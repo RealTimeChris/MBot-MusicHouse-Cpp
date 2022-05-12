@@ -217,7 +217,7 @@ namespace DiscordCoreAPI {
 					playlist.currentSong = Song();
 					SongAPI::setPlaylist(playlist, guild.id);
 					auto newPlaylist = SongAPI::getPlaylist(guild.id);
-					savePlaylist(guild);
+					savePlaylist(discordGuild);
 				}
 				auto newChannelId = args.eventData.getChannelId();
 				if (!SongAPI::areWeCurrentlyPlaying(guild.id)) {

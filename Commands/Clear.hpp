@@ -54,7 +54,7 @@ namespace DiscordCoreAPI {
 				auto playlist = SongAPI::getPlaylist(guild.id);
 				playlist.songQueue.clear();
 				SongAPI::setPlaylist(playlist, guild.id);
-				savePlaylist(guild);
+				savePlaylist(discordGuild);
 
 				EmbedData msgEmbed;
 				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());

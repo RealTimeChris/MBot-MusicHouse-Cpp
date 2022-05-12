@@ -501,14 +501,14 @@ namespace DiscordCoreAPI {
 		}
 	};
 
-	void savePlaylist(DiscordGuild guild) {
+	void savePlaylist(DiscordGuild& guild) {
 		Playlist playlist = getSongAPIMap().at(guild.data.guildId)->playlist;
 		getSongAPIMap().at(guild.data.guildId)->playlist = playlist;
 		guild.data.playlist = playlist;
 		guild.writeDataToDB();
 	}
 
-	Playlist loadPlaylist(DiscordGuild guild) {
+	Playlist loadPlaylist(DiscordGuild& guild) {
 		guild.getDataFromDB();
 		if (getSongAPIMap().contains(guild.data.guildId)) {
 			getSongAPIMap().at(guild.data.guildId)->playlist = guild.data.playlist;

@@ -13,11 +13,12 @@ namespace DiscordCoreAPI {
 		std::vector<EmbedData> embedsFromSearch, BaseFunctionArguments& newArgs,
 							   std::vector<int32_t> arrayOfIndices, GuildMember guildMember, std::vector<Song> searchResults) {
 		if (returnData.buttonId == "exit") {
+			arrayOfIndices.erase(arrayOfIndices.end() - 1, arrayOfIndices.end());
 			for (auto& value: arrayOfIndices) {
 				if (value != -1) {
 					auto song = SongAPI::addSongToQueue(guildMember, searchResults[value]);
 				}
-			}
+			}			
 			std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 			std::string descriptionString{};
 			descriptionString = "------\n__**Added the following songs to the queue:\n";
