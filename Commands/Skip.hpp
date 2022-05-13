@@ -193,7 +193,7 @@ namespace DiscordCoreAPI {
 				reportException("Skip::execute()");
 			}
 		}
-		virtual ~Skip(){};
+		~Skip(){};
 	};
 	std::unordered_map<std::string, int64_t> Skip::timeOfLastSkip{};
 }

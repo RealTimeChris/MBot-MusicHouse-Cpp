@@ -83,7 +83,7 @@ namespace DiscordCoreAPI {
 				reportException("NP:execute()");
 			}
 		}
-		virtual ~Np(){};
+		~Np(){};
 	};
 
 }

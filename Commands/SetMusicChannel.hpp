@@ -180,6 +180,6 @@ namespace DiscordCoreAPI {
 				reportException("SetMusicChannel::execute()");
 			}
 		}
-		virtual ~SetMusicChannel(){};
+		~SetMusicChannel(){};
 	};
 }

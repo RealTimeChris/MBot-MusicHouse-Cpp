@@ -76,7 +76,7 @@ namespace DiscordCoreAPI {
 				reportException("LoopSong::execute()");
 			}
 		}
-		virtual ~LoopSong(){};
+		~LoopSong(){};
 	};
 
 }

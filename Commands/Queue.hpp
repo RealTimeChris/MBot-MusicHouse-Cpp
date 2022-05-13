@@ -435,7 +435,7 @@ namespace DiscordCoreAPI {
 				reportException("Queue::execute()");
 			};
 		};
-		virtual ~TheQueue(){};
+		~TheQueue(){};
 	};
 
 };

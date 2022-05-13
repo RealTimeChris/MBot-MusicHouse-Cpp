@@ -378,7 +378,7 @@ namespace DiscordCoreAPI {
 				reportException("PlayRN::execute()");
 			}
 		};
-		virtual ~PlayRN(){};
+		~PlayRN(){};
 	};
 
 };

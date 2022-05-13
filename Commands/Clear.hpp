@@ -72,7 +72,7 @@ namespace DiscordCoreAPI {
 				reportException("Clear::execute()");
 			}
 		}
-		virtual ~Clear(){};
+		~Clear(){};
 	};
 
 }

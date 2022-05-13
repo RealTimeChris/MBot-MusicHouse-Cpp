@@ -82,7 +82,7 @@ namespace DiscordCoreAPI {
 				reportException("Disconnect::execute()");
 			}
 		}
-		virtual ~Disconnect(){};
+		~Disconnect(){};
 	};
 
 }

@@ -418,7 +418,7 @@ namespace DiscordCoreAPI {
 				reportException("Play::execute()");
 			}
 		};
-		virtual ~Play(){};
+		~Play(){};
 	};
 	std::unordered_map<std::string, int64_t> Play::timeOfLastPlay{};
 

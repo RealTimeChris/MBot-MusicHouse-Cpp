@@ -113,7 +113,7 @@ namespace DiscordCoreAPI {
 				reportException("Pause::execute()");
 			}
 		}
-		virtual ~Pause(){};
+		~Pause(){};
 	};
 
 }

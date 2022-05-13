@@ -96,7 +96,7 @@ namespace DiscordCoreAPI {
 				reportException("UserInfo::execute()");
 			}
 		}
-		virtual ~UserInfo(){};
+		~UserInfo(){};
 	};
 
 }

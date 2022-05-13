@@ -76,7 +76,7 @@ namespace DiscordCoreAPI {
 				reportException("LoopAll::execute()");
 			}
 		}
-		virtual ~LoopAll(){};
+		~LoopAll(){};
 	};
 
 }
