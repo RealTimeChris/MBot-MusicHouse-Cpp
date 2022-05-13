@@ -34,7 +34,7 @@ namespace DiscordCoreAPI {
 				auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
-			
+
 				CreateGlobalApplicationCommandData createBotInfoCommandData{};
 				createBotInfoCommandData.dmPermission = true;
 				createBotInfoCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -295,7 +295,7 @@ namespace DiscordCoreAPI {
 				userInfoData.type = ApplicationCommandType::Message;
 				userInfoData.name = "User Info";
 				ApplicationCommands::createGlobalApplicationCommandAsync(userInfoData);
-				
+
 				EmbedData msgEmbed{};
 				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.setColor("FeFeFe");

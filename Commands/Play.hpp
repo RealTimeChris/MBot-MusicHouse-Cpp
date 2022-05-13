@@ -9,16 +9,15 @@
 
 namespace DiscordCoreAPI {
 
-	MoveThroughMessagePagesData recurseThroughOptions(MoveThroughMessagePagesData returnData,int32_t currentPageIndex, InputEventData newEvent,
-		std::vector<EmbedData> embedsFromSearch, BaseFunctionArguments& newArgs,
-							   std::vector<int32_t> arrayOfIndices, GuildMember guildMember, std::vector<Song> searchResults) {
+	MoveThroughMessagePagesData recurseThroughOptions(MoveThroughMessagePagesData returnData, int32_t currentPageIndex, InputEventData newEvent,
+		std::vector<EmbedData> embedsFromSearch, BaseFunctionArguments& newArgs, std::vector<int32_t> arrayOfIndices, GuildMember guildMember, std::vector<Song> searchResults) {
 		if (returnData.buttonId == "exit") {
 			arrayOfIndices.erase(arrayOfIndices.end() - 1, arrayOfIndices.end());
 			for (auto& value: arrayOfIndices) {
 				if (value != -1) {
 					auto song = SongAPI::addSongToQueue(guildMember, searchResults[value]);
 				}
-			}			
+			}
 			std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 			std::string descriptionString{};
 			descriptionString = "------\n__**Added the following songs to the queue:\n";
@@ -206,7 +205,7 @@ namespace DiscordCoreAPI {
 					dataPackage0.setResponseType(InputEventResponseType::Follow_Up_Message);
 					dataPackage0.addMessageEmbed(embedsFromSearch[0]);
 					newEvent = InputEvents::respondToInputEventAsync(dataPackage0).get();
-					
+
 					returnData = recurseThroughOptions(returnData, currentPageIndex, newEvent, embedsFromSearch, newArgs, arrayOfIndices, guildMember, searchResults);
 					savePlaylist(discordGuild);
 					discordGuild.writeDataToDB();
