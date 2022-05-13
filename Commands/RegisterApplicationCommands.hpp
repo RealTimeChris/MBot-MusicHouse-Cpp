@@ -104,7 +104,7 @@ namespace DiscordCoreAPI {
 				createSetGameChannelOptionFour.name = "purge";
 				createSetGameChannelOptionFour.description = "Purges the list of channels for the server.";
 				createSetGameChannelCommandData.options.push_back(createSetGameChannelOptionFour);
-				ApplicationCommands::createGlobalApplicationCommandAsync(createSetGameChannelCommandData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createSetGameChannelCommandData);
 
 				CreateGlobalApplicationCommandData createSetBorderColorCommandData{};
 				createSetBorderColorCommandData.dmPermission = false;
@@ -120,7 +120,7 @@ namespace DiscordCoreAPI {
 				createSetBorderColorOptionTwo.required = true;
 				createSetBorderColorOptionTwo.description = "The hex-color-value to set the borders to.";
 				createSetBorderColorCommandData.options.push_back(createSetBorderColorOptionTwo);
-				ApplicationCommands::createGlobalApplicationCommandAsync(createSetBorderColorCommandData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createSetBorderColorCommandData);
 
 				CreateGlobalApplicationCommandData createSkipData{};
 				createSkipData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
@@ -129,7 +129,7 @@ namespace DiscordCoreAPI {
 				createSkipData.type = ApplicationCommandType::Chat_Input;
 				createSkipData.name = "skip";
 				createSkipData.description = "Skip to the next song in the queue.";
-				ApplicationCommands::createGlobalApplicationCommandAsync(createSkipData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createSkipData);
 
 				CreateGlobalApplicationCommandData createStopData{};
 				createStopData.dmPermission = false;
@@ -138,7 +138,7 @@ namespace DiscordCoreAPI {
 				createStopData.type = ApplicationCommandType::Chat_Input;
 				createStopData.name = "stop";
 				createStopData.description = "Stops the currently playing music.";
-				ApplicationCommands::createGlobalApplicationCommandAsync(createStopData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createStopData);
 
 				CreateGlobalApplicationCommandData createLoopSongData{};
 				createLoopSongData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
@@ -147,7 +147,7 @@ namespace DiscordCoreAPI {
 				createLoopSongData.type = ApplicationCommandType::Chat_Input;
 				createLoopSongData.name = "loopsong";
 				createLoopSongData.description = "Set the current song to be looped over.";
-				ApplicationCommands::createGlobalApplicationCommandAsync(createLoopSongData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createLoopSongData);
 
 				CreateGlobalApplicationCommandData createLoopAllData{};
 				createLoopAllData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
@@ -156,7 +156,7 @@ namespace DiscordCoreAPI {
 				createLoopAllData.type = ApplicationCommandType::Chat_Input;
 				createLoopAllData.name = "loopall";
 				createLoopAllData.description = "Set the current playlist to be looped over.";
-				ApplicationCommands::createGlobalApplicationCommandAsync(createLoopAllData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createLoopAllData);
 
 				CreateGlobalApplicationCommandData createSeekCommandData{};
 				createSeekCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
@@ -183,7 +183,7 @@ namespace DiscordCoreAPI {
 				createSeekCommandData.options.push_back(createSeekOptionOne);
 				createSeekCommandData.options.push_back(createSeekOptionTwo);
 				createSeekCommandData.options.push_back(createSeekOptionThree);
-				ApplicationCommands::createGlobalApplicationCommandAsync(createSeekCommandData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createSeekCommandData);
 
 				CreateGlobalApplicationCommandData createClearData{};
 				createClearData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
@@ -192,7 +192,7 @@ namespace DiscordCoreAPI {
 				createClearData.type = ApplicationCommandType::Chat_Input;
 				createClearData.name = "clear";
 				createClearData.description = "Clears the current song queue.";
-				ApplicationCommands::createGlobalApplicationCommandAsync(createClearData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createClearData);
 
 				CreateGlobalApplicationCommandData createEditQueueData{};
 				createEditQueueData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
@@ -201,7 +201,7 @@ namespace DiscordCoreAPI {
 				createEditQueueData.type = ApplicationCommandType::Chat_Input;
 				createEditQueueData.name = "editqueue";
 				createEditQueueData.description = "Edit the current server's queue of songs.";
-				ApplicationCommands::createGlobalApplicationCommandAsync(createEditQueueData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createEditQueueData);
 
 				CreateGlobalApplicationCommandData createDisconnectData{};
 				createDisconnectData.dmPermission = false;
@@ -210,7 +210,7 @@ namespace DiscordCoreAPI {
 				createDisconnectData.type = ApplicationCommandType::Chat_Input;
 				createDisconnectData.name = "disconnect";
 				createDisconnectData.description = "Disconnect from the current voice channel.";
-				ApplicationCommands::createGlobalApplicationCommandAsync(createDisconnectData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createDisconnectData);
 
 				CreateGlobalApplicationCommandData createTestData{};
 				createTestData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
@@ -219,7 +219,7 @@ namespace DiscordCoreAPI {
 				createTestData.type = ApplicationCommandType::Chat_Input;
 				createTestData.name = "test";
 				createTestData.description = "Test command.";
-				ApplicationCommands::createGlobalApplicationCommandAsync(createTestData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createTestData);
 
 				CreateGlobalApplicationCommandData createPauseData{};
 				createPauseData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
@@ -228,7 +228,7 @@ namespace DiscordCoreAPI {
 				createPauseData.type = ApplicationCommandType::Chat_Input;
 				createPauseData.name = "pause";
 				createPauseData.description = "Pause the music.";
-				ApplicationCommands::createGlobalApplicationCommandAsync(createPauseData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createPauseData);
 
 				CreateGlobalApplicationCommandData createQueueData{};
 				createQueueData.dmPermission = false;
@@ -237,7 +237,7 @@ namespace DiscordCoreAPI {
 				createQueueData.type = ApplicationCommandType::Chat_Input;
 				createQueueData.name = "queue";
 				createQueueData.description = "Look at the queue and possibly edit it.";
-				ApplicationCommands::createGlobalApplicationCommandAsync(createQueueData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createQueueData);
 
 				CreateGlobalApplicationCommandData createHelpData{};
 				createHelpData.dmPermission = true;
@@ -246,7 +246,7 @@ namespace DiscordCoreAPI {
 				createHelpData.type = ApplicationCommandType::Chat_Input;
 				createHelpData.name = "help";
 				createHelpData.description = "A help command for this bot.";
-				ApplicationCommands::createGlobalApplicationCommandAsync(createHelpData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createHelpData);
 
 				CreateGlobalApplicationCommandData createNpData{};
 				createNpData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
@@ -255,7 +255,7 @@ namespace DiscordCoreAPI {
 				createNpData.type = ApplicationCommandType::Chat_Input;
 				createNpData.name = "np";
 				createNpData.description = "Displays the currently playing song.";
-				ApplicationCommands::createGlobalApplicationCommandAsync(createNpData).get();
+				ApplicationCommands::createGlobalApplicationCommandAsync(createNpData);
 
 				CreateGlobalApplicationCommandData playRNCommandData{};
 				playRNCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
@@ -293,7 +293,6 @@ namespace DiscordCoreAPI {
 				userInfoData.dmPermission = false;
 				userInfoData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				userInfoData.type = ApplicationCommandType::Message;
-				userInfoData.description = "Displays information about the author.";
 				userInfoData.name = "User Info";
 				ApplicationCommands::createGlobalApplicationCommandAsync(userInfoData);
 				
