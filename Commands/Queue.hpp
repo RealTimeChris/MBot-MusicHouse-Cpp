@@ -19,10 +19,12 @@ namespace DiscordCoreAPI {
 				msgEmbedFieldsPage += 1;
 				msgEmbedFields.push_back(std::vector<EmbedFieldData>());
 			}
-			EmbedFieldData msgEmbedField = { .value = "__**Title:**__ [" + playlist.at(y).songTitle + "](" + playlist.at(y).viewUrl + ")\n__**Added By:**__ <@!" +
-					playlist.at(y).addedByUserId + "> (" + playlist.at(y).addedByUserName + ")",
+			EmbedFieldData msgEmbedField = {
+				.Inline = false,
+				.value = "__**Title:**__ [" + playlist.at(y).songTitle + "](" + playlist.at(y).viewUrl + ")\n__**Added By:**__ <@!" + playlist.at(y).addedByUserId + "> (" +
+					playlist.at(y).addedByUserName + ")",
 				.name = "__**" + std::to_string(y + 1) + " of " + std::to_string(playlist.size()) + "**__",
-				.Inline = false };
+			};
 			msgEmbedFields[msgEmbedFieldsPage].push_back(msgEmbedField);
 		}
 		msgEmbedFieldsPage = 0;
@@ -123,11 +125,13 @@ namespace DiscordCoreAPI {
 						}
 						msgEmbedFields.push_back(std::vector<EmbedFieldData>());
 					}
-					EmbedFieldData msgEmbedField = { .value = "__**Title:**__ [" + SongAPI::getPlaylist(guild->id).songQueue.at(y).songTitle + "](" +
-							SongAPI::getPlaylist(guild->id).songQueue.at(y).viewUrl + ")\n__**Added By:**__ <@!" + SongAPI::getPlaylist(guild->id).songQueue.at(y).addedByUserId +
-							"> (" + SongAPI::getPlaylist(guild->id).songQueue.at(y).addedByUserName + ")",
+					EmbedFieldData msgEmbedField = {
+						.Inline = false,
+						.value = "__**Title:**__ [" + SongAPI::getPlaylist(guild->id).songQueue.at(y).songTitle + "](" + SongAPI::getPlaylist(guild->id).songQueue.at(y).viewUrl +
+							")\n__**Added By:**__ <@!" + SongAPI::getPlaylist(guild->id).songQueue.at(y).addedByUserId + "> (" +
+							SongAPI::getPlaylist(guild->id).songQueue.at(y).addedByUserName + ")",
 						.name = "__**" + std::to_string(y + 1) + " of " + std::to_string(SongAPI::getPlaylist(guild->id).songQueue.size()) + "**__",
-						.Inline = false };
+					};
 					msgEmbedFields[msgEmbedFieldsPage].push_back(msgEmbedField);
 				}
 				std::vector<EmbedData> msgEmbeds;
@@ -275,9 +279,9 @@ namespace DiscordCoreAPI {
 								msgEmbeds[currentPageIndex].setFooter("PLEASE ENTER A PROPER INPUT!\nType 'remove <trackNumber>' to remove a track.\nType "
 																	  "'swap <sourceTrackNumber> <destinationTrackNumber>' to swap "
 																	  "tracks.\nType 'shuffle' to shuffle the playlist.\nType 'exit' to exit.");
-								Messages::deleteMessageAsync({ .channelId = returnedMessages.get().messages[0].channelId,
+								Messages::deleteMessageAsync({ .timeStamp = returnedMessages.get().messages[0].timestamp,
+																 .channelId = returnedMessages.get().messages[0].channelId,
 																 .messageId = returnedMessages.get().messages[0].id,
-																 .timeStamp = returnedMessages.get().messages[0].timestamp,
 																 .reason = "Deleting the message!" })
 									.get();
 								RespondToInputEventData dataPackage03(newEvent);
@@ -295,9 +299,9 @@ namespace DiscordCoreAPI {
 									msgEmbeds[currentPageIndex].setFooter("PLEASE ENTER A PROPER INPUT!\nType 'remove <trackNumber>' to remove a track.\nType "
 																		  "'swap <sourceTrackNumber> <destinationTrackNumber>' to swap "
 																		  "tracks.\nType 'shuffle' to shuffle the playlist.\nType 'exit' to exit.");
-									Messages::deleteMessageAsync({ .channelId = returnedMessages.get().messages[0].channelId,
+									Messages::deleteMessageAsync({ .timeStamp = returnedMessages.get().messages[0].timestamp,
+																	 .channelId = returnedMessages.get().messages[0].channelId,
 																	 .messageId = returnedMessages.get().messages[0].id,
-																	 .timeStamp = returnedMessages.get().messages[0].timestamp,
 																	 .reason = "Deleting the message!" })
 										.get();
 									RespondToInputEventData dataPackage03(newEvent);
@@ -315,9 +319,9 @@ namespace DiscordCoreAPI {
 									msgEmbeds[currentPageIndex].setFooter("PLEASE ENTER A PROPER INPUT!\nType 'remove <trackNumber>' to remove a track.\nType "
 																		  "'swap <sourceTrackNumber> <destinationTrackNumber>' to swap "
 																		  "tracks.\nType 'shuffle' to shuffle the playlist.\nType 'exit' to exit.");
-									Messages::deleteMessageAsync({ .channelId = returnedMessages.get().messages[0].channelId,
+									Messages::deleteMessageAsync({ .timeStamp = returnedMessages.get().messages[0].timestamp,
+																	 .channelId = returnedMessages.get().messages[0].channelId,
 																	 .messageId = returnedMessages.get().messages[0].id,
-																	 .timeStamp = returnedMessages.get().messages[0].timestamp,
 																	 .reason = "Deleting the message!" })
 										.get();
 									RespondToInputEventData dataPackage03(newEvent);
@@ -332,9 +336,9 @@ namespace DiscordCoreAPI {
 								auto playlist = SongAPI::getPlaylist(guild->id);
 								playlist.songQueue.erase(playlist.songQueue.begin() + removeIndex - 1, playlist.songQueue.begin() + removeIndex);
 								SongAPI::setPlaylist(playlist, guild->id);
-								Messages::deleteMessageAsync({ .channelId = returnedMessages.get().messages[0].channelId,
+								Messages::deleteMessageAsync({ .timeStamp = returnedMessages.get().messages[0].timestamp,
+																 .channelId = returnedMessages.get().messages[0].channelId,
 																 .messageId = returnedMessages.get().messages[0].id,
-																 .timeStamp = returnedMessages.get().messages[0].timestamp,
 																 .reason = "Deleting the message!" })
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
@@ -351,9 +355,9 @@ namespace DiscordCoreAPI {
 									msgEmbeds[currentPageIndex].setFooter("PLEASE ENTER A PROPER INPUT!\nType 'remove <trackNumber>' to remove a track.\nType "
 																		  "'swap <sourceTrackNumber> <destinationTrackNumber>' to swap "
 																		  "tracks.\nType 'shuffle' to shuffle the playlist.\nType 'exit' to exit.");
-									Messages::deleteMessageAsync({ .channelId = returnedMessages.get().messages[0].channelId,
+									Messages::deleteMessageAsync({ .timeStamp = returnedMessages.get().messages[0].timestamp,
+																	 .channelId = returnedMessages.get().messages[0].channelId,
 																	 .messageId = returnedMessages.get().messages[0].id,
-																	 .timeStamp = returnedMessages.get().messages[0].timestamp,
 																	 .reason = "Deleting the message!" })
 										.get();
 									RespondToInputEventData dataPackage03(newEvent);
@@ -373,9 +377,9 @@ namespace DiscordCoreAPI {
 									msgEmbeds[currentPageIndex].setFooter("PLEASE ENTER A PROPER INPUT!\nType 'remove <trackNumber>' to remove a track.\nType "
 																		  "'swap <sourceTrackNumber> <destinationTrackNumber>' to swap "
 																		  "tracks.\nType 'shuffle' to shuffle the playlist.\nType 'exit' to exit.");
-									Messages::deleteMessageAsync({ .channelId = returnedMessages.get().messages[0].channelId,
+									Messages::deleteMessageAsync({ .timeStamp = returnedMessages.get().messages[0].timestamp,
+																	 .channelId = returnedMessages.get().messages[0].channelId,
 																	 .messageId = returnedMessages.get().messages[0].id,
-																	 .timeStamp = returnedMessages.get().messages[0].timestamp,
 																	 .reason = "Deleting the message!" })
 										.get();
 									RespondToInputEventData dataPackage03(newEvent);
@@ -389,9 +393,9 @@ namespace DiscordCoreAPI {
 								int32_t sourceIndex = ( int32_t )stoll(args2[1]) - 1;
 								int32_t destinationIndex = ( int32_t )stoll(args2[2]) - 1;
 								SongAPI::modifyQueue(sourceIndex, destinationIndex, guild->id);
-								Messages::deleteMessageAsync({ .channelId = returnedMessages.get().messages[0].channelId,
+								Messages::deleteMessageAsync({ .timeStamp = returnedMessages.get().messages[0].timestamp,
+																 .channelId = returnedMessages.get().messages[0].channelId,
 																 .messageId = returnedMessages.get().messages[0].id,
-																 .timeStamp = returnedMessages.get().messages[0].timestamp,
 																 .reason = "Deleting the message!" })
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
@@ -412,9 +416,9 @@ namespace DiscordCoreAPI {
 								}
 								oldSongArray.songQueue = newVector;
 								SongAPI::setPlaylist(oldSongArray, guild->id);
-								Messages::deleteMessageAsync({ .channelId = returnedMessages.get().messages[0].channelId,
+								Messages::deleteMessageAsync({ .timeStamp = returnedMessages.get().messages[0].timestamp,
+																 .channelId = returnedMessages.get().messages[0].channelId,
 																 .messageId = returnedMessages.get().messages[0].id,
-																 .timeStamp = returnedMessages.get().messages[0].timestamp,
 																 .reason = "Deleting the message!" })
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
