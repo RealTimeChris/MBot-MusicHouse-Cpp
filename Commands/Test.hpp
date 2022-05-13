@@ -24,7 +24,7 @@ namespace DiscordCoreAPI {
 			return std::make_unique<Test>();
 		}
 
-		virtual void execute(BaseFunctionArguments&) {
+		void execute(BaseFunctionArguments&) {
 			try {
 				return;
 			} catch (...) {

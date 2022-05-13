@@ -26,7 +26,7 @@ namespace DiscordCoreAPI {
 			return std::make_unique<PlayRN>();
 		}
 
-		virtual void execute(BaseFunctionArguments& newArgs) {
+		void execute(BaseFunctionArguments& newArgs) {
 			try {
 				Channel channel = Channels::getCachedChannelAsync({ newArgs.eventData.getChannelId() }).get();
 

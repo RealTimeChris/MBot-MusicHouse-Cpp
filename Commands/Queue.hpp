@@ -66,7 +66,7 @@ namespace DiscordCoreAPI {
 			return std::make_unique<TheQueue>();
 		}
 
-		virtual void execute(BaseFunctionArguments& newArgs) {
+		void execute(BaseFunctionArguments& newArgs) {
 			try {
 				std::unique_ptr<Channel> channel{ std::make_unique<Channel>(Channels::getCachedChannelAsync({ newArgs.eventData.getChannelId() }).get()) };
 
