@@ -290,7 +290,6 @@ namespace DiscordCoreAPI {
 				ApplicationCommands::createGlobalApplicationCommandAsync(playQCommandData);
 
 				CreateGlobalApplicationCommandData userInfoData{};
-				userInfoData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
 				userInfoData.dmPermission = false;
 				userInfoData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				userInfoData.type = ApplicationCommandType::Message;
