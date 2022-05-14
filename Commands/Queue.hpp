@@ -9,8 +9,8 @@
 
 namespace DiscordCoreAPI {
 
-	std::vector<EmbedData> updateMessageEmbeds(
-		std::vector<Song> playlist, DiscordGuild* discordGuild, InputEventData interaction, InputEventData originalEvent, int32_t currentPageIndex) {
+	std::vector<EmbedData> updateMessageEmbeds(std::vector<Song> playlist, DiscordGuild* discordGuild, InputEventData interaction, InputEventData originalEvent,
+		int32_t currentPageIndex) {
 		std::vector<std::vector<EmbedFieldData>> msgEmbedFields{};
 		msgEmbedFields.push_back(std::vector<EmbedFieldData>());
 		int32_t msgEmbedFieldsPage{ 0 };
@@ -311,7 +311,7 @@ namespace DiscordCoreAPI {
 									newEvent = InputEvents::respondToInputEventAsync(dataPackage03).get();
 									continue;
 								}
-								if ((stoll(args2[1]) - 1) < 0 || (size_t)(stoll(args2[1]) - 1) >= SongAPI::getPlaylist(guild->id).songQueue.size() || args2.size() < 1) {
+								if ((stoll(args2[1]) - 1) < 0 || ( size_t )(stoll(args2[1]) - 1) >= SongAPI::getPlaylist(guild->id).songQueue.size() || args2.size() < 1) {
 									msgEmbeds[currentPageIndex].setDescription(
 										"__**PLEASE ENTER A PROPER INPUT!**__\n__Type 'remove <trackNumber>' to remove a track.\nType 'swap "
 										"<sourceTrackNumber> "
@@ -368,8 +368,8 @@ namespace DiscordCoreAPI {
 									continue;
 								}
 								if (args2.size() < 2 ||
-									((stoll(args2[1]) - 1) < 0 || (size_t)(stoll(args2[1]) - 1) >= SongAPI::getPlaylist(guild->id).songQueue.size() || (stoll(args2[2]) - 1) < 0 ||
-										(size_t)(stoll(args2[2]) - 1) >= SongAPI::getPlaylist(guild->id).songQueue.size() || args2.size() < 2)) {
+									((stoll(args2[1]) - 1) < 0 || ( size_t )(stoll(args2[1]) - 1) >= SongAPI::getPlaylist(guild->id).songQueue.size() ||
+										(stoll(args2[2]) - 1) < 0 || ( size_t )(stoll(args2[2]) - 1) >= SongAPI::getPlaylist(guild->id).songQueue.size() || args2.size() < 2)) {
 									msgEmbeds[currentPageIndex].setDescription(
 										"__**PLEASE ENTER A PROPER INPUT!**__\n__Type 'remove <trackNumber>' to remove a track.\nType 'swap "
 										"<sourceTrackNumber> "

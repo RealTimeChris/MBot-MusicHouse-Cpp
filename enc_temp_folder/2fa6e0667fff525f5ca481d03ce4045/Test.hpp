@@ -26,6 +26,7 @@ namespace DiscordCoreAPI {
 
 		void execute(BaseFunctionArguments&) {
 			try {
+				
 			} catch (...) {
 				reportException("Test::execute()");
 			}

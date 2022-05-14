@@ -81,8 +81,8 @@ namespace DiscordCoreAPI {
 		return false;
 	}
 
-	bool doWeHaveAdminPermissions(
-		BaseFunctionArguments newArgs, InputEventData eventData, DiscordGuild discordGuild, Channel channel, GuildMember guildMember, bool displayResponse = true) {
+	bool doWeHaveAdminPermissions(BaseFunctionArguments newArgs, InputEventData eventData, DiscordGuild discordGuild, Channel channel, GuildMember guildMember,
+		bool displayResponse = true) {
 		bool doWeHaveAdmin = guildMember.permissions.checkForPermission(guildMember, channel, Permission::Administrator);
 
 		if (doWeHaveAdmin) {
