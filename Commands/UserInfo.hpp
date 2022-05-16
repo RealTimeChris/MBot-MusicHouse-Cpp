@@ -40,7 +40,7 @@ namespace DiscordCoreAPI {
 				GuildMember guildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = message.author.id, .guildId = newArgs.eventData.getGuildId() }).get();
 
 				std::vector<EmbedFieldData> fields;
-				EmbedFieldData field = { .Inline = true, .value = guildMember.user.userName + "#" + guildMember.user.discriminator, .name = "__User Tag: __" };
+				EmbedFieldData field = { .Inline = true, .value = guildMember.user.userName + "#" + std::string{ guildMember.user.discriminator }, .name = "__User Tag: __" };
 				fields.push_back(field);
 				EmbedFieldData field1 = { .Inline = true, .value = guildMember.user.userName, .name = "__User Name:__" };
 				fields.push_back(field1);
@@ -56,7 +56,7 @@ namespace DiscordCoreAPI {
 				fields.push_back(field3);
 				EmbedFieldData field4 = { .Inline = true, .value = guildMember.joinedAt.getDateTimeStamp(TimeFormat::LongDateTime), .name = "__Joined:__" };
 				fields.push_back(field4);
-				EmbedFieldData field5 = { .Inline = true, .value = guildMember.user.createdAt, .name = "__Created At:__" };
+				EmbedFieldData field5 = { .Inline = true, .value = guildMember.user.getCreatedAtTimestamp(TimeFormat::LongDateTime), .name = "__Created At:__" };
 				fields.push_back(field5);
 				Permissions permsString = Permissions::getCurrentChannelPermissions(guildMember, channel);
 				std::vector<std::string> permissionsArray = permsString.displayPermissions();

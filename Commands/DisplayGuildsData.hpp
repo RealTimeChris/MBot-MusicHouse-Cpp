@@ -36,14 +36,14 @@ namespace DiscordCoreAPI {
 				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
 				auto inputEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 				for (auto& value: theCache) {
-					std::string msgString = "__Guild Name:__ " + value.name + "\n";
+					std::string msgString = "__Guild Name:__ " + std::string{ value.name } + "\n";
 					msgString += "__Guild ID:__ " + value.id + "\n";
 					msgString += "__Member Count:__ " + std::to_string(value.memberCount) + "\n";
 
 					msgString += "__Joined At:__ " + value.joinedAt.getDateTimeStamp(TimeFormat::LongDateTime) + "\n";
 					User owner = Users::getUserAsync({ value.ownerId }).get();
-					msgString += "__Guild Owner:__ <@!" + value.ownerId + "> " + owner.userName + "#" + owner.discriminator + "\n";
-					msgString += "__Created At:__ " + value.createdAt;
+					msgString += "__Guild Owner:__ <@!" + std::string{ value.ownerId } + "> " + owner.userName + "#" + std::string{ owner.discriminator } + "\n";
+					msgString += "__Created At:__ " + value.getCreatedAtTimestamp(TimeFormat::LongDateTime);
 
 					EmbedData messageEmbed;
 					messageEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());

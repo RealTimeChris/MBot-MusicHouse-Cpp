@@ -9,7 +9,7 @@
 
 namespace DiscordCoreAPI {
 
-	std::vector<EmbedData> updateMessageEmbeds(std::vector<Song> playlist, DiscordGuild* discordGuild, InputEventData interaction, InputEventData originalEvent,
+	std::vector<EmbedData> updateMessageEmbeds(std::vector<Song> playlist, DiscordGuild* discordGuild, InputEventData interaction, InputEventData originalEvent,GuildMember guildMember,
 		int32_t currentPageIndex) {
 		std::vector<std::vector<EmbedFieldData>> msgEmbedFields{};
 		msgEmbedFields.push_back(std::vector<EmbedFieldData>());
@@ -31,7 +31,7 @@ namespace DiscordCoreAPI {
 		std::vector<EmbedData> newMsgEmbeds{};
 		for (int32_t y = 0; y < msgEmbedFields.size(); y += 1) {
 			std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
-			newEmbed->setAuthor(originalEvent.getUserName(), originalEvent.getAvatarUrl());
+			newEmbed->setAuthor(guildMember.user.userName, guildMember.avatar);
 			newEmbed->setColor(discordGuild->data.borderColor);
 			newEmbed->setTimeStamp(getTimeAndDate());
 			newEmbed->setTitle("__**Playlist, Page " + std::to_string(y + 1) + " of " + std::to_string(msgEmbedFields.size()) + "**__");
@@ -242,7 +242,8 @@ namespace DiscordCoreAPI {
 							auto returnedMessages = messageCollector->collectMessages(1, 120000, messageFilter);
 							if (returnedMessages.get().messages.size() == 0) {
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
-								msgEmbeds = updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, currentPageIndex);
+								msgEmbeds =
+									updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, guildMember, currentPageIndex);
 								doWeQuit = true;
 								break;
 							}
@@ -268,7 +269,8 @@ namespace DiscordCoreAPI {
 																 .reason = "Deleting the message!" })
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
-								msgEmbeds = updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, currentPageIndex);
+								msgEmbeds =
+									updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, guildMember, currentPageIndex);
 								doWeQuit = true;
 								break;
 							} else if (convertToLowerCase(args2[0]) != "remove" && convertToLowerCase(args2[0]) != "swap" && convertToLowerCase(args2[0]) != "exit" &&
@@ -342,7 +344,8 @@ namespace DiscordCoreAPI {
 																 .reason = "Deleting the message!" })
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
-								msgEmbeds = updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, currentPageIndex);
+								msgEmbeds =
+									updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, guildMember, currentPageIndex);
 								doWeQuit = true;
 								savePlaylist(*discordGuild);
 								break;
@@ -399,7 +402,7 @@ namespace DiscordCoreAPI {
 																 .reason = "Deleting the message!" })
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
-								msgEmbeds = updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newEvent, currentPageIndex);
+								msgEmbeds = updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newEvent, guildMember, currentPageIndex);
 								doWeQuit = true;
 								savePlaylist(*discordGuild);
 								break;
@@ -422,7 +425,7 @@ namespace DiscordCoreAPI {
 																 .reason = "Deleting the message!" })
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
-								msgEmbeds = updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newEvent, currentPageIndex);
+								msgEmbeds = updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newEvent, guildMember, currentPageIndex);
 								doWeQuit = true;
 								savePlaylist(*discordGuild);
 								break;
