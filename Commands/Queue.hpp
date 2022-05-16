@@ -9,7 +9,7 @@
 
 namespace DiscordCoreAPI {
 
-	std::vector<EmbedData> updateMessageEmbeds(std::vector<Song> playlist, DiscordGuild* discordGuild, InputEventData interaction, InputEventData originalEvent,GuildMember guildMember,
+	std::vector<EmbedData> updateMessageEmbeds(std::vector<Song> playlist, DiscordGuild* discordGuild, InputEventData interaction, InputEventData originalEvent, User theUser,
 		int32_t currentPageIndex) {
 		std::vector<std::vector<EmbedFieldData>> msgEmbedFields{};
 		msgEmbedFields.push_back(std::vector<EmbedFieldData>());
@@ -31,7 +31,7 @@ namespace DiscordCoreAPI {
 		std::vector<EmbedData> newMsgEmbeds{};
 		for (int32_t y = 0; y < msgEmbedFields.size(); y += 1) {
 			std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
-			newEmbed->setAuthor(guildMember.user.userName, guildMember.avatar);
+			newEmbed->setAuthor(theUser.userName, theUser.avatar);
 			newEmbed->setColor(discordGuild->data.borderColor);
 			newEmbed->setTimeStamp(getTimeAndDate());
 			newEmbed->setTitle("__**Playlist, Page " + std::to_string(y + 1) + " of " + std::to_string(msgEmbedFields.size()) + "**__");
@@ -138,8 +138,8 @@ namespace DiscordCoreAPI {
 				msgEmbedFieldsPage = 0;
 				for (int32_t y = 0; y < msgEmbedFields.size(); y += 1) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
-					newEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl())
-						.setColor(discordGuild->data.borderColor)
+					newEmbed->setColor(discordGuild->data.borderColor)
+						.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl())
 						.setTimeStamp(getTimeAndDate())
 						.setTitle("__**Playlist, Page " + std::to_string(y + 1) + " of " + std::to_string(msgEmbedFields.size()) + "**__")
 						.setFooter("React with ✅ to edit the contents of the current page. React with ❌ to exit!")
@@ -237,13 +237,13 @@ namespace DiscordCoreAPI {
 									return false;
 								}
 							};
-
+							User theUser = Users::getCachedUserAsync({ newArgs.eventData.getAuthorId() }).get();
 							std::unique_ptr<MessageCollector> messageCollector{ std::make_unique<MessageCollector>() };
 							auto returnedMessages = messageCollector->collectMessages(1, 120000, messageFilter);
 							if (returnedMessages.get().messages.size() == 0) {
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
 								msgEmbeds =
-									updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, guildMember, currentPageIndex);
+									updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, theUser, currentPageIndex);
 								doWeQuit = true;
 								break;
 							}
@@ -270,7 +270,7 @@ namespace DiscordCoreAPI {
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
 								msgEmbeds =
-									updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, guildMember, currentPageIndex);
+									updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, theUser, currentPageIndex);
 								doWeQuit = true;
 								break;
 							} else if (convertToLowerCase(args2[0]) != "remove" && convertToLowerCase(args2[0]) != "swap" && convertToLowerCase(args2[0]) != "exit" &&
@@ -345,7 +345,7 @@ namespace DiscordCoreAPI {
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
 								msgEmbeds =
-									updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, guildMember, currentPageIndex);
+									updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, theUser, currentPageIndex);
 								doWeQuit = true;
 								savePlaylist(*discordGuild);
 								break;
@@ -402,7 +402,7 @@ namespace DiscordCoreAPI {
 																 .reason = "Deleting the message!" })
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
-								msgEmbeds = updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newEvent, guildMember, currentPageIndex);
+								msgEmbeds = updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newEvent, theUser, currentPageIndex);
 								doWeQuit = true;
 								savePlaylist(*discordGuild);
 								break;
@@ -425,7 +425,7 @@ namespace DiscordCoreAPI {
 																 .reason = "Deleting the message!" })
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
-								msgEmbeds = updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newEvent, guildMember, currentPageIndex);
+								msgEmbeds = updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newEvent, theUser, currentPageIndex);
 								doWeQuit = true;
 								savePlaylist(*discordGuild);
 								break;

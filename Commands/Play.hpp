@@ -12,6 +12,8 @@ namespace DiscordCoreAPI {
 	MoveThroughMessagePagesData recurseThroughOptions(MoveThroughMessagePagesData returnData, int32_t currentPageIndex, InputEventData newEvent,
 		std::vector<EmbedData> embedsFromSearch, BaseFunctionArguments& newArgs, std::vector<int32_t> arrayOfIndices, GuildMember guildMember, std::vector<Song> searchResults) {
 		if (returnData.buttonId == "exit") {
+			auto currentQueue = SongAPI::getPlaylist(guildMember.guildId);
+			int32_t songSize = currentQueue.songQueue.size();
 			arrayOfIndices.erase(arrayOfIndices.end() - 1, arrayOfIndices.end());
 			for (auto& value: arrayOfIndices) {
 				if (value != -1) {
@@ -20,11 +22,11 @@ namespace DiscordCoreAPI {
 			}
 			std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 			std::string descriptionString{};
-			auto currentQueue = SongAPI::getPlaylist(guildMember.guildId);
+			currentQueue = SongAPI::getPlaylist(guildMember.guildId);
 			descriptionString = "------\n__**Added the following songs to the queue:\n";
 			for (uint32_t x = 0; x < arrayOfIndices.size(); x+=1) {
-				descriptionString += "[" + searchResults[arrayOfIndices[x]].songTitle + "](" + searchResults[arrayOfIndices[x]].viewUrl + ")\n" +
-					"Position: " + std::to_string(currentQueue.songQueue.size() + x) + "\n";
+				descriptionString +=
+					"[" + searchResults[arrayOfIndices[x]].songTitle + "](" + searchResults[arrayOfIndices[x]].viewUrl + ")\n" + "Position: " + std::to_string(songSize + x) + "\n";
 			}
 			descriptionString += "**__\n------";
 			newEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
@@ -225,7 +227,7 @@ namespace DiscordCoreAPI {
 									co_return;
 								}
 								savePlaylist(discordGuild);
-								newEmbed->setAuthor(eventData.guildMember.user.userName, eventData.guildMember.user.avatar);
+								newEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 								newEmbed->setDescription("__**Title:**__ [" + SongAPI::getCurrentSong(eventData.guild.id).songTitle + "](" +
 									SongAPI::getCurrentSong(eventData.guild.id).viewUrl + ")" + "\n__**Description:**__ " +
 									SongAPI::getCurrentSong(eventData.guild.id).description + "\n__**Duration:**__ " + SongAPI::getCurrentSong(eventData.guild.id).duration +
@@ -254,7 +256,7 @@ namespace DiscordCoreAPI {
 								SongAPI::sendNextSong(eventData.guildMember);
 								savePlaylist(discordGuild);
 								loadPlaylist(discordGuild);
-								newEmbed->setAuthor(eventData.guildMember.user.userName, eventData.guildMember.user.avatar);
+								newEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 								newEmbed->setDescription("__**It appears as though there was an error when trying to play the following track!**__\n__**Title:**__ [" +
 									eventData.previousSong.songTitle + "](" + eventData.previousSong.viewUrl + ")" + "\n__**Description:**__ " +
 									eventData.previousSong.description + "\n__**Duration:**__ " + eventData.previousSong.duration + "\n__**Added By:**__ <@!" +
@@ -280,7 +282,7 @@ namespace DiscordCoreAPI {
 								Messages::createMessageAsync(dataPackage02).get();
 
 								if (!SongAPI::areWeCurrentlyPlaying(eventData.guild.id)) {
-									newEmbed->setAuthor(eventData.guildMember.user.userName, eventData.guildMember.user.avatar);
+									newEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 									newEmbed->setDescription("__**Title:**__ [" + SongAPI::getCurrentSong(eventData.guild.id).songTitle + "](" +
 										SongAPI::getCurrentSong(eventData.guild.id).viewUrl + ")" + "\n__**Description:**__ " +
 										SongAPI::getCurrentSong(eventData.guild.id).description + "\n__**Duration:**__ " + SongAPI::getCurrentSong(eventData.guild.id).duration +
@@ -311,7 +313,7 @@ namespace DiscordCoreAPI {
 							SongAPI::play(eventData.guild.id);
 						} else {
 							std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
-							newEmbed->setAuthor(eventData.guildMember.user.userName, eventData.guildMember.user.avatar);
+							newEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 							newEmbed->setDescription("------\n__**Sorry, but there's nothing left to play here!**__\n------");
 							newEmbed->setTimeStamp(getTimeAndDate());
 							newEmbed->setTitle("__**Now Playing:**__");
