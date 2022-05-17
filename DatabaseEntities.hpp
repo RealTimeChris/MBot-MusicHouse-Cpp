@@ -72,6 +72,113 @@ namespace DiscordCoreAPI {
 	};
 
 	class DatabaseManagerAgent {
+	  public:
+		static void initialize(std::string botUserIdNew) {
+			DatabaseManagerAgent::botUserId = botUserIdNew;
+			auto newClient = DatabaseManagerAgent::getClient();
+			mongocxx::database newDataBase = (*newClient)[DatabaseManagerAgent::botUserId];
+			mongocxx::collection newCollection = newDataBase[DatabaseManagerAgent::botUserId];
+		}
+
+		static mongocxx::pool::entry getClient() {
+			return DatabaseManagerAgent::thePool.acquire();
+		}
+
+		static DatabaseReturnValue submitWorkloadAndGetResults(DatabaseWorkload workload) {
+			std::lock_guard<std::mutex> workloadLock{ DatabaseManagerAgent::workloadMutex };
+			DatabaseReturnValue newData{};
+			try {
+				mongocxx::pool::entry thePtr = DatabaseManagerAgent::getClient();
+				auto newDataBase = (*thePtr)[DatabaseManagerAgent::botUserId];
+				auto newCollection = newDataBase[DatabaseManagerAgent::botUserId];
+				switch (workload.workloadType) {
+					case (DatabaseWorkloadType::DISCORD_USER_WRITE): {
+						auto doc = DatabaseManagerAgent::convertUserDataToDBDoc(workload.userData);
+						bsoncxx::builder::basic::document document{};
+						document.append(bsoncxx::builder::basic::kvp("_id", workload.userData.userId.c_str()));
+						auto resultNew = newCollection.find_one(document.view());
+						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
+							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
+						if (resultNewer.get_ptr() == NULL) {
+							auto doc02 = DatabaseManagerAgent::convertUserDataToDBDoc(workload.userData);
+							newCollection.insert_one(std::move(doc02.extract()));
+							return newData;
+						}
+						break;
+					}
+					case (DatabaseWorkloadType::DISCORD_USER_READ): {
+						bsoncxx::builder::basic::document document{};
+						document.append(bsoncxx::builder::basic::kvp("_id", workload.userData.userId.c_str()));
+						auto resultNew = newCollection.find_one(document.view());
+						if (resultNew.get_ptr() != NULL) {
+							DiscordUserData userData = DatabaseManagerAgent::parseUserData(*resultNew.get_ptr());
+							newData.discordUser = userData;
+							return newData;
+						} else {
+							return newData;
+						}
+						break;
+					}
+					case (DatabaseWorkloadType::DISCORD_GUILD_WRITE): {
+						auto doc = DatabaseManagerAgent::convertGuildDataToDBDoc(workload.guildData);
+						bsoncxx::builder::basic::document document{};
+						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildData.guildId.c_str()));
+						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
+							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
+						if (resultNewer.get_ptr() == NULL) {
+							auto doc02 = DatabaseManagerAgent::convertGuildDataToDBDoc(workload.guildData);
+							newCollection.insert_one(std::move(doc02.extract()));
+							return newData;
+						}
+						break;
+					}
+					case (DatabaseWorkloadType::DISCORD_GUILD_READ): {
+						bsoncxx::builder::basic::document document{};
+						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildData.guildId.c_str()));
+						auto resultNew = newCollection.find_one(document.view());
+						if (resultNew.get_ptr() != NULL) {
+							DiscordGuildData guildData = DatabaseManagerAgent::parseGuildData(*resultNew.get_ptr());
+							newData.discordGuild = guildData;
+							return newData;
+						} else {
+							return newData;
+						}
+						break;
+					}
+					case (DatabaseWorkloadType::DISCORD_GUILD_MEMBER_WRITE): {
+						auto doc = DatabaseManagerAgent::convertGuildMemberDataToDBDoc(workload.guildMemberData);
+						bsoncxx::builder::basic::document document{};
+						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildMemberData.globalId.c_str()));
+						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
+							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
+						if (resultNewer.get_ptr() == NULL) {
+							auto doc02 = DatabaseManagerAgent::convertGuildMemberDataToDBDoc(workload.guildMemberData);
+							newCollection.insert_one(std::move(doc02.extract()));
+							return newData;
+						}
+						break;
+					}
+					case (DatabaseWorkloadType::DISCORD_GUILD_MEMBER_READ): {
+						bsoncxx::builder::basic::document document{};
+						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildMemberData.globalId.c_str()));
+						auto resultNew = newCollection.find_one(document.view());
+						if (resultNew.get_ptr() != NULL) {
+							DiscordGuildMemberData guildMemberData = DatabaseManagerAgent::parseGuildMemberData(*resultNew.get_ptr());
+							newData.discordGuildMember = guildMemberData;
+							return newData;
+						} else {
+							return newData;
+						}
+						break;
+					}
+				}
+			} catch (...) {
+				reportException("DatabaseManagerAgent::run() Error: ");
+				return newData;
+			}
+			return newData;
+		}
+
 	  protected:
 		static mongocxx::instance instance;
 		static std::mutex workloadMutex;
@@ -148,13 +255,11 @@ namespace DiscordCoreAPI {
 							kvp("contentLength", bsoncxx::types::b_int32(discordGuildData.playlist.currentSong.contentLength)),
 							kvp("description", discordGuildData.playlist.currentSong.description.c_str()),
 							kvp("secondDownloadUrl", discordGuildData.playlist.currentSong.secondDownloadUrl.c_str()),
-							kvp("duration", discordGuildData.playlist.currentSong.duration.c_str()),
-							kvp("songTitle", discordGuildData.playlist.currentSong.songTitle.c_str()),
+							kvp("duration", discordGuildData.playlist.currentSong.duration.c_str()), kvp("songTitle", discordGuildData.playlist.currentSong.songTitle.c_str()),
 							kvp("firstDownloadUrl", discordGuildData.playlist.currentSong.firstDownloadUrl.c_str()),
 							kvp("thumbnailUrl", discordGuildData.playlist.currentSong.thumbnailUrl.c_str()),
 							kvp("type", bsoncxx::types::b_int32(( int )discordGuildData.playlist.currentSong.type)),
-							kvp("songId", discordGuildData.playlist.currentSong.songId.c_str()),
-							kvp("html5Player", discordGuildData.playlist.currentSong.html5Player.c_str()),
+							kvp("songId", discordGuildData.playlist.currentSong.songId.c_str()), kvp("html5Player", discordGuildData.playlist.currentSong.html5Player.c_str()),
 							kvp("html5PlayerFile", discordGuildData.playlist.currentSong.html5PlayerFile.c_str()),
 							kvp("viewUrl", discordGuildData.playlist.currentSong.viewUrl.c_str()));
 					}));
@@ -172,9 +277,8 @@ namespace DiscordCoreAPI {
 								}));
 								subDocument02.append(kvp("addedByUserId", value.addedByUserId.c_str()), kvp("addedByUserName", value.addedByUserName.c_str()),
 									kvp("contentLength", bsoncxx::types::b_int32(value.contentLength)), kvp("description", value.description.c_str()),
-									kvp("duration", value.duration.c_str()), kvp("thumbnailUrl", value.thumbnailUrl.c_str()),
-									kvp("songId", value.songId.c_str()), kvp("type", bsoncxx::types::b_int32(( int )value.type)),
-									kvp("viewUrl", value.viewUrl.c_str()));
+									kvp("duration", value.duration.c_str()), kvp("thumbnailUrl", value.thumbnailUrl.c_str()), kvp("songId", value.songId.c_str()),
+									kvp("type", bsoncxx::types::b_int32(( int )value.type)), kvp("viewUrl", value.viewUrl.c_str()));
 								subDocument02.append(kvp("songTitle", value.songTitle.c_str()), kvp("firstDownloadUrl", value.firstDownloadUrl.c_str()),
 									kvp("html5Player", value.html5Player), kvp("html5PlayerFile", value.html5PlayerFile.c_str()),
 									kvp("secondDownloadUrl", value.secondDownloadUrl.c_str()));
@@ -288,113 +392,6 @@ namespace DiscordCoreAPI {
 				return guildMemberData;
 			}
 		};
-
-	  public:
-		static void initialize(std::string botUserIdNew) {
-			DatabaseManagerAgent::botUserId = botUserIdNew;
-			auto newClient = DatabaseManagerAgent::getClient();
-			mongocxx::database newDataBase = (*newClient)[DatabaseManagerAgent::botUserId];
-			mongocxx::collection newCollection = newDataBase[DatabaseManagerAgent::botUserId];
-		}
-
-		static mongocxx::pool::entry getClient() {
-			return DatabaseManagerAgent::thePool.acquire();
-		}
-
-		static DatabaseReturnValue submitWorkloadAndGetResults(DatabaseWorkload workload) {
-			std::lock_guard<std::mutex> workloadLock{ DatabaseManagerAgent::workloadMutex };
-			DatabaseReturnValue newData{};
-			try {
-				mongocxx::pool::entry thePtr = DatabaseManagerAgent::getClient();
-				auto newDataBase = (*thePtr)[DatabaseManagerAgent::botUserId];
-				auto newCollection = newDataBase[DatabaseManagerAgent::botUserId];
-				switch (workload.workloadType) {
-					case (DatabaseWorkloadType::DISCORD_USER_WRITE): {
-						auto doc = DatabaseManagerAgent::convertUserDataToDBDoc(workload.userData);
-						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.userData.userId.c_str()));
-						auto resultNew = newCollection.find_one(document.view());
-						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
-							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
-						if (resultNewer.get_ptr() == NULL) {
-							auto doc02 = DatabaseManagerAgent::convertUserDataToDBDoc(workload.userData);
-							newCollection.insert_one(std::move(doc02.extract()));
-							return newData;
-						}
-						break;
-					}
-					case (DatabaseWorkloadType::DISCORD_USER_READ): {
-						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.userData.userId.c_str()));
-						auto resultNew = newCollection.find_one(document.view());
-						if (resultNew.get_ptr() != NULL) {
-							DiscordUserData userData = DatabaseManagerAgent::parseUserData(*resultNew.get_ptr());
-							newData.discordUser = userData;
-							return newData;
-						} else {
-							return newData;
-						}
-						break;
-					}
-					case (DatabaseWorkloadType::DISCORD_GUILD_WRITE): {
-						auto doc = DatabaseManagerAgent::convertGuildDataToDBDoc(workload.guildData);
-						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildData.guildId.c_str()));
-						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
-							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
-						if (resultNewer.get_ptr() == NULL) {
-							auto doc02 = DatabaseManagerAgent::convertGuildDataToDBDoc(workload.guildData);
-							newCollection.insert_one(std::move(doc02.extract()));
-							return newData;
-						}
-						break;
-					}
-					case (DatabaseWorkloadType::DISCORD_GUILD_READ): {
-						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildData.guildId.c_str()));
-						auto resultNew = newCollection.find_one(document.view());
-						if (resultNew.get_ptr() != NULL) {
-							DiscordGuildData guildData = DatabaseManagerAgent::parseGuildData(*resultNew.get_ptr());
-							newData.discordGuild = guildData;
-							return newData;
-						} else {
-							return newData;
-						}
-						break;
-					}
-					case (DatabaseWorkloadType::DISCORD_GUILD_MEMBER_WRITE): {
-						auto doc = DatabaseManagerAgent::convertGuildMemberDataToDBDoc(workload.guildMemberData);
-						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildMemberData.globalId.c_str()));
-						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
-							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
-						if (resultNewer.get_ptr() == NULL) {
-							auto doc02 = DatabaseManagerAgent::convertGuildMemberDataToDBDoc(workload.guildMemberData);
-							newCollection.insert_one(std::move(doc02.extract()));
-							return newData;
-						}
-						break;
-					}
-					case (DatabaseWorkloadType::DISCORD_GUILD_MEMBER_READ): {
-						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildMemberData.globalId.c_str()));
-						auto resultNew = newCollection.find_one(document.view());
-						if (resultNew.get_ptr() != NULL) {
-							DiscordGuildMemberData guildMemberData = DatabaseManagerAgent::parseGuildMemberData(*resultNew.get_ptr());
-							newData.discordGuildMember = guildMemberData;
-							return newData;
-						} else {
-							return newData;
-						}
-						break;
-					}
-				}
-			} catch (...) {
-				reportException("DatabaseManagerAgent::run() Error: ");
-				return newData;
-			}
-			return newData;
-		}
 	};
 
 	class DiscordUser {
