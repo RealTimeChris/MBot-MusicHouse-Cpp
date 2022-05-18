@@ -24,9 +24,9 @@ namespace DiscordCoreAPI {
 			std::string descriptionString{};
 			currentQueue = SongAPI::getPlaylist(guildMember.guildId);
 			descriptionString = "------\n__**Added the following songs to the queue:\n";
-			for (uint32_t x = 0; x < arrayOfIndices.size(); x+=1) {
-				descriptionString +=
-					"[" + searchResults[arrayOfIndices[x]].songTitle + "](" + searchResults[arrayOfIndices[x]].viewUrl + ")\n" + "Position: " + std::to_string(songSize + x) + "\n";
+			for (uint32_t x = 0; x < arrayOfIndices.size(); x += 1) {
+				descriptionString += "[" + searchResults[arrayOfIndices[x]].songTitle + "](" + searchResults[arrayOfIndices[x]].viewUrl + ")\n" +
+					"Position: " + std::to_string(songSize + x + 1) + "\n";
 			}
 			descriptionString += "**__\n------";
 			newEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
