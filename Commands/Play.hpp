@@ -93,7 +93,7 @@ namespace DiscordCoreAPI {
 				if (!doWeHaveControl) {
 					return;
 				}
-
+				
 				InputEventData newEvent = newArgs.eventData;
 
 				int64_t currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -124,8 +124,8 @@ namespace DiscordCoreAPI {
 
 				previousPlayedTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 				Play::timeOfLastPlay.insert_or_assign(newArgs.eventData.getGuildId(), previousPlayedTime);
-
-				VoiceConnection* voiceConnection = guild.connectToVoice(guildMember.voiceData.channelId, true, false);
+				auto voiceStateData = guild.voiceStates.at(guildMember.id);
+				VoiceConnection* voiceConnection = guild.connectToVoice(voiceStateData.channelId, true, false);
 
 				if (voiceConnection == nullptr) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
@@ -146,7 +146,7 @@ namespace DiscordCoreAPI {
 				}
 				loadPlaylist(discordGuild);
 
-				if (guildMember.voiceData.channelId == 0 || guildMember.voiceData.channelId != voiceConnection->getChannelId()) {
+				if (voiceStateData.channelId == 0 || voiceStateData.channelId != voiceConnection->getChannelId()) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 					newEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					newEmbed->setDescription("------\n__**Sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");

@@ -69,8 +69,8 @@ namespace DiscordCoreAPI {
 					newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
-
-				VoiceConnection* voiceConnection = guild.connectToVoice(guildMember.voiceData.channelId, true, false);
+				auto voiceStateData = guild.voiceStates.at(guildMember.id);
+				VoiceConnection* voiceConnection = guild.connectToVoice(voiceStateData.channelId, true, false);
 				loadPlaylist(discordGuild);
 				if (voiceConnection == nullptr) {
 					EmbedData newEmbed{};
@@ -86,7 +86,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				if (guildMember.voiceData.channelId == 0 || guildMember.voiceData.channelId != voiceConnection->getChannelId()) {
+				if (voiceStateData.channelId == 0 || voiceStateData.channelId != voiceConnection->getChannelId()) {
 					EmbedData newEmbed{};
 					newEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					newEmbed.setDescription("------\n__**Sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");

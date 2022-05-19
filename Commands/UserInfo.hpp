@@ -37,26 +37,26 @@ namespace DiscordCoreAPI {
 				DiscordGuild discordGuild(guild);
 				uint64_t messageId = stoull(newArgs.commandData.optionsArgs[0]);
 				auto message = Messages::getMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .id = messageId }).get();
-				GuildMember guildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = message.author.id, .guildId = newArgs.eventData.getGuildId() }).get();
-
+				GuildMemberData guildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = message.author.id, .guildId = newArgs.eventData.getGuildId() }).get();
+				User theUser = Users::getCachedUserAsync({ .userId = newArgs.eventData.getAuthorId() }).get();
 				std::vector<EmbedFieldData> fields;
-				EmbedFieldData field = { .Inline = true, .value = guildMember.user.userName + "#" + std::string{ guildMember.user.discriminator }, .name = "__User Tag: __" };
+				EmbedFieldData field = { .Inline = true, .value = guildMember.userName + "#" + std::string{ theUser.discriminator }, .name = "__User Tag: __" };
 				fields.push_back(field);
-				EmbedFieldData field1 = { .Inline = true, .value = guildMember.user.userName, .name = "__User Name:__" };
+				EmbedFieldData field1 = { .Inline = true, .value = guildMember.userName, .name = "__User Name:__" };
 				fields.push_back(field1);
 				if (guildMember.nick == "") {
-					EmbedFieldData field2 = { .Inline = true, .value = guildMember.user.userName, .name = "__Display Name:__" };
+					EmbedFieldData field2 = { .Inline = true, .value = guildMember.userName, .name = "__Display Name:__" };
 					fields.push_back(field2);
 				} else {
 					EmbedFieldData field2 = { .Inline = true, .value = guildMember.nick, .name = "__Display Name:__" };
 					fields.push_back(field2);
 				}
 
-				EmbedFieldData field3 = { .Inline = true, .value = std::to_string(guildMember.user.id), .name = "__User ID:__" };
+				EmbedFieldData field3 = { .Inline = true, .value = std::to_string(guildMember.id), .name = "__User ID:__" };
 				fields.push_back(field3);
 				EmbedFieldData field4 = { .Inline = true, .value = guildMember.joinedAt.getDateTimeStamp(TimeFormat::LongDateTime), .name = "__Joined:__" };
 				fields.push_back(field4);
-				EmbedFieldData field5 = { .Inline = true, .value = guildMember.user.getCreatedAtTimestamp(TimeFormat::LongDateTime), .name = "__Created At:__" };
+				EmbedFieldData field5 = { .Inline = true, .value = guildMember.getCreatedAtTimestamp(TimeFormat::LongDateTime), .name = "__Created At:__" };
 				fields.push_back(field5);
 				Permissions permsString = Permissions::getCurrentChannelPermissions(guildMember, channel);
 				std::vector<std::string> permissionsArray = permsString.displayPermissions();
@@ -83,7 +83,7 @@ namespace DiscordCoreAPI {
 				msgEmbed.setColor(discordGuild.data.borderColor);
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setTitle("__**User Info:**__");
-				msgEmbed.setImage(guildMember.user.avatar);
+				msgEmbed.setImage(guildMember.userAvatar);
 				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.fields = fields;
 				RespondToInputEventData dataPackage02(newArgs.eventData);
