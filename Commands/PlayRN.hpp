@@ -76,11 +76,9 @@ namespace DiscordCoreAPI {
 				previousPlayedTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 				Play::timeOfLastPlay.insert_or_assign(newEvent.getGuildId(), previousPlayedTime);
 
-				if (newEvent.eventType == InteractionType::Application_Command) {
-					RespondToInputEventData dataPackage(newEvent);
-					dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
-					newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
-				}
+				RespondToInputEventData dataPackage(newEvent);
+				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
+				newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 				auto voiceStateData = guild.voiceStates.at(guildMember.id);
 				VoiceConnection* voiceConnection = guild.connectToVoice(guildMember.id, 0, true, false);
 
