@@ -70,7 +70,7 @@ namespace DiscordCoreAPI {
 				EmbedFieldData field6 = { .Inline = false, .value = "", .name = "__Roles:__" };
 
 				for (uint32_t x = 0; x < guildMember.roles.size(); x += 1) {
-					field6.value += "<@&" + guildMember.roles[x] + ">";
+					field6.value += "<@&" + std::to_string(guildMember.roles[x]) + ">";
 					if (x < guildMember.roles.size() - 1) {
 						field6.value += ", ";
 					}
