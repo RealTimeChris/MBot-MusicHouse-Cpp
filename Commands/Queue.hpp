@@ -21,7 +21,7 @@ namespace DiscordCoreAPI {
 			}
 			EmbedFieldData msgEmbedField = {
 				.Inline = false,
-				.value = "__**Title:**__ [" + playlist.at(y).songTitle + "](" + playlist.at(y).viewUrl + ")\n__**Added By:**__ <@!" + playlist.at(y).addedByUserId + "> (" +
+				.value = "__**Title:**__ [" + playlist.at(y).songTitle + "](" + playlist.at(y).viewUrl + ")\n__**Added By:**__ <@!" + std::to_string(playlist.at(y).addedByUserId) + "> (" +
 					playlist.at(y).addedByUserName + ")",
 				.name = "__**" + std::to_string(y + 1) + " of " + std::to_string(playlist.size()) + "**__",
 			};
@@ -128,7 +128,7 @@ namespace DiscordCoreAPI {
 					EmbedFieldData msgEmbedField = {
 						.Inline = false,
 						.value = "__**Title:**__ [" + SongAPI::getPlaylist(guild->id).songQueue.at(y).songTitle + "](" + SongAPI::getPlaylist(guild->id).songQueue.at(y).viewUrl +
-							")\n__**Added By:**__ <@!" + SongAPI::getPlaylist(guild->id).songQueue.at(y).addedByUserId + "> (" +
+							")\n__**Added By:**__ <@!" + std::to_string(SongAPI::getPlaylist(guild->id).songQueue.at(y).addedByUserId) + "> (" +
 							SongAPI::getPlaylist(guild->id).songQueue.at(y).addedByUserName + ")",
 						.name = "__**" + std::to_string(y + 1) + " of " + std::to_string(SongAPI::getPlaylist(guild->id).songQueue.size()) + "**__",
 					};
@@ -159,7 +159,7 @@ namespace DiscordCoreAPI {
 				for (int32_t y = 0; y < 1; y) {
 					std::unique_ptr<ButtonCollector> button{ std::make_unique<ButtonCollector>(newEvent) };
 					auto buttonCollectedData = button->collectButtonData(false, 120000, 1, newArgs.eventData.getAuthorId()).get();
-					std::string userID = newArgs.eventData.getAuthorId();
+					uint64_t userID = newArgs.eventData.getAuthorId();
 					if (buttonCollectedData.size() == 0 || buttonCollectedData.at(0).buttonId == "exit" || buttonCollectedData.at(0).buttonId == "empty") {
 						RespondToInputEventData dataPackage02(*buttonCollectedData.at(0).interactionData);
 						dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);

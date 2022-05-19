@@ -20,7 +20,7 @@ namespace DiscordCoreAPI {
 					isItFound = true;
 					break;
 				} else {
-					msgString += "<#" + value + ">\n";
+					msgString += "<#" + std::to_string(value) + ">\n";
 				}
 			}
 			msgString += "------";
@@ -39,7 +39,7 @@ namespace DiscordCoreAPI {
 	}
 
 	bool checkIfWeHaveControl(InputEventData eventData, DiscordGuild guildData, GuildMember guildMember) {
-		if (guildData.data.djRoleId == "") {
+		if (guildData.data.djRoleId == 0) {
 			return true;
 		}
 		bool doWeHaveControl = false;
