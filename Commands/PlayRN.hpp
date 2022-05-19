@@ -82,7 +82,7 @@ namespace DiscordCoreAPI {
 					newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 				}
 				auto voiceStateData = guild.voiceStates.at(guildMember.id);
-				VoiceConnection* voiceConnection = guild.connectToVoice(voiceStateData.channelId, true, false);
+				VoiceConnection* voiceConnection = guild.connectToVoice(guildMember.id, 0, true, false);
 
 				if (voiceConnection == nullptr) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };

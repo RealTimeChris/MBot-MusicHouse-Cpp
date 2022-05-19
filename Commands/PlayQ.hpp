@@ -81,7 +81,7 @@ namespace DiscordCoreAPI {
 				previousPlayedTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 				PlayQ::timeOfLastPlay.insert_or_assign(newArgs.eventData.getGuildId(), previousPlayedTime);
 				auto voiceStateData = guild.voiceStates.at(guildMember.id);
-				VoiceConnection* voiceConnection = guild.connectToVoice(voiceStateData.channelId, true, false);
+				VoiceConnection* voiceConnection = guild.connectToVoice(guildMember.id, 0, true, false);
 				loadPlaylist(discordGuild);
 				if (voiceConnection == nullptr) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
