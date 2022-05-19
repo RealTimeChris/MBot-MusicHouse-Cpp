@@ -35,7 +35,7 @@ namespace DiscordCoreAPI {
 				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData.getGuildId() }).get();
 
 				DiscordGuild discordGuild(guild);
-				uint64_t messageId = stoull(newArgs.commandData.optionsArgs[0]);
+				std::string messageId = newArgs.commandData.optionsArgs[0];
 				auto message = Messages::getMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .id = messageId }).get();
 				GuildMember guildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = message.author.id, .guildId = newArgs.eventData.getGuildId() }).get();
 
@@ -52,7 +52,7 @@ namespace DiscordCoreAPI {
 					fields.push_back(field2);
 				}
 
-				EmbedFieldData field3 = { .Inline = true, .value = std::to_string(guildMember.user.id), .name = "__User ID:__" };
+				EmbedFieldData field3 = { .Inline = true, .value = guildMember.user.id, .name = "__User ID:__" };
 				fields.push_back(field3);
 				EmbedFieldData field4 = { .Inline = true, .value = guildMember.joinedAt.getDateTimeStamp(TimeFormat::LongDateTime), .name = "__Joined:__" };
 				fields.push_back(field4);
