@@ -95,7 +95,7 @@ namespace DiscordCoreAPI {
 					case (DatabaseWorkloadType::DISCORD_USER_WRITE): {
 						auto doc = DatabaseManagerAgent::convertUserDataToDBDoc(workload.userData);
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.userData.userId));
+						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(workload.userData.userId)));
 						auto resultNew = newCollection.find_one(document.view());
 						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
 							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
@@ -108,7 +108,7 @@ namespace DiscordCoreAPI {
 					}
 					case (DatabaseWorkloadType::DISCORD_USER_READ): {
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.userData.userId));
+						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(workload.userData.userId)));
 						auto resultNew = newCollection.find_one(document.view());
 						if (resultNew.get_ptr() != NULL) {
 							DiscordUserData userData = DatabaseManagerAgent::parseUserData(*resultNew.get_ptr());
@@ -122,7 +122,7 @@ namespace DiscordCoreAPI {
 					case (DatabaseWorkloadType::DISCORD_GUILD_WRITE): {
 						auto doc = DatabaseManagerAgent::convertGuildDataToDBDoc(workload.guildData);
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildData.guildId));
+						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(workload.guildData.guildId)));
 						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
 							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
 						if (resultNewer.get_ptr() == NULL) {
@@ -134,7 +134,7 @@ namespace DiscordCoreAPI {
 					}
 					case (DatabaseWorkloadType::DISCORD_GUILD_READ): {
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildData.guildId));
+						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(workload.guildData.guildId)));
 						auto resultNew = newCollection.find_one(document.view());
 						if (resultNew.get_ptr() != NULL) {
 							DiscordGuildData guildData = DatabaseManagerAgent::parseGuildData(*resultNew.get_ptr());
@@ -231,7 +231,7 @@ namespace DiscordCoreAPI {
 				buildDoc.append(kvp("guildName", discordGuildData.guildName.c_str()));
 				buildDoc.append(kvp("memberCount", bsoncxx::types::b_int32(discordGuildData.memberCount)));
 				buildDoc.append(kvp("borderColor", discordGuildData.borderColor.c_str()));
-				buildDoc.append(kvp("djRoleId", discordGuildData.djRoleId));
+				buildDoc.append(kvp("djRoleId", bsoncxx::types::b_int64(discordGuildData.djRoleId)));
 				buildDoc.append(kvp("musicChannelIds", [discordGuildData](bsoncxx::builder::basic::sub_array subArray) {
 					for (auto& value: discordGuildData.musicChannelIds) {
 						subArray.append(bsoncxx::types::b_int64(value));
@@ -275,7 +275,7 @@ namespace DiscordCoreAPI {
 										});
 									};
 								}));
-								subDocument02.append(kvp("addedByUserId", value.addedByUserId), kvp("addedByUserName", value.addedByUserName.c_str()),
+								subDocument02.append(kvp("addedByUserId", bsoncxx::types::b_int64(value.addedByUserId)), kvp("addedByUserName", value.addedByUserName.c_str()),
 									kvp("contentLength", bsoncxx::types::b_int32(value.contentLength)), kvp("description", value.description.c_str()),
 									kvp("duration", value.duration.c_str()), kvp("thumbnailUrl", value.thumbnailUrl.c_str()), kvp("songId", value.songId.c_str()),
 									kvp("type", bsoncxx::types::b_int32(( int )value.type)), kvp("viewUrl", value.viewUrl.c_str()));
