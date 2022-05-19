@@ -43,7 +43,7 @@ namespace DiscordCoreAPI {
 				}
 
 				if (newArgs.commandData.subCommandName == "add") {
-					std::string channelID = channel.id;
+					uint64_t channelID = channel.id;
 					for (uint32_t x = 0; x < discordGuild.data.musicChannelIds.size(); x += 1) {
 						if (channelID == discordGuild.data.musicChannelIds[x]) {
 							std::string msgString = "------\n**That channel is already on the list of enabled channels!**\n------";
@@ -68,7 +68,7 @@ namespace DiscordCoreAPI {
 					messageEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					messageEmbed.setColor(discordGuild.data.borderColor);
 					messageEmbed.setTimeStamp(getTimeAndDate());
-					messageEmbed.setDescription("------\n**You've succesfully added <#" + channelID + "> to your list of accepted music channels!**\n------");
+					messageEmbed.setDescription("------\n**You've succesfully added <#" + std::to_string(channelID) + "> to your list of accepted music channels!**\n------");
 					messageEmbed.setTitle("__**Music Channel Added:**__");
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
@@ -77,7 +77,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 				if (newArgs.commandData.subCommandName == "remove") {
-					std::string channelID;
+					uint64_t channelID;
 					channelID = channel.id;
 
 					std::string msgString;
@@ -87,7 +87,7 @@ namespace DiscordCoreAPI {
 							isItPresent = true;
 							discordGuild.data.musicChannelIds.erase(discordGuild.data.musicChannelIds.begin() + x);
 							discordGuild.writeDataToDB();
-							msgString += "------\n**You've succesfully removed the channel <#" + channelID + "> from the list of enabled music channels!**\n------";
+							msgString += "------\n**You've succesfully removed the channel <#" + std::to_string(channelID) + "> from the list of enabled music channels!**\n------";
 						}
 					}
 
@@ -126,14 +126,14 @@ namespace DiscordCoreAPI {
 						msgString = "__You've removed the following channels from your list of enabled music channels:__\n------\n";
 
 						for (uint32_t x = 0; x < discordGuild.data.musicChannelIds.size(); x += 1) {
-							std::string currentID = discordGuild.data.musicChannelIds[x];
+							uint64_t currentID = discordGuild.data.musicChannelIds[x];
 
-							msgString += "__**Channel #" + std::to_string(x) + "**__<#" + currentID + "> \n";
+							msgString += "__**Channel #" + std::to_string(x) + "**__<#" + std::to_string(currentID) + "> \n";
 						}
 
 						msgString += "------\n__**The music commands will now work in ANY CHANNEL!**__";
 
-						discordGuild.data.musicChannelIds = std::vector<std::string>();
+						discordGuild.data.musicChannelIds = std::vector<uint64_t>();
 						discordGuild.writeDataToDB();
 					} else {
 						msgString += "------\n**Sorry, but there are no channels to remove!**\n------";
@@ -155,9 +155,9 @@ namespace DiscordCoreAPI {
 					std::string msgString = "__You have the following channels enabled for music commands, on this server:__\n------\n";
 
 					for (uint32_t x = 0; x < discordGuild.data.musicChannelIds.size(); x += 1) {
-						std::string currentID = discordGuild.data.musicChannelIds[x];
+						uint64_t currentID = discordGuild.data.musicChannelIds[x];
 
-						msgString += "__**Channel #" + std::to_string(x) + ":**__ <#" + currentID + "> \n";
+						msgString += "__**Channel #" + std::to_string(x) + ":**__ <#" + std::to_string(currentID) + "> \n";
 					}
 
 					msgString += "------\n";
