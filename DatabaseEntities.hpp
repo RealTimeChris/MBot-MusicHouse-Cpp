@@ -22,28 +22,28 @@
 namespace DiscordCoreAPI {
 
 	struct DiscordUserData {
-		std::vector<std::string> botCommanders{};
+		std::vector<uint64_t> botCommanders{};
 		std::string userName{ "" };
-		std::string userId{ "" };
+		uint64_t userId{ 0 };
 	};
 
 	struct DiscordGuildData {
-		std::vector<std::string> musicChannelIds{};
+		std::vector<uint64_t> musicChannelIds{};
 		std::string borderColor{ "FEFEFE" };
 		unsigned int memberCount{ 0 };
 		std::string guildName{ "" };
-		std::string djRoleId{ "" };
-		std::string guildId{ "" };
+		uint64_t djRoleId{ 0 };
+		uint64_t guildId{ 0 };
 		Playlist playlist{};
 	};
 
 	struct DiscordGuildMemberData {
 		std::string guildMemberMention{ "" };
-		std::string guildMemberId{ "" };
 		std::string displayName{ "" };
+		uint64_t guildMemberId{ 0 };
 		std::string globalId{ "" };
 		std::string userName{ "" };
-		std::string guildId{ "" };
+		uint64_t guildId{ 0 };
 	};
 
 	enum class DatabaseWorkloadType {
@@ -73,11 +73,11 @@ namespace DiscordCoreAPI {
 
 	class DatabaseManagerAgent {
 	  public:
-		static void initialize(std::string botUserIdNew) {
+		static void initialize(uint64_t botUserIdNew) {
 			DatabaseManagerAgent::botUserId = botUserIdNew;
 			auto newClient = DatabaseManagerAgent::getClient();
-			mongocxx::database newDataBase = (*newClient)[DatabaseManagerAgent::botUserId];
-			mongocxx::collection newCollection = newDataBase[DatabaseManagerAgent::botUserId];
+			mongocxx::database newDataBase = (*newClient)[std::to_string(DatabaseManagerAgent::botUserId)];
+			mongocxx::collection newCollection = newDataBase[std::to_string(DatabaseManagerAgent::botUserId)];
 		}
 
 		static mongocxx::pool::entry getClient() {
@@ -89,13 +89,13 @@ namespace DiscordCoreAPI {
 			DatabaseReturnValue newData{};
 			try {
 				mongocxx::pool::entry thePtr = DatabaseManagerAgent::getClient();
-				auto newDataBase = (*thePtr)[DatabaseManagerAgent::botUserId];
-				auto newCollection = newDataBase[DatabaseManagerAgent::botUserId];
+				auto newDataBase = (*thePtr)[std::to_string(DatabaseManagerAgent::botUserId)];
+				auto newCollection = newDataBase[std::to_string(DatabaseManagerAgent::botUserId)];
 				switch (workload.workloadType) {
 					case (DatabaseWorkloadType::DISCORD_USER_WRITE): {
 						auto doc = DatabaseManagerAgent::convertUserDataToDBDoc(workload.userData);
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.userData.userId.c_str()));
+						document.append(bsoncxx::builder::basic::kvp("_id", workload.userData.userId));
 						auto resultNew = newCollection.find_one(document.view());
 						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
 							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
@@ -108,7 +108,7 @@ namespace DiscordCoreAPI {
 					}
 					case (DatabaseWorkloadType::DISCORD_USER_READ): {
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.userData.userId.c_str()));
+						document.append(bsoncxx::builder::basic::kvp("_id", workload.userData.userId));
 						auto resultNew = newCollection.find_one(document.view());
 						if (resultNew.get_ptr() != NULL) {
 							DiscordUserData userData = DatabaseManagerAgent::parseUserData(*resultNew.get_ptr());
@@ -122,7 +122,7 @@ namespace DiscordCoreAPI {
 					case (DatabaseWorkloadType::DISCORD_GUILD_WRITE): {
 						auto doc = DatabaseManagerAgent::convertGuildDataToDBDoc(workload.guildData);
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildData.guildId.c_str()));
+						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildData.guildId));
 						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
 							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
 						if (resultNewer.get_ptr() == NULL) {
@@ -134,7 +134,7 @@ namespace DiscordCoreAPI {
 					}
 					case (DatabaseWorkloadType::DISCORD_GUILD_READ): {
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildData.guildId.c_str()));
+						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildData.guildId));
 						auto resultNew = newCollection.find_one(document.view());
 						if (resultNew.get_ptr() != NULL) {
 							DiscordGuildData guildData = DatabaseManagerAgent::parseGuildData(*resultNew.get_ptr());
@@ -148,7 +148,7 @@ namespace DiscordCoreAPI {
 					case (DatabaseWorkloadType::DISCORD_GUILD_MEMBER_WRITE): {
 						auto doc = DatabaseManagerAgent::convertGuildMemberDataToDBDoc(workload.guildMemberData);
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildMemberData.globalId.c_str()));
+						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildMemberData.globalId));
 						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
 							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
 						if (resultNewer.get_ptr() == NULL) {
@@ -160,7 +160,7 @@ namespace DiscordCoreAPI {
 					}
 					case (DatabaseWorkloadType::DISCORD_GUILD_MEMBER_READ): {
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildMemberData.globalId.c_str()));
+						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildMemberData.globalId));
 						auto resultNew = newCollection.find_one(document.view());
 						if (resultNew.get_ptr() != NULL) {
 							DiscordGuildMemberData guildMemberData = DatabaseManagerAgent::parseGuildMemberData(*resultNew.get_ptr());
@@ -183,18 +183,18 @@ namespace DiscordCoreAPI {
 		static mongocxx::instance instance;
 		static std::mutex workloadMutex;
 		static mongocxx::pool thePool;
-		static std::string botUserId;
+		static uint64_t botUserId;
 
 		static bsoncxx::builder::basic::document convertUserDataToDBDoc(DiscordUserData discordUserData) {
 			bsoncxx::builder::basic::document buildDoc;
 			try {
 				using bsoncxx::builder::basic::kvp;
-				buildDoc.append(kvp("_id", discordUserData.userId.c_str()));
-				buildDoc.append(kvp("userId", discordUserData.userId.c_str()));
+				buildDoc.append(kvp("_id", bsoncxx::types::b_int64(discordUserData.userId)));
+				buildDoc.append(kvp("userId", bsoncxx::types::b_int64(discordUserData.userId)));
 				buildDoc.append(kvp("userName", discordUserData.userName.c_str()));
 				buildDoc.append(kvp("botCommanders", [discordUserData](bsoncxx::builder::basic::sub_array subArray) {
 					for (auto& value: discordUserData.botCommanders) {
-						subArray.append(value.c_str());
+						subArray.append(bsoncxx::types::b_int64(value));
 					}
 				}));
 				return buildDoc;
@@ -208,11 +208,11 @@ namespace DiscordCoreAPI {
 			DiscordUserData userData{};
 			try {
 				userData.userName = docValue.view()["userName"].get_utf8().value.to_string();
-				userData.userId = docValue.view()["userId"].get_utf8().value.to_string();
+				userData.userId = docValue.view()["userId"].get_int64().value;
 				auto botCommandersArray = docValue.view()["botCommanders"].get_array();
-				std::vector<std::string> newVector;
+				std::vector<uint64_t> newVector;
 				for (const auto& value: botCommandersArray.value) {
-					newVector.push_back(value.get_utf8().value.to_string());
+					newVector.push_back(value.get_int64().value);
 				}
 				userData.botCommanders = newVector;
 				return userData;
@@ -226,15 +226,15 @@ namespace DiscordCoreAPI {
 			bsoncxx::builder::basic::document buildDoc{};
 			try {
 				using bsoncxx::builder::basic::kvp;
-				buildDoc.append(kvp("_id", discordGuildData.guildId.c_str()));
-				buildDoc.append(kvp("guildId", discordGuildData.guildId.c_str()));
+				buildDoc.append(kvp("_id", bsoncxx::types::b_int64(discordGuildData.guildId)));
+				buildDoc.append(kvp("guildId", bsoncxx::types::b_int64(discordGuildData.guildId)));
 				buildDoc.append(kvp("guildName", discordGuildData.guildName.c_str()));
 				buildDoc.append(kvp("memberCount", bsoncxx::types::b_int32(discordGuildData.memberCount)));
 				buildDoc.append(kvp("borderColor", discordGuildData.borderColor.c_str()));
-				buildDoc.append(kvp("djRoleId", discordGuildData.djRoleId.c_str()));
+				buildDoc.append(kvp("djRoleId", discordGuildData.djRoleId));
 				buildDoc.append(kvp("musicChannelIds", [discordGuildData](bsoncxx::builder::basic::sub_array subArray) {
 					for (auto& value: discordGuildData.musicChannelIds) {
-						subArray.append(value.c_str());
+						subArray.append(bsoncxx::types::b_int64(value));
 					}
 				}));
 				buildDoc.append(kvp("playlist", [discordGuildData](bsoncxx::builder::basic::sub_document subDocument01) {
@@ -250,7 +250,7 @@ namespace DiscordCoreAPI {
 							};
 						}));
 
-						subDocument02.append(kvp("addedByUserId", discordGuildData.playlist.currentSong.addedByUserId.c_str()),
+						subDocument02.append(kvp("addedByUserId", bsoncxx::types::b_int64(discordGuildData.playlist.currentSong.addedByUserId)),
 							kvp("addedByUserName", discordGuildData.playlist.currentSong.addedByUserName.c_str()),
 							kvp("contentLength", bsoncxx::types::b_int32(discordGuildData.playlist.currentSong.contentLength)),
 							kvp("description", discordGuildData.playlist.currentSong.description.c_str()),
@@ -275,7 +275,7 @@ namespace DiscordCoreAPI {
 										});
 									};
 								}));
-								subDocument02.append(kvp("addedByUserId", value.addedByUserId.c_str()), kvp("addedByUserName", value.addedByUserName.c_str()),
+								subDocument02.append(kvp("addedByUserId", value.addedByUserId), kvp("addedByUserName", value.addedByUserName.c_str()),
 									kvp("contentLength", bsoncxx::types::b_int32(value.contentLength)), kvp("description", value.description.c_str()),
 									kvp("duration", value.duration.c_str()), kvp("thumbnailUrl", value.thumbnailUrl.c_str()), kvp("songId", value.songId.c_str()),
 									kvp("type", bsoncxx::types::b_int32(( int )value.type)), kvp("viewUrl", value.viewUrl.c_str()));
@@ -297,7 +297,7 @@ namespace DiscordCoreAPI {
 			DiscordGuildData guildData{};
 			try {
 				auto currentSongValue = docValue.view()["playlist"].get_document().value["currentSong"].get_document();
-				guildData.playlist.currentSong.addedByUserId = currentSongValue.value["addedByUserId"].get_utf8().value.to_string();
+				guildData.playlist.currentSong.addedByUserId = currentSongValue.value["addedByUserId"].get_int64().value;
 				guildData.playlist.currentSong.addedByUserName = currentSongValue.value["addedByUserName"].get_utf8().value.to_string();
 				guildData.playlist.currentSong.firstDownloadUrl = currentSongValue.value["firstDownloadUrl"].get_utf8().value.to_string();
 				guildData.playlist.currentSong.secondDownloadUrl = currentSongValue.value["secondDownloadUrl"].get_utf8().value.to_string();
@@ -330,7 +330,7 @@ namespace DiscordCoreAPI {
 					}
 					newSong.addedByUserName = value["addedByUserName"].get_utf8().value.to_string();
 					newSong.description = value["description"].get_utf8().value.to_string();
-					newSong.addedByUserId = value["addedByUserId"].get_utf8().value.to_string();
+					newSong.addedByUserId = value["addedByUserId"].get_int64().value;
 					newSong.duration = value["duration"].get_utf8().value.to_string();
 					newSong.thumbnailUrl = value["thumbnailUrl"].get_utf8().value.to_string();
 					newSong.contentLength = value["contentLength"].get_int32().value;
@@ -344,12 +344,12 @@ namespace DiscordCoreAPI {
 					newSong.html5Player = value["html5Player"].get_utf8().value.to_string();
 					guildData.playlist.songQueue.push_back(newSong);
 				}
-				guildData.djRoleId = docValue.view()["djRoleId"].get_utf8().value.to_string();
+				guildData.djRoleId = docValue.view()["djRoleId"].get_int64().value;
 				guildData.borderColor = docValue.view()["borderColor"].get_utf8().value.to_string();
 				guildData.guildName = docValue.view()["guildName"].get_utf8().value.to_string();
-				guildData.guildId = docValue.view()["guildId"].get_utf8().value.to_string();
+				guildData.guildId = docValue.view()["guildId"].get_int64().value;
 				for (auto& value: docValue.view()["musicChannelIds"].get_array().value) {
-					guildData.musicChannelIds.push_back(value.get_utf8().value.to_string());
+					guildData.musicChannelIds.push_back(value.get_int64().value);
 				}
 				guildData.memberCount = docValue.view()["memberCount"].get_int32().value;
 				return guildData;
@@ -365,8 +365,8 @@ namespace DiscordCoreAPI {
 				using bsoncxx::builder::basic::kvp;
 				buildDoc.append(kvp("guildMemberMention", discordGuildMemberData.guildMemberMention.c_str()));
 				buildDoc.append(kvp("_id", discordGuildMemberData.globalId.c_str()));
-				buildDoc.append(kvp("guildId", discordGuildMemberData.guildId.c_str()));
-				buildDoc.append(kvp("guildMemberId", discordGuildMemberData.guildMemberId.c_str()));
+				buildDoc.append(kvp("guildId", bsoncxx::types::b_int64(discordGuildMemberData.guildId)));
+				buildDoc.append(kvp("guildMemberId", bsoncxx::types::b_int64(discordGuildMemberData.guildMemberId)));
 				buildDoc.append(kvp("globalId", discordGuildMemberData.globalId.c_str()));
 				buildDoc.append(kvp("userName", discordGuildMemberData.userName.c_str()));
 				buildDoc.append(kvp("displayName", discordGuildMemberData.displayName.c_str()));
@@ -381,10 +381,10 @@ namespace DiscordCoreAPI {
 			DiscordGuildMemberData guildMemberData{};
 			try {
 				guildMemberData.guildMemberMention = docValue.view()["guildMemberMention"].get_utf8().value.to_string();
-				guildMemberData.guildId = docValue.view()["guildId"].get_utf8().value.to_string();
+				guildMemberData.guildId = docValue.view()["guildId"].get_int64().value;
 				guildMemberData.displayName = docValue.view()["displayName"].get_utf8().value.to_string();
 				guildMemberData.globalId = docValue.view()["globalId"].get_utf8().value.to_string();
-				guildMemberData.guildMemberId = docValue.view()["guildMemberId"].get_utf8().value.to_string();
+				guildMemberData.guildMemberId = docValue.view()["guildMemberId"].get_int64().value;
 				guildMemberData.userName = docValue.view()["userName"].get_utf8().value.to_string();
 				return guildMemberData;
 			} catch (...) {
@@ -400,7 +400,7 @@ namespace DiscordCoreAPI {
 
 		DiscordUserData data{};
 
-		DiscordUser(std::string userNameNew, std::string userIdNew) {
+		DiscordUser(std::string userNameNew, uint64_t userIdNew) {
 			this->data.userId = userIdNew;
 			this->data.userName = userNameNew;
 			this->getDataFromDB();
@@ -421,7 +421,7 @@ namespace DiscordCoreAPI {
 			workload.workloadType = DatabaseWorkloadType::DISCORD_USER_READ;
 			workload.userData = this->data;
 			auto result = DatabaseManagerAgent::submitWorkloadAndGetResults(workload);
-			if (result.discordUser.userId != "") {
+			if (result.discordUser.userId != 0) {
 				this->data = result.discordUser;
 			}
 		}
@@ -454,7 +454,7 @@ namespace DiscordCoreAPI {
 			workload.workloadType = DatabaseWorkloadType::DISCORD_GUILD_READ;
 			workload.guildData = this->data;
 			auto result = DatabaseManagerAgent::submitWorkloadAndGetResults(workload);
-			if (result.discordGuild.guildId != "") {
+			if (result.discordGuild.guildId != 0) {
 				this->data = result.discordGuild;
 			}
 		}
@@ -467,14 +467,14 @@ namespace DiscordCoreAPI {
 		DiscordGuildMember(GuildMemberData guildMemberData) {
 			this->data.guildMemberId = guildMemberData.user.id;
 			this->data.guildId = guildMemberData.guildId;
-			this->data.globalId = this->data.guildId + " + " + this->data.guildMemberId;
+			this->data.globalId = std::to_string(this->data.guildId) + " + " + std::to_string(this->data.guildMemberId);
 			this->getDataFromDB();
 			if (guildMemberData.nick == "") {
 				this->data.displayName = guildMemberData.user.userName;
-				this->data.guildMemberMention = "<@" + this->data.guildMemberId + ">";
+				this->data.guildMemberMention = "<@" + std::to_string(this->data.guildMemberId) + ">";
 			} else {
 				this->data.displayName = guildMemberData.nick;
-				this->data.guildMemberMention = "<@!" + this->data.guildMemberId + ">";
+				this->data.guildMemberMention = "<@!" + std::to_string(this->data.guildMemberId) + ">";
 			}
 			this->data.userName = guildMemberData.user.userName;
 			this->writeDataToDB();
@@ -517,8 +517,8 @@ namespace DiscordCoreAPI {
 
 	mongocxx::instance DatabaseManagerAgent::instance{};
 	mongocxx::pool DatabaseManagerAgent::thePool{ mongocxx::uri{} };
-	std::string DatabaseManagerAgent::botUserId{ "" };
 	std::mutex DatabaseManagerAgent::workloadMutex{};
+	uint64_t DatabaseManagerAgent::botUserId{ 0 };
 	int32_t DiscordUser::guildCount{ 0 };
 
 }
