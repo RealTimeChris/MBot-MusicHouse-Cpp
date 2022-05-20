@@ -60,7 +60,7 @@ namespace DiscordCoreAPI {
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(newEmbed);
 					auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
-					InputEvents::deleteInputEventResponseAsync(std::move(newEvent), 20000);
+					InputEvents::deleteInputEventResponseAsync(newEvent, 20000);
 					SongAPI::stop(guild.id);
 					guild.disconnect();
 					savePlaylist(discordGuild);

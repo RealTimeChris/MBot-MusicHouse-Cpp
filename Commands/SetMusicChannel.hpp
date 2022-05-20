@@ -8,6 +8,7 @@
 #include "HelperFunctions.hpp"
 
 namespace DiscordCoreAPI {
+
 	class SetMusicChannel : public BaseFunction {
 	  public:
 		SetMusicChannel() {
@@ -57,7 +58,7 @@ namespace DiscordCoreAPI {
 							dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 							dataPackage.addMessageEmbed(messageEmbed);
 							auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
-							InputEvents::deleteInputEventResponseAsync(std::move(newEvent), 20000);
+							InputEvents::deleteInputEventResponseAsync(newEvent, 20000);
 							return;
 						}
 					}
@@ -103,7 +104,7 @@ namespace DiscordCoreAPI {
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(messageEmbed);
 						auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
-						InputEvents::deleteInputEventResponseAsync(std::move(newEvent), 20000);
+						InputEvents::deleteInputEventResponseAsync(newEvent, 20000);
 						return;
 					}
 

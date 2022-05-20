@@ -338,7 +338,7 @@ namespace DiscordCoreAPI {
 					SongAPI::onSongCompletion(theTask, guild.id);
 					if (SongAPI::isThereAnySongs(guild.id)) {
 						if (!SongAPI::sendNextSong(guildMember)) {
-							InputEvents::deleteInputEventResponseAsync(std::move(newEvent));
+							InputEvents::deleteInputEventResponseAsync(newEvent);
 							SongAPI::play(guild.id);
 						}
 						std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };

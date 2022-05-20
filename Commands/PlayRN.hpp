@@ -342,7 +342,7 @@ namespace DiscordCoreAPI {
 				if (SongAPI::isThereAnySongs(guild.id)) {
 					if (!SongAPI::sendNextSong(guildMember)) {
 						SongAPI::play(guild.id);
-						InputEvents::deleteInputEventResponseAsync(std::move(newEvent));
+						InputEvents::deleteInputEventResponseAsync(newEvent);
 						return;
 					}
 					DiscordGuild discordGuildNew = discordGuild;

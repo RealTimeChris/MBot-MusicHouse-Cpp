@@ -296,7 +296,7 @@ namespace DiscordCoreAPI {
 				}
 				if (SongAPI::isThereAnySongs(guild.id)) {
 					if (!SongAPI::sendNextSong(guildMember)) {
-						InputEvents::deleteInputEventResponseAsync(std::move(newEvent));
+						InputEvents::deleteInputEventResponseAsync(newEvent);
 						return;
 					}
 					savePlaylist(discordGuild);
