@@ -259,8 +259,7 @@ namespace DiscordCoreAPI {
 							kvp("firstDownloadUrl", discordGuildData.playlist.currentSong.firstDownloadUrl.c_str()),
 							kvp("thumbnailUrl", discordGuildData.playlist.currentSong.thumbnailUrl.c_str()),
 							kvp("type", bsoncxx::types::b_int32(( int )discordGuildData.playlist.currentSong.type)),
-							kvp("songId", discordGuildData.playlist.currentSong.songId.c_str()), kvp("html5Player", discordGuildData.playlist.currentSong.html5Player.c_str()),
-							kvp("html5PlayerFile", discordGuildData.playlist.currentSong.html5PlayerFile.c_str()),
+							kvp("songId", discordGuildData.playlist.currentSong.songId.c_str()), 
 							kvp("viewUrl", discordGuildData.playlist.currentSong.viewUrl.c_str()));
 					}));
 
@@ -280,7 +279,6 @@ namespace DiscordCoreAPI {
 									kvp("duration", value.duration.c_str()), kvp("thumbnailUrl", value.thumbnailUrl.c_str()), kvp("songId", value.songId.c_str()),
 									kvp("type", bsoncxx::types::b_int32(( int )value.type)), kvp("viewUrl", value.viewUrl.c_str()));
 								subDocument02.append(kvp("songTitle", value.songTitle.c_str()), kvp("firstDownloadUrl", value.firstDownloadUrl.c_str()),
-									kvp("html5Player", value.html5Player), kvp("html5PlayerFile", value.html5PlayerFile.c_str()),
 									kvp("secondDownloadUrl", value.secondDownloadUrl.c_str()));
 							});
 						}
@@ -309,8 +307,6 @@ namespace DiscordCoreAPI {
 				guildData.playlist.currentSong.songTitle = currentSongValue.value["songTitle"].get_utf8().value.to_string();
 				guildData.playlist.currentSong.type = static_cast<SongType>(currentSongValue.value["type"].get_int32().value);
 				guildData.playlist.currentSong.viewUrl = currentSongValue.value["viewUrl"].get_utf8().value.to_string();
-				guildData.playlist.currentSong.html5PlayerFile = currentSongValue.value["html5PlayerFile"].get_utf8().value.to_string();
-				guildData.playlist.currentSong.html5Player = currentSongValue.value["html5Player"].get_utf8().value.to_string();
 				guildData.playlist.isLoopSongEnabled = docValue.view()["playlist"].get_document().value["isLoopSongEnabled"].get_bool().value;
 				guildData.playlist.isLoopAllEnabled = docValue.view()["playlist"].get_document().value["isLoopAllEnabled"].get_bool().value;
 
@@ -340,8 +336,6 @@ namespace DiscordCoreAPI {
 					newSong.secondDownloadUrl = value["secondDownloadUrl"].get_utf8().value.to_string();
 					newSong.songTitle = value["songTitle"].get_utf8().value.to_string();
 					newSong.viewUrl = value["viewUrl"].get_utf8().value.to_string();
-					newSong.html5PlayerFile = value["html5PlayerFile"].get_utf8().value.to_string();
-					newSong.html5Player = value["html5Player"].get_utf8().value.to_string();
 					guildData.playlist.songQueue.push_back(newSong);
 				}
 				guildData.djRoleId = docValue.view()["djRoleId"].get_int64().value;
