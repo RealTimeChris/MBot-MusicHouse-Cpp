@@ -78,7 +78,6 @@ namespace DiscordCoreAPI {
 
 				previousPlayedTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 				PlayQ::timeOfLastPlay.insert_or_assign(newArgs.eventData.getGuildId(), previousPlayedTime);
-				VoiceConnection* voiceConnection = guild.connectToVoice(guildMember.id, 0, true, false);
 
 				VoiceStateData voiceStateData{};
 				if (guild.voiceStates.contains(guildMember.id)) {
@@ -100,6 +99,8 @@ namespace DiscordCoreAPI {
 					InputEvents::deleteInputEventResponseAsync(newerEvent, 20000);
 					return;
 				}
+
+				VoiceConnection* voiceConnection = guild.connectToVoice(guildMember.id, 0, true, false);
 
 				loadPlaylist(discordGuild);
 				if (voiceConnection == nullptr) {
@@ -156,9 +157,9 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				int32_t trackNumber = stoi(newArgs.commandData.optionsArgs[0]);
+				int32_t trackNumber = stoi(newArgs.commandData.optionsArgs[0]) - 1;
 
-				if (trackNumber > SongAPI::getPlaylist(guild.id).songQueue.size()) {
+				if (trackNumber >= SongAPI::getPlaylist(guild.id).songQueue.size()) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 					newEmbed->setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
 					newEmbed->setDescription("------\n__**Sorry, but that number is out of the range of the current track list!**__\n------");

@@ -144,7 +144,6 @@ namespace DiscordCoreAPI {
 				}
 				
 				VoiceConnection* voiceConnection = guild.connectToVoice(guildMember.id, 0, true, false);
-
 				if (voiceConnection == nullptr) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 					newEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
