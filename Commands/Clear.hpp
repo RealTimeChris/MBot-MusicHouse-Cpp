@@ -30,8 +30,6 @@ namespace DiscordCoreAPI {
 			try {
 				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 
-				InputEvents::deleteInputEventResponseAsync(newArgs.eventData).get();
-
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 
 				DiscordGuild discordGuild(guild);

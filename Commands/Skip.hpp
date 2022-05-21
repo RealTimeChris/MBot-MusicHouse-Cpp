@@ -40,8 +40,6 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				InputEvents::deleteInputEventResponseAsync(newArgs.eventData).get();
-
 				GuildMember guildMember =
 					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() }).get();
 
@@ -187,7 +185,6 @@ namespace DiscordCoreAPI {
 						return;
 					}
 				}
-				InputEvents::deleteInputEventResponseAsync(newArgs.eventData).get();
 				return;
 			} catch (...) {
 				reportException("Skip::execute()");

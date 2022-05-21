@@ -30,8 +30,6 @@ namespace DiscordCoreAPI {
 			try {
 				Channel channel = Channels::getCachedChannelAsync({ newArgs.eventData.getChannelId() }).get();
 
-				InputEvents::deleteInputEventResponseAsync(newArgs.eventData).get();
-
 				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild(guild);
 
@@ -79,7 +77,26 @@ namespace DiscordCoreAPI {
 				RespondToInputEventData dataPackage(newEvent);
 				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
 				newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
-				auto voiceStateData = guild.voiceStates.at(guildMember.id);
+				VoiceStateData voiceStateData{};
+				if (guild.voiceStates.contains(guildMember.id)) {
+					voiceStateData = guild.voiceStates.at(guildMember.id);
+				} else {
+					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+					newEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
+					newEmbed->setDescription("------\n__**Sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");
+					newEmbed->setTimeStamp(getTimeAndDate());
+					newEmbed->setTitle("__**Playing Issue:**__");
+					newEmbed->setColor(discordGuild.data.borderColor);
+					RespondToInputEventData dataPackage(newEvent);
+					dataPackage.setResponseType(InputEventResponseType::Follow_Up_Message);
+					dataPackage.addMessageEmbed(*newEmbed);
+					auto newerEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
+					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+					newerEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
+					InputEvents::deleteInputEventResponseAsync(newEvent).get();
+					InputEvents::deleteInputEventResponseAsync(newerEvent, 20000);
+					return;
+				}
 				VoiceConnection* voiceConnection = guild.connectToVoice(guildMember.id, 0, true, false);
 
 				if (voiceConnection == nullptr) {
