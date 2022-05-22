@@ -21,8 +21,8 @@ namespace DiscordCoreAPI {
 			}
 			EmbedFieldData msgEmbedField = {
 				.Inline = false,
-				.value = "__**Title:**__ [" + playlist.at(y).songTitle + "](" + playlist.at(y).viewUrl + ")\n__**Added By:**__ <@!" + std::to_string(playlist.at(y).addedByUserId) + "> (" +
-					playlist.at(y).addedByUserName + ")",
+				.value = "__**Title:**__ [" + playlist.at(y).songTitle + "](" + playlist.at(y).viewUrl + ")\n__**Added By:**__ <@!" + std::to_string(playlist.at(y).addedByUserId) +
+					"> (" + playlist.at(y).addedByUserName + ")",
 				.name = "__**" + std::to_string(y + 1) + " of " + std::to_string(playlist.size()) + "**__",
 			};
 			msgEmbedFields[msgEmbedFieldsPage].push_back(msgEmbedField);

@@ -91,7 +91,7 @@ namespace DiscordCoreAPI {
 				if (!doWeHaveControl) {
 					return;
 				}
-				
+
 				InputEventData newEvent = newArgs.eventData;
 
 				int64_t currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -142,7 +142,7 @@ namespace DiscordCoreAPI {
 					InputEvents::deleteInputEventResponseAsync(newerEvent, 20000);
 					return;
 				}
-				
+
 				VoiceConnection* voiceConnection = guild.connectToVoice(guildMember.id, 0, true, false);
 				if (voiceConnection == nullptr) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
