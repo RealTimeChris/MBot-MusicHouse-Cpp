@@ -9,12 +9,9 @@
 	#define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
 #endif
 
-#include <bsoncxx/document/view_or_value.hpp>
-#include <bsoncxx/types/bson_value/value.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/database.hpp>
 #include <mongocxx/client.hpp>
-#include <bsoncxx/types.hpp>
 #include <mongocxx/pool.hpp>
 
 #include <discordcoreapi/Index.hpp>
