@@ -60,9 +60,6 @@ namespace DiscordCoreAPI {
 		DatabaseWorkloadType workloadType{};
 		DiscordGuildData guildData{};
 		DiscordUserData userData{};
-		std::string guildMemberId{ "" };
-		std::string globalId{ "" };
-		std::string guildId{ "" };
 	};
 
 	struct DatabaseReturnValue {

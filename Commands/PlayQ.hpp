@@ -157,7 +157,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				int32_t trackNumber = stoi(newArgs.commandData.optionsArgs[0]) - 1;
+				int32_t trackNumber = stoi(newArgs.commandData.optionsArgs[0]);
 
 				if (trackNumber >= SongAPI::getPlaylist(guild.id).songQueue.size()) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
