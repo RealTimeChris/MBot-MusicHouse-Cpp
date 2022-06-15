@@ -178,7 +178,7 @@ namespace DiscordCoreAPI {
 				}
 
 				Playlist currentPlaylist = SongAPI::getPlaylist(guild.id);
-				Song currentNew = currentPlaylist.songQueue.at(trackNumber );
+				Song currentNew = currentPlaylist.songQueue.at(trackNumber);
 				currentPlaylist.songQueue.erase(currentPlaylist.songQueue.begin() + trackNumber);
 				std::vector<Song> newVector{};
 				Playlist newPlaylist{};
