@@ -48,8 +48,24 @@ namespace DiscordCoreAPI {
 				if (!doWeHaveControl) {
 					return;
 				}
-				auto voiceStateData = guild.voiceStates.at(guildMember.id);
-				VoiceConnection* voiceConnection = guild.connectToVoice(voiceStateData.channelId, true, false);
+				VoiceConnection* voiceConnection{};
+				VoiceStateData voiceStateData{};
+				if (guild.voiceStates.contains(guildMember.id)) {
+					voiceStateData = guild.voiceStates.at(guildMember.id);
+					voiceConnection = guild.connectToVoice(voiceStateData.channelId, true, false);
+				} else {
+					EmbedData newEmbed{};
+					newEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
+					newEmbed.setDescription("------\n__**Sorry, but there is no voice connection that is currently held by me!**__\n------");
+					newEmbed.setTimeStamp(getTimeAndDate());
+					newEmbed.setTitle("__**Connection Issue:**__");
+					newEmbed.setColor(discordGuild.data.borderColor);
+					RespondToInputEventData dataPackage(newArgs.eventData);
+					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+					dataPackage.addMessageEmbed(newEmbed);
+					InputEvents::respondToInputEventAsync(dataPackage).get();
+					return;
+				}
 				loadPlaylist(discordGuild);
 				if (voiceConnection == nullptr) {
 					EmbedData newEmbed{};
