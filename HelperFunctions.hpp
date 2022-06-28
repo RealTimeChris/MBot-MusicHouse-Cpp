@@ -47,7 +47,7 @@ namespace DiscordCoreAPI {
 
 		auto myRoles = Roles::getGuildMemberRolesAsync({ .guildMember = guildMember, .guildId = guildData.data.guildId }).get();
 
-		for (auto& value: myRoles.theRoles) {
+		for (auto& value: myRoles) {
 			if (value.id == guildData.data.djRoleId) {
 				doWeHaveControl = true;
 			}
