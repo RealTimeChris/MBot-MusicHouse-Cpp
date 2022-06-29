@@ -30,7 +30,7 @@ namespace DiscordCoreAPI {
 			try {
 				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 
-				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData.getGuildId() }).get();
+				GuildData guild = Guilds::getCachedGuildAsync({ newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild(guild);
 
 				bool areWeAllowed = checkIfAllowedPlayingInChannel(newArgs.eventData, discordGuild);
@@ -59,7 +59,6 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(newEmbed);
 					auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					InputEvents::deleteInputEventResponseAsync(newEvent, 20000);
-					SongAPI::stop(guild.id);
 					guild.disconnect();
 					savePlaylist(discordGuild);
 				} else {
