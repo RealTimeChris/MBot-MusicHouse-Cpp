@@ -72,13 +72,12 @@ namespace DiscordCoreAPI {
 
 				previousSkippedTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 				Skip::timeOfLastSkip.insert_or_assign(newArgs.eventData.getGuildId(), previousSkippedTime);
-				VoiceConnection* voiceConnection{}; 
+				VoiceConnection* voiceConnection{};
 				VoiceStateData voiceStateData{};
 				if (guild.voiceStates.contains(guildMember.id)) {
 					voiceStateData = guild.voiceStates.at(guildMember.id);
 					voiceConnection = guild.connectToVoice(voiceStateData.channelId, true, false);
-				}
-				else {
+				} else {
 					EmbedData newEmbed{};
 					newEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					newEmbed.setDescription("------\n__**Sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");
@@ -91,7 +90,7 @@ namespace DiscordCoreAPI {
 					newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
-				
+
 				loadPlaylist(discordGuild);
 				if (voiceConnection == nullptr) {
 					EmbedData newEmbed{};

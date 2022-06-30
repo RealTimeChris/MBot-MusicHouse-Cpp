@@ -253,8 +253,7 @@ namespace DiscordCoreAPI {
 							kvp("firstDownloadUrl", discordGuildData.playlist.currentSong.firstDownloadUrl.c_str()),
 							kvp("thumbnailUrl", discordGuildData.playlist.currentSong.thumbnailUrl.c_str()),
 							kvp("type", bsoncxx::types::b_int32(( int )discordGuildData.playlist.currentSong.type)),
-							kvp("songId", discordGuildData.playlist.currentSong.songId.c_str()), 
-							kvp("viewUrl", discordGuildData.playlist.currentSong.viewUrl.c_str()));
+							kvp("songId", discordGuildData.playlist.currentSong.songId.c_str()), kvp("viewUrl", discordGuildData.playlist.currentSong.viewUrl.c_str()));
 					}));
 
 					subDocument01.append(kvp("songList", [discordGuildData](bsoncxx::builder::basic::sub_array subArray01) {

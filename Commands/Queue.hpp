@@ -261,12 +261,11 @@ namespace DiscordCoreAPI {
 							for (; next != end; ++next) {
 								args2.push_back(next->str());
 							}
-							
+
 							std::regex digitRegex("\\d{1,3}");
 							if (args2.size() == 0 || convertToLowerCase(args2[0]) == "exit") {
-								Messages::deleteMessageAsync({ .channelId = returnedMessages.messages[0].channelId,
-																 .messageId = returnedMessages.messages[0].id,
-																 .reason = "Deleting the message!" })
+								Messages::deleteMessageAsync(
+									{ .channelId = returnedMessages.messages[0].channelId, .messageId = returnedMessages.messages[0].id, .reason = "Deleting the message!" })
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
 								msgEmbeds =
