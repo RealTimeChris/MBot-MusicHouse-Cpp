@@ -401,7 +401,7 @@ namespace DiscordCoreAPI {
 						InputEvents::deleteInputEventResponseAsync(newEvent).get();
 						InputEvents::deleteInputEventResponseAsync(newerEvent, 20000);
 					}
-				} else if (newArgs.commandData.optionsArgs.size() == 0) {
+				} else if (newArgs.commandData.optionsArgs.size() == 0 && SongAPI::areWeCurrentlyPlaying(guild.id)) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 					newEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					newEmbed->setDescription("------\n__**Sorry, but there's already something playing!**__\n------");

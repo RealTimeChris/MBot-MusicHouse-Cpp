@@ -67,7 +67,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 				loadPlaylist(discordGuild);
-				if (voiceConnection == nullptr) {
+				if (voiceConnection == nullptr || !guild.areWeConnected()) {
 					EmbedData newEmbed{};
 					newEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					newEmbed.setDescription("------\n__**Sorry, but there is no voice connection that is currently held by me!**__\n------");
@@ -86,7 +86,7 @@ namespace DiscordCoreAPI {
 					newEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					newEmbed.setDescription("------\n__**Sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
-					newEmbed.setTitle("__**Pauseping Issue:**__");
+					newEmbed.setTitle("__**Pausing Issue:**__");
 					newEmbed.setColor(discordGuild.data.borderColor);
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
@@ -95,20 +95,20 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				if (!guild.areWeConnected() || !SongAPI::areWeCurrentlyPlaying(guild.id)) {
-					std::string msgString = "------\n**There's no music playing to be paused!**\n------";
-					EmbedData msgEmbed;
-					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
-					msgEmbed.setColor(discordGuild.data.borderColor);
-					msgEmbed.setDescription(msgString);
-					msgEmbed.setTimeStamp(getTimeAndDate());
-					msgEmbed.setTitle("__**Pausing Issue:**__");
+				if (!SongAPI::areWeCurrentlyPlaying(guild.id)) {
+					EmbedData newEmbed{};
+					newEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
+					newEmbed.setDescription("------\n__**Sorry, but I need to be either playing or paused for this command to be possible!**__\n------");
+					newEmbed.setTimeStamp(getTimeAndDate());
+					newEmbed.setTitle("__**Pausing Issue:**__");
+					newEmbed.setColor(discordGuild.data.borderColor);
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-					dataPackage.addMessageEmbed(msgEmbed);
+					dataPackage.addMessageEmbed(newEmbed);
 					auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
+
 				SongAPI::pauseToggle(guild.id);
 
 				EmbedData msgEmbed;
