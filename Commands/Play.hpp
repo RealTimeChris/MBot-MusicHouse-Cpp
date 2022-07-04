@@ -236,6 +236,7 @@ namespace DiscordCoreAPI {
 				if (!SongAPI::areWeCurrentlyPlaying(guild.id)) {
 					auto theTask = [=](SongCompletionEventData eventData) mutable noexcept -> CoRoutine<void> {
 						co_await NewThreadAwaitable<void>();
+						std::this_thread::sleep_for(150ms);
 						if (SongAPI::isThereAnySongs(guild.id)) {
 							std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 							if (!eventData.wasItAFail) {
