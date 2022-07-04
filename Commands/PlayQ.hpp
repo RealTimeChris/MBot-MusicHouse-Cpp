@@ -290,7 +290,6 @@ namespace DiscordCoreAPI {
 								}
 							}
 							savePlaylist(discordGuild);
-							SongAPI::play(eventData.guild.id);
 						} else {
 							std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 							newEmbed->setAuthor(eventData.guildMember.userName, eventData.guildMember.userAvatar);
