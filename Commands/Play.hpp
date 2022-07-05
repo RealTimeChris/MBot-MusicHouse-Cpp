@@ -352,7 +352,6 @@ namespace DiscordCoreAPI {
 						}
 						co_return;
 					};
-					SongAPI::onSongCompletion(theTask, guild.id);
 					if (SongAPI::isThereAnySongs(guild.id)) {
 						if (!SongAPI::sendNextSong(guildMember)) {
 							InputEvents::deleteInputEventResponseAsync(newEvent);
@@ -401,6 +400,7 @@ namespace DiscordCoreAPI {
 						InputEvents::deleteInputEventResponseAsync(newEvent).get();
 						InputEvents::deleteInputEventResponseAsync(newerEvent, 20000);
 					}
+					SongAPI::onSongCompletion(theTask, guild.id);
 				} else if (newArgs.commandData.optionsArgs.size() == 0 && SongAPI::areWeCurrentlyPlaying(guild.id)) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 					newEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
@@ -436,7 +436,6 @@ namespace DiscordCoreAPI {
 					dataPackage02.addMessageEmbed(*newEmbed);
 					newEvent = InputEvents::respondToInputEventAsync(dataPackage02).get();
 				}
-
 				return;
 			} catch (...) {
 				reportException("Play::execute()");
