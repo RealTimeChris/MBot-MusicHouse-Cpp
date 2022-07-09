@@ -39,7 +39,7 @@ namespace DiscordCoreAPI {
 				}
 				std::string borderColor;
 
-				if (std::stoll(newArgs.commandData.optionsArgs[0], 0, 16) < 0 || std::stoll(newArgs.commandData.optionsArgs[0], 0, 16) > std::stoll("fefefe", 0, 16)) {
+				if (std::stoll(newArgs.optionsArgs[0], 0, 16) < 0 || std::stoll(newArgs.optionsArgs[0], 0, 16) > std::stoll("fefefe", 0, 16)) {
 					std::string msgString = "------\n**Please, enter a hex-color value between 0 and FeFeFe! (!setbordercolor = BOTNAME, HEXCOLORVALUE)**\n------";
 					EmbedData msgEmbed;
 					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
@@ -53,7 +53,7 @@ namespace DiscordCoreAPI {
 					auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				} else {
-					borderColor = newArgs.commandData.optionsArgs[0];
+					borderColor = newArgs.optionsArgs[0];
 
 					discordGuild.data.borderColor = borderColor;
 					discordGuild.writeDataToDB();

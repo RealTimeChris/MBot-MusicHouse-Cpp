@@ -157,7 +157,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				int32_t trackNumber = stoi(newArgs.commandData.optionsArgs[0]) - 1;
+				int32_t trackNumber = stoi(newArgs.optionsArgs[0]) - 1;
 
 				if (trackNumber >= SongAPI::getPlaylist(guild.id).songQueue.size()) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
@@ -193,7 +193,7 @@ namespace DiscordCoreAPI {
 				newPlaylist.isLoopSongEnabled = SongAPI::isLoopSongEnabled(guild.id);
 				SongAPI::setPlaylist(newPlaylist, guild.id);
 				savePlaylist(discordGuild);
-				auto channelId = args.eventData.getChannelId();
+				auto channelId = newArgs.eventData.getChannelId();
 				if (!SongAPI::areWeCurrentlyPlaying(guild.id)) {
 					std::function<CoRoutine<void>(SongCompletionEventData)> theTask = [=](SongCompletionEventData eventData) mutable noexcept -> CoRoutine<void> {
 						co_await NewThreadAwaitable<void>();

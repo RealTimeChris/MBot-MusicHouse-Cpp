@@ -6,6 +6,7 @@
 #pragma once
 
 #include "HelperFunctions.hpp"
+#include <regex>
 
 namespace DiscordCoreAPI {
 
