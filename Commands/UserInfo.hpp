@@ -33,7 +33,7 @@ namespace DiscordCoreAPI {
 				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData.getGuildId() }).get();
 
 				DiscordGuild discordGuild(guild);
-				uint64_t userId = stoull(newArgs.commandData.optionsArgs[0]);
+				uint64_t userId = stoull(newArgs.optionsArgs[0]);
 				GuildMemberData guildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = userId, .guildId = newArgs.eventData.getGuildId() }).get();
 				User theUser = Users::getUserAsync({ .userId = newArgs.eventData.getAuthorId() }).get();
 				std::vector<EmbedFieldData> fields;

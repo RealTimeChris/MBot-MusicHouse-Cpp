@@ -137,7 +137,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				if (newArgs.commandData.optionsArgs.size() == 0 && !SongAPI::isThereAnySongs(guild.id)) {
+				if (newArgs.optionsArgs.size() == 0 && !SongAPI::isThereAnySongs(guild.id)) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 					newEmbed->setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
 					newEmbed->setDescription("------\n__**Sorry, but there's nothing to play!**__\n------");
@@ -153,7 +153,7 @@ namespace DiscordCoreAPI {
 					InputEvents::deleteInputEventResponseAsync(newEvent).get();
 					InputEvents::deleteInputEventResponseAsync(newerEvent, 20000);
 					return;
-				} else if (newArgs.commandData.optionsArgs.size() == 0 && SongAPI::areWeCurrentlyPlaying(guild.id)) {
+				} else if (newArgs.optionsArgs.size() == 0 && SongAPI::areWeCurrentlyPlaying(guild.id)) {
 					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 					newEmbed->setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
 					newEmbed->setDescription("------\n__**Sorry, but there's already something playing!**__\n------");
@@ -173,8 +173,8 @@ namespace DiscordCoreAPI {
 
 
 				std::vector<Song> searchResults{};
-				if (newArgs.commandData.optionsArgs.size() > 0) {
-					searchResults = SongAPI::searchForSong(newArgs.commandData.optionsArgs[0], guild.id);
+				if (newArgs.optionsArgs.size() > 0) {
+					searchResults = SongAPI::searchForSong(newArgs.optionsArgs[0], guild.id);
 				}
 
 				std::vector<EmbedData> embedsFromSearch;
@@ -234,7 +234,7 @@ namespace DiscordCoreAPI {
 					auto newPlaylist = SongAPI::getPlaylist(guild.id);
 					savePlaylist(discordGuild);
 				}
-				auto newChannelId = args.eventData.getChannelId();
+				auto newChannelId = newArgs.eventData.getChannelId();
 				if (!SongAPI::areWeCurrentlyPlaying(guild.id)) {
 					std::function<CoRoutine<void>(SongCompletionEventData)> theTask = [=](SongCompletionEventData eventData) mutable noexcept -> CoRoutine<void> {
 						co_await NewThreadAwaitable<void>();

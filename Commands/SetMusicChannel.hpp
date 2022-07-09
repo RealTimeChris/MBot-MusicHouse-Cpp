@@ -42,7 +42,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				if (newArgs.commandData.subCommandName == "add") {
+				if (newArgs.subCommandName == "add") {
 					uint64_t channelID = channel.id;
 					for (uint32_t x = 0; x < discordGuild.data.musicChannelIds.size(); x += 1) {
 						if (channelID == discordGuild.data.musicChannelIds[x]) {
@@ -76,7 +76,7 @@ namespace DiscordCoreAPI {
 					auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
-				if (newArgs.commandData.subCommandName == "remove") {
+				if (newArgs.subCommandName == "remove") {
 					uint64_t channelID;
 					channelID = channel.id;
 
@@ -119,7 +119,7 @@ namespace DiscordCoreAPI {
 					auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
-				if (newArgs.commandData.subCommandName == "purge") {
+				if (newArgs.subCommandName == "purge") {
 					std::string msgString;
 
 					if (discordGuild.data.musicChannelIds.size() > 0) {
@@ -151,7 +151,7 @@ namespace DiscordCoreAPI {
 					auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
-				if (newArgs.commandData.subCommandName == "view") {
+				if (newArgs.subCommandName == "view") {
 					std::string msgString = "__You have the following channels enabled for music commands, on this server:__\n------\n";
 
 					for (uint32_t x = 0; x < discordGuild.data.musicChannelIds.size(); x += 1) {
