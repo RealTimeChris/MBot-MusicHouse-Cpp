@@ -48,6 +48,7 @@ namespace DiscordCoreAPI {
 						newData.label = newString;
 						newData.description = value->helpDescription;
 						newData.value = convertToLowerCase(newString);
+						value->helpEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 						newData.emoji.name = "✅";
 						bool doWeContinue{ false };
 						for (auto& value02: selectOptions) {
