@@ -16,7 +16,7 @@ set(OPUS_DEBUG_ROOT "")
 set(SODIUM_INCLUDE_DIR "")
 set(SODIUM_RELEASE_ROOT "")
 set(SODIUM_DEBUG_ROOT "")
-s
+
 # Also, set this value to install the output files to a particular location.
 set(CMAKE_INSTALL_PREFIX)
 
