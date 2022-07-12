@@ -82,9 +82,9 @@ namespace DiscordCoreAPI {
 					msgEmbed.setColor("FeFeFe");
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setDescription(messageNew);
-					msgEmbed.setTitle("__**" + newArgs.discordCoreClient->getBotUser().userName + " Help: Front Page**__");
+					msgEmbed.setTitle("__**" + static_cast<std::string>(newArgs.discordCoreClient->getBotUser().userName) + " Help: Front Page**__");
 
-					std::string msgString = "------\nHello! How are you doing today?! I'm " + newArgs.discordCoreClient->getBotUser().userName +
+					std::string msgString = "------\nHello! How are you doing today?! I'm " + static_cast<std::string>(newArgs.discordCoreClient->getBotUser().userName) +
 						" and I'm here to help you out!\n" +
 						"Please, select one of my commands from the drop-down menu below, to gain more information about them! (Or select 'Go Back' to go back "
 						"to the previous menu)\n------";
@@ -122,8 +122,8 @@ namespace DiscordCoreAPI {
 						msgEmbed00.setColor("FeFeFe");
 						msgEmbed00.setTimeStamp(getTimeAndDate());
 						msgEmbed00.setDescription(msgString);
-						msgEmbed00.setTitle("__**" + newArgs.discordCoreClient->getBotUser().userName + " Help: Page " + std::to_string(counter03 + 1) + " of " +
-							std::to_string(selectOptions.size()) + "**__");
+						msgEmbed00.setTitle("__**" + static_cast<std::string>(newArgs.discordCoreClient->getBotUser().userName) + " Help: Page " + std::to_string(counter03 + 1) +
+							" of " + std::to_string(selectOptions.size()) + "**__");
 						RespondToInputEventData responseData03(*buttonData.at(0).interactionData);
 						responseData03.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 						responseData03.addMessageEmbed(msgEmbed00);
@@ -138,8 +138,8 @@ namespace DiscordCoreAPI {
 							msgEmbed00.setColor("FeFeFe");
 							msgEmbed00.setTimeStamp(getTimeAndDate());
 							msgEmbed00.setDescription(messageNew);
-							msgEmbed00.setTitle("__**" + newArgs.discordCoreClient->getBotUser().userName + " Help: Page " + std::to_string(counter03 + 1) + " of " +
-								std::to_string(selectOptions.size()) + "**__");
+							msgEmbed00.setTitle("__**" + static_cast<std::string>(newArgs.discordCoreClient->getBotUser().userName) + " Help: Page " +
+								std::to_string(counter03 + 1) + " of " + std::to_string(selectOptions.size()) + "**__");
 							RespondToInputEventData responseData03(*buttonData.at(0).interactionData);
 							responseData03.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 							responseData03.addMessageEmbed(msgEmbed00);
@@ -190,6 +190,9 @@ namespace DiscordCoreAPI {
 					auto buttonReturnData02 = ButtonCollector{ newEvent01 }.collectButtonData(false, 120000, 1, newArgs.eventData.getAuthorId()).get();
 					if (buttonReturnData02.at(0).buttonId == "back") {
 						responseData = RespondToInputEventData{ *buttonReturnData02.at(0).interactionData };
+						responseData.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+						responseData.addMessageEmbed(newEmbed);
+						newEvent = InputEvents::respondToInputEventAsync(responseData).get();
 						continue;
 					} else if (buttonReturnData02.at(0).buttonId == "exit" || buttonReturnData02.at(0).buttonId == "empty") {
 						RespondToInputEventData responseData03(*buttonReturnData02.at(0).interactionData);
