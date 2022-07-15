@@ -71,6 +71,12 @@ namespace DiscordCoreAPI {
 
 		void execute(BaseFunctionArguments& newArgs) {
 			try {
+
+				InputEventData newEvent{ newArgs.eventData };
+
+				RespondToInputEventData dataPackage(newArgs.eventData);
+				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
+				newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 				std::unique_ptr<Channel> channel{ std::make_unique<Channel>(Channels::getCachedChannelAsync({ newArgs.eventData.getChannelId() }).get()) };
 
 				std::unique_ptr<Guild> guild{ std::make_unique<Guild>(Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get()) };
@@ -91,7 +97,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				InputEventData newEvent{ newArgs.eventData };
+				
 
 				loadPlaylist(*discordGuild);
 
@@ -110,9 +116,6 @@ namespace DiscordCoreAPI {
 				}
 
 				int32_t currentPageIndex = 0;
-				RespondToInputEventData dataPackage(newArgs.eventData);
-				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
-				newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 
 				std::vector<std::vector<EmbedFieldData>> msgEmbedFields;
 				msgEmbedFields.push_back(std::vector<EmbedFieldData>());
