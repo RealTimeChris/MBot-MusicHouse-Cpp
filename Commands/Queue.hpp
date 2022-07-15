@@ -95,9 +95,7 @@ namespace DiscordCoreAPI {
 
 				if (!doWeHaveControl) {
 					return;
-				}
-
-				
+				}				
 
 				loadPlaylist(*discordGuild);
 
