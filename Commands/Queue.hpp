@@ -156,10 +156,12 @@ namespace DiscordCoreAPI {
 				dataPackage0.addButton(false, "exit", "Exit", ButtonStyle::Success, "❌");
 				newEvent = InputEvents::respondToInputEventAsync(dataPackage0).get();
 				for (int32_t y = 0; y < 1; y) {
+					bool doWeQuit{ false };
 					std::unique_ptr<ButtonCollector> button{ std::make_unique<ButtonCollector>(newEvent) };
 					auto buttonCollectedData = button->collectButtonData(false, 120000, 1, newArgs.eventData.getAuthorId()).get();
+					newEvent = *buttonCollectedData[0].interactionData;
 					uint64_t userID = newArgs.eventData.getAuthorId();
-					if (buttonCollectedData.size() == 0 || buttonCollectedData.at(0).buttonId == "exit" || buttonCollectedData.at(0).buttonId == "empty") {
+					if (buttonCollectedData.size() == 0 || buttonCollectedData.at(0).buttonId == "exit" || buttonCollectedData.at(0).buttonId == "empty" || doWeQuit) {
 						RespondToInputEventData dataPackage02(*buttonCollectedData.at(0).interactionData);
 						dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 						dataPackage02.addMessageEmbed(msgEmbeds[currentPageIndex]);
@@ -215,16 +217,21 @@ namespace DiscordCoreAPI {
 						newEvent = InputEvents::respondToInputEventAsync(*dataPackage02).get();
 						continue;
 					} else if (buttonCollectedData.at(0).buttonId == "check") {
-						bool doWeQuit{ false };
 						msgEmbeds[currentPageIndex].setDescription("__Type 'remove <trackNumber>' to remove a track.\nType 'swap <sourceTrackNumber> "
 																   "<destinationTrackNumber>' to swap tracks.\nType 'shuffle' to shuffle "
 																   "the playlist.\nType 'exit' to exit.__\n");
 						msgEmbeds[currentPageIndex].setFooter(
 							"Type 'remove <trackNumber>' to remove a track.\nType 'swap <sourceTrackNumber> <destinationTrackNumber>' to swap tracks.\nType "
 							"'shuffle' to shuffle the playlist.\nType 'exit' to exit.");
+						newEvent = *buttonCollectedData.at(0).interactionData;
+						std::unique_ptr<RespondToInputEventData> dataPackage03{ std::make_unique<RespondToInputEventData>(newEvent) };
+						dataPackage03->setResponseType(InputEventResponseType::Interaction_Response);
+						dataPackage03->addMessageEmbed(msgEmbeds[currentPageIndex]);
+						dataPackage03->addContent("");
+						newEvent = InputEvents::respondToInputEventAsync(*dataPackage03).get();
 						while (!doWeQuit) {
-							std::unique_ptr<RespondToInputEventData> dataPackage02{ std::make_unique<RespondToInputEventData>(*buttonCollectedData.at(0).interactionData) };
-							dataPackage02->setResponseType(InputEventResponseType::Interaction_Response);
+							std::unique_ptr<RespondToInputEventData> dataPackage02{ std::make_unique<RespondToInputEventData>(newEvent) };
+							dataPackage02->setResponseType(InputEventResponseType::Edit_Interaction_Response);
 							dataPackage02->addMessageEmbed(msgEmbeds[currentPageIndex]);
 							dataPackage02->addContent("");
 							newEvent = InputEvents::respondToInputEventAsync(*dataPackage02).get();
@@ -265,13 +272,15 @@ namespace DiscordCoreAPI {
 
 							std::regex digitRegex("\\d{1,3}");
 							if (args2.size() == 0 || convertToLowerCase(args2[0]) == "exit") {
-								Messages::deleteMessageAsync(
-									{ .channelId = returnedMessages.messages[0].channelId, .messageId = returnedMessages.messages[0].id, .reason = "Deleting the message!" })
+								Messages::deleteMessageAsync({ .timeStamp = returnedMessages.messages[0].timestamp,
+																 .channelId = returnedMessages.messages[0].channelId,
+																 .messageId = returnedMessages.messages[0].id,
+																 .reason = "Deleting the message!" })
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
-								msgEmbeds =
-									updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, theUser, currentPageIndex);
+								msgEmbeds = updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newEvent, theUser, currentPageIndex);
 								doWeQuit = true;
+								savePlaylist(*discordGuild);
 								break;
 							} else if (convertToLowerCase(args2[0]) != "remove" && convertToLowerCase(args2[0]) != "swap" && convertToLowerCase(args2[0]) != "exit" &&
 								convertToLowerCase(args2[0]) != "shuffle") {
@@ -287,7 +296,7 @@ namespace DiscordCoreAPI {
 																 .reason = "Deleting the message!" })
 									.get();
 								RespondToInputEventData dataPackage03(newEvent);
-								dataPackage03.setResponseType(InputEventResponseType::Interaction_Response);
+								dataPackage03.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 								dataPackage03.addMessageEmbed(msgEmbeds[currentPageIndex]);
 								dataPackage03.addContent("");
 								newEvent = InputEvents::respondToInputEventAsync(dataPackage03).get();
@@ -307,7 +316,7 @@ namespace DiscordCoreAPI {
 																	 .reason = "Deleting the message!" })
 										.get();
 									RespondToInputEventData dataPackage03(newEvent);
-									dataPackage03.setResponseType(InputEventResponseType::Interaction_Response);
+									dataPackage03.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 									dataPackage03.addMessageEmbed(msgEmbeds[currentPageIndex]);
 									dataPackage03.addContent("");
 									newEvent = InputEvents::respondToInputEventAsync(dataPackage03).get();
@@ -327,7 +336,7 @@ namespace DiscordCoreAPI {
 																	 .reason = "Deleting the message!" })
 										.get();
 									RespondToInputEventData dataPackage03(newEvent);
-									dataPackage03.setResponseType(InputEventResponseType::Interaction_Response);
+									dataPackage03.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 									dataPackage03.addMessageEmbed(msgEmbeds[currentPageIndex]);
 									dataPackage03.addContent("");
 									newEvent = InputEvents::respondToInputEventAsync(dataPackage03).get();
@@ -344,8 +353,7 @@ namespace DiscordCoreAPI {
 																 .reason = "Deleting the message!" })
 									.get();
 								msgEmbeds.erase(msgEmbeds.begin() + currentPageIndex, msgEmbeds.begin() + currentPageIndex + 1);
-								msgEmbeds =
-									updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newArgs.eventData, theUser, currentPageIndex);
+								msgEmbeds = updateMessageEmbeds(SongAPI::getPlaylist(guild->id).songQueue, discordGuild.get(), newEvent, newEvent, theUser, currentPageIndex);
 								doWeQuit = true;
 								savePlaylist(*discordGuild);
 								break;
@@ -364,7 +372,7 @@ namespace DiscordCoreAPI {
 																	 .reason = "Deleting the message!" })
 										.get();
 									RespondToInputEventData dataPackage03(newEvent);
-									dataPackage03.setResponseType(InputEventResponseType::Interaction_Response);
+									dataPackage03.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 									dataPackage03.addMessageEmbed(msgEmbeds[currentPageIndex]);
 									dataPackage03.addContent("");
 									newEvent = InputEvents::respondToInputEventAsync(dataPackage03).get();
@@ -386,7 +394,7 @@ namespace DiscordCoreAPI {
 																	 .reason = "Deleting the message!" })
 										.get();
 									RespondToInputEventData dataPackage03(newEvent);
-									dataPackage03.setResponseType(InputEventResponseType::Interaction_Response);
+									dataPackage03.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 									dataPackage03.addMessageEmbed(msgEmbeds[currentPageIndex]);
 									dataPackage03.addContent("");
 									newEvent = InputEvents::respondToInputEventAsync(dataPackage03).get();
