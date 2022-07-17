@@ -28,9 +28,6 @@ namespace DiscordCoreAPI {
 
 		void execute(BaseFunctionArguments& newArgs) {
 			try {
-				RespondToInputEventData dataPackage00(newArgs.eventData);
-				dataPackage00.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
-				InputEvents::respondToInputEventAsync(dataPackage00).get();
 				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
@@ -51,6 +48,10 @@ namespace DiscordCoreAPI {
 				if (!doWeHaveControl) {
 					return;
 				}
+
+				RespondToInputEventData dataPackage00(newArgs.eventData);
+				dataPackage00.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
+				InputEvents::respondToInputEventAsync(dataPackage00).get();
 				VoiceConnection* voiceConnection{};
 				VoiceStateData voiceStateData{};
 				if (guild.voiceStates.contains(guildMember.id)) {
