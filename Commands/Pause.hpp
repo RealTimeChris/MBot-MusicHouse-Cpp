@@ -28,6 +28,9 @@ namespace DiscordCoreAPI {
 
 		void execute(BaseFunctionArguments& newArgs) {
 			try {
+				RespondToInputEventData dataPackage00(newArgs.eventData);
+				dataPackage00.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
+				InputEvents::respondToInputEventAsync(dataPackage00).get();
 				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
@@ -61,7 +64,7 @@ namespace DiscordCoreAPI {
 					newEmbed.setTitle("__**Connection Issue:**__");
 					newEmbed.setColor(discordGuild.data.borderColor);
 					RespondToInputEventData dataPackage(newArgs.eventData);
-					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+					dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 					dataPackage.addMessageEmbed(newEmbed);
 					InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
@@ -75,7 +78,7 @@ namespace DiscordCoreAPI {
 					newEmbed.setTitle("__**Connection Issue:**__");
 					newEmbed.setColor(discordGuild.data.borderColor);
 					RespondToInputEventData dataPackage(newArgs.eventData);
-					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+					dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 					dataPackage.addMessageEmbed(newEmbed);
 					auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
@@ -89,7 +92,7 @@ namespace DiscordCoreAPI {
 					newEmbed.setTitle("__**Pausing Issue:**__");
 					newEmbed.setColor(discordGuild.data.borderColor);
 					RespondToInputEventData dataPackage(newArgs.eventData);
-					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+					dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 					dataPackage.addMessageEmbed(newEmbed);
 					auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
@@ -103,7 +106,7 @@ namespace DiscordCoreAPI {
 					newEmbed.setTitle("__**Pausing Issue:**__");
 					newEmbed.setColor(discordGuild.data.borderColor);
 					RespondToInputEventData dataPackage(newArgs.eventData);
-					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+					dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 					dataPackage.addMessageEmbed(newEmbed);
 					auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
@@ -118,7 +121,7 @@ namespace DiscordCoreAPI {
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setTitle("__**Paused Playback:**__");
 				RespondToInputEventData dataPackage(newArgs.eventData);
-				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+				dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 				dataPackage.addMessageEmbed(msgEmbed);
 				auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 
