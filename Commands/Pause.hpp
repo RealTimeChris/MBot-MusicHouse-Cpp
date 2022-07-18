@@ -49,7 +49,6 @@ namespace DiscordCoreAPI {
 				InputEvents::respondToInputEventAsync(dataPackage00).get();
 				VoiceConnection* voiceConnection{};
 				VoiceStateData voiceStateData{};
-				discordGuild.getDataFromDB();
 				if (guild.voiceStates.contains(guildMember.id)) {
 					voiceStateData = guild.voiceStates.at(guildMember.id);
 					voiceConnection = guild.connectToVoice(0, voiceStateData.channelId, true, false);
