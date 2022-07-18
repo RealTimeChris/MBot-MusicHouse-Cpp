@@ -9,7 +9,7 @@
 
 namespace DiscordCoreAPI {
 
-	bool checkIfAllowedPlayingInChannel(InputEventData eventData, DiscordGuild discordGuild) {
+	bool checkIfAllowedGamingInChannel(InputEventData eventData, DiscordGuild discordGuild) {
 		bool isItFound = true;
 		if (discordGuild.data.musicChannelIds.size() > 0) {
 			isItFound = false;
@@ -31,8 +31,14 @@ namespace DiscordCoreAPI {
 				msgEmbed.setTitle("__**Permissions Issue:**__");
 				RespondToInputEventData replyMessageData{ eventData };
 				replyMessageData.addMessageEmbed(msgEmbed);
-				replyMessageData.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-				InputEvents::respondToInputEventAsync(replyMessageData);
+				if (eventData.responseType != InputEventResponseType::Unset) {
+					InputEvents::deleteInputEventResponseAsync(eventData).get();
+					replyMessageData.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+				} else {
+					replyMessageData.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+				}
+
+				InputEvents::respondToInputEventAsync(replyMessageData).get();
 			}
 		}
 		return isItFound;
