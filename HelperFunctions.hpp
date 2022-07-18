@@ -9,7 +9,7 @@
 
 namespace DiscordCoreAPI {
 
-	bool checkIfAllowedGamingInChannel(InputEventData eventData, DiscordGuild discordGuild) {
+	bool checkIfAllowedPlayingInChannel(InputEventData eventData, DiscordGuild discordGuild) {
 		bool isItFound = true;
 		if (discordGuild.data.musicChannelIds.size() > 0) {
 			isItFound = false;
