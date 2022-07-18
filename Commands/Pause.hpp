@@ -31,20 +31,15 @@ namespace DiscordCoreAPI {
 				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
-
 				DiscordGuild discordGuild(guild);
-
 				bool checkIfAllowedInChannel = checkIfAllowedPlayingInChannel(newArgs.eventData, discordGuild);
-
 				if (!checkIfAllowedInChannel) {
 					return;
 				}
 
 				GuildMember guildMember =
 					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() }).get();
-
 				bool doWeHaveControl = checkIfWeHaveControl(newArgs.eventData, discordGuild, guildMember);
-
 				if (!doWeHaveControl) {
 					return;
 				}
@@ -56,7 +51,7 @@ namespace DiscordCoreAPI {
 				VoiceStateData voiceStateData{};
 				if (guild.voiceStates.contains(guildMember.id)) {
 					voiceStateData = guild.voiceStates.at(guildMember.id);
-					voiceConnection = guild.connectToVoice(voiceStateData.channelId, true, false);
+					voiceConnection = guild.connectToVoice(0, voiceStateData.channelId, true, false);
 				} else {
 					EmbedData newEmbed{};
 					newEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());

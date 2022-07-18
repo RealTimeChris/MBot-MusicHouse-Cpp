@@ -76,7 +76,7 @@ namespace DiscordCoreAPI {
 				VoiceStateData voiceStateData{};
 				if (guild.voiceStates.contains(guildMember.id)) {
 					voiceStateData = guild.voiceStates.at(guildMember.id);
-					voiceConnection = guild.connectToVoice(voiceStateData.channelId, true, false);
+					voiceConnection = guild.connectToVoice(0, voiceStateData.channelId, true, false);
 				} else {
 					EmbedData newEmbed{};
 					newEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
