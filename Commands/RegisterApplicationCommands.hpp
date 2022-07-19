@@ -52,6 +52,27 @@ namespace DiscordCoreAPI {
 				createDisplayGuildsDataCommandData.name = "displayguildsdata";
 				ApplicationCommands::createGlobalApplicationCommandAsync(createDisplayGuildsDataCommandData);
 
+				CreateGlobalApplicationCommandData seekCommandData{};
+				seekCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				seekCommandData.dmPermission = false;
+				seekCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
+				seekCommandData.type = ApplicationCommandType::Chat_Input;
+				seekCommandData.description = "Seek into a currently playing song.";
+				seekCommandData.name = "seek";
+				ApplicationCommandOptionData seekCommandDataOptionOne;
+				seekCommandDataOptionOne.name = "minutes";
+				seekCommandDataOptionOne.type = ApplicationCommandOptionType::String;
+				seekCommandDataOptionOne.description = "The number of minutes into the song to seek.";
+				seekCommandDataOptionOne.required = true;
+				seekCommandData.options.push_back(seekCommandDataOptionOne);
+				ApplicationCommandOptionData seekCommandDataOptionTwo;
+				seekCommandDataOptionTwo.name = "seconds";
+				seekCommandDataOptionTwo.type = ApplicationCommandOptionType::String;
+				seekCommandDataOptionTwo.description = "The number of seconds into the song to seek.";
+				seekCommandDataOptionTwo.required = true;
+				seekCommandData.options.push_back(seekCommandDataOptionTwo);
+				ApplicationCommands::createGlobalApplicationCommandAsync(seekCommandData);
+
 				CreateGlobalApplicationCommandData playCommandData{};
 				playCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
 				playCommandData.dmPermission = false;
