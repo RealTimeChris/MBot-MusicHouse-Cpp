@@ -24,7 +24,7 @@
 set(LOCAL TRUE)
 
 set(VCPKG_ROOT_DIR "C:/vcpkg")
-set(Jsonifier_DIR "C:\Users\Chris\source\repos\Jsonifier\Install\Windows-Release\share\jsonifier")
+#set(Jsonifier_DIR "C:/Users/Chris/source/repos/Jsonifier/Install/Windows-Release/share/jsonifier")
 
 if (WIN32)
 	set(OS "windows")

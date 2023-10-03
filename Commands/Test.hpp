@@ -1,72 +1,63 @@
-// Test.hpp - Header for the "test" command.
-// https://github.com/RealTimeChris
+﻿// test.hpp - header for the "test" command.
+// https://github.com/real_time_chris
 
 #pragma once
 
 #include "../HelperFunctions.hpp"
-#include "RegisterApplicationCommands.hpp"
 
-namespace DiscordCoreAPI {
+namespace discord_core_api {
 
-	class Test : public BaseFunction {
+	class test : public base_function {
 	  public:
-		Test() {
+		test() {
 			this->commandName	  = "test";
-			this->helpDescription = "Testing purposes!";
-			EmbedData msgEmbed{};
+			this->helpDescription = "testing purposes!";
+			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /test!\n------");
-			msgEmbed.setTitle("__**Test Usage:**__");
+			msgEmbed.setTitle("__**test usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("FeFeFe");
+			msgEmbed.setColor("fe_fe_fe");
 			this->helpEmbed = msgEmbed;
 		}
 
-		UniquePtr<BaseFunction> create() {
-			return makeUnique<Test>();
+		unique_ptr<base_function> create() {
+			return makeUnique<test>();
 		}
 
-		void execute(BaseFunctionArguments& argsNew) {
+		void execute(const base_function_arguments& argsNew) {
 			try {
-				jsonifier::vector<Song> searchResults{};
-				GuildData guild{ argsNew.getInteractionData().guildId };
-				GuildMemberCacheData guildMember{ argsNew.getGuildMemberData() };
-				RespondToInputEventData dataPackage0(argsNew.getInputEventData());
-				dataPackage0.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
-				jsonifier::vector<EmbedData> embedsFromSearch;
-				CreateMessageData createMessageData{};
-				auto newEvent = InputEvents::respondToInputEventAsync(dataPackage0).get();
-
+				jsonifier::vector<song> searchResults{};
+				guild_data guild{ argsNew.getInteractionData().guildId };
+				guild_member_cache_data guildMember{ argsNew.getGuildMemberData() };
+				respond_to_input_event_data dataPackage0(argsNew.getInputEventData());
+				dataPackage0.setResponseType(input_event_response_type::Ephemeral_Deferred_Response);
+				jsonifier::vector<embed_data> embedsFromSearch;
+				create_message_data createMessageData{};
+				auto newEvent = input_events::respondToInputEventAsync(dataPackage0).get();
+				auto newArg					= argsNew.getCommandArguments().values["test"].value.operator jsonifier::string();
 				createMessageData.channelId = argsNew.getChannelData().id;
 				for (size_t x = 0; x < 20; ++x) {
-					EmbedData newData{};
-					createMessageData.addContent("Testing: " + jsonifier::toString(x) + "\r\n");
-					Messages::createMessageAsync(createMessageData);
-					newData.description = "Testing: " + jsonifier::toString(x) + "\r\n";
+					embed_data newData{};
+					createMessageData.addContent(":star:");
+					messages::createMessageAsync(createMessageData);
+					newData.description = "testing: " + jsonifier::toString(x) + "\r\n";
 					newData.setColor("fefefe");
 					newData.timeStamp = getTimeAndDate();
 					embedsFromSearch.emplace_back(newData);
 				}
-				jsonifier::vector<CoRoutine<InputEventData, true>> theVector{};
-				for (size_t x = 0; x < 30; ++x) {
-					RespondToInputEventData responseData{ newEvent };
-					responseData.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+				std::cout << "WERE LEAVING LEAVING!" << std::endl;
+				for (size_t x = 0; x < 20; ++x) {
+					respond_to_input_event_data responseData{ newEvent };
+					responseData.setResponseType(input_event_response_type::Ephemeral_Follow_Up_Message);
 					responseData.addMessageEmbed(embedsFromSearch.at(x));
-					InputEvents::respondToInputEventAsync(responseData);
+					input_events::respondToInputEventAsync(responseData);
 				}
-				for (auto& value: theVector) {
-					try {
-						value.get();
-						
-					} catch (DCAException error) {
-						std::cout << "ERROR: " << error.what()<< std::endl;
-					}
-					
-				}
+				std::cout << "WERE LEAVING LEAVING!" << std::endl;
 
 			} catch (const std::runtime_error& error) {
-				std::cout << "Test::execute()" << error.what() << std::endl;
+				std::cout << "test::execute()" << error.what() << std::endl;
 			}
 		}
-		~Test(){};
+		~test(){};
 	};
-}// namespace DiscordCoreAPI
+}// namespace discord_core_api

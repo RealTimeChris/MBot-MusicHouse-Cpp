@@ -1,77 +1,77 @@
-// UserInfo.hpp - Header for the "user info" command.
-// Aug 13, 2021
-// Chris M.
-// https://github.com/RealTimeChris
+// user_info.hpp - header for the "user info" command.
+// aug 13, 2021
+// chris m.
+// https://github.com/real_time_chris
 
 #pragma once
 
 #include "../HelperFunctions.hpp"
 
-namespace DiscordCoreAPI {
+namespace discord_core_api {
 
-	class UserInfo : public BaseFunction {
+	class user_info : public base_function {
 	  public:
-		UserInfo() {
+		user_info() {
 			this->commandName	  = "userinfo";
-			this->helpDescription = "Displays some info about a chosen user.";
-			EmbedData msgEmbed{};
-			msgEmbed.setDescription("------\nEnter /userinfo, or /userinfo @USERMENTION, to display the info of another user.\n------");
-			msgEmbed.setTitle("__**UserCacheData Info Usage:**__");
+			this->helpDescription = "displays some info about a chosen user.";
+			embed_data msgEmbed{};
+			msgEmbed.setDescription("------\nEnter /userinfo, or /userinfo @usermention, to display the info of another user.\n------");
+			msgEmbed.setTitle("__**user_cache_data info usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("FeFeFe");
+			msgEmbed.setColor("fe_fe_fe");
 			this->helpEmbed = msgEmbed;
 		}
 
-		UniquePtr<BaseFunction> create() {
-			return makeUnique<UserInfo>();
+		unique_ptr<base_function> create() {
+			return makeUnique<user_info>();
 		}
 
-		void execute(BaseFunctionArguments& argsNew) {
+		void execute(const base_function_arguments& argsNew) {
 			try {
-				ChannelCacheData channel{ argsNew.getChannelData() };
+				channel_cache_data channel{ argsNew.getChannelData() };
 
-				GuildData guild{ argsNew.getInteractionData().guildId };
+				guild_data guild{ argsNew.getInteractionData().guildId };
 
-				DiscordGuild discordGuild{ managerAgent, guild };
-				Snowflake userId{ std::stoull(argsNew.getCommandArguments().values["user"].value.operator jsonifier::string().data()) };
-				GuildMemberCacheData guildMember = GuildMembers::getCachedGuildMember({ .guildMemberId = userId, .guildId = guild.id });
-				UserCacheData theUser			 = Users::getCachedUser({ .userId = argsNew.getUserData().id });
-				jsonifier::vector<EmbedFieldData> fields;
-				EmbedFieldData field{};
+				discord_guild discordGuild{ managerAgent, guild };
+				snowflake userId{ argsNew.getCommandArguments().values["user"].value.operator size_t() };
+				guild_member_cache_data guildMember = guild_members::getCachedGuildMember({ .guildMemberId = userId, .guildId = guild.id });
+				user_cache_data theUser			 = users::getCachedUser({ .userId = argsNew.getUserData().id });
+				jsonifier::vector<embed_field_data> fields;
+				embed_field_data field{};
 				field.Inline = true;
 				field.value	 = guildMember.getUserData().userName  + "#" + theUser.discriminator;
-				field.name	 = "__User Tag: __";
+				field.name	 = "__User tag: __";
 				fields.emplace_back(field);
-				EmbedFieldData field1{};
+				embed_field_data field1{};
 				field1.Inline = true;
 				field1.value  = guildMember.getUserData().userName;
-				field1.name	  = "__User Name:__";
+				field1.name	  = "__User name:__";
 				fields.emplace_back(field1);
 				if (guildMember.nick == "") {
-					EmbedFieldData field2{};
+					embed_field_data field2{};
 					field2.Inline = true;
 					field2.value  = guildMember.getUserData().userName;
-					field2.name	  = "__Display Name:__";
+					field2.name	  = "__Display name:__";
 					fields.emplace_back(field2);
 				} else {
-					EmbedFieldData field2{};
+					embed_field_data field2{};
 					field2.Inline = true;
 					field2.value  = guildMember.nick;
-					field2.name	  = "__Display Name:__";
+					field2.name	  = "__Display name:__";
 					fields.emplace_back(field2);
 				}
 
-				EmbedFieldData field3{};
+				embed_field_data field3{};
 				field3.Inline = true;
 				field3.value  = guildMember.user.id.operator jsonifier::string();
-				field3.name	  = "__User ID:__";
+				field3.name	  = "__User id:__";
 				fields.emplace_back(field3);
-				EmbedFieldData field5{};
+				embed_field_data field5{};
 				field5.Inline = true;
 				field5.value  = guildMember.user.id.operator jsonifier::string();
-				field5.name	  = "__Created At:__";
+				field5.name	  = "__Created at:__";
 				fields.emplace_back(field5);
-				Permissions permsString							= Permissions{ Permissions::getCurrentChannelPermissions(guildMember, channel) };
+				permissions permsString							= permissions{ permissions::getCurrentChannelPermissions(guildMember, channel) };
 				jsonifier::vector<jsonifier::string> permissionsArray = permsString.displayPermissions();
 				jsonifier::string msgString;
 				for (int32_t x = 0; x < permissionsArray.size(); x += 1) {
@@ -80,7 +80,7 @@ namespace DiscordCoreAPI {
 						msgString += ", ";
 					}
 				}
-				EmbedFieldData field6{};
+				embed_field_data field6{};
 				field6.Inline = false;
 				field6.value  = "";
 				field6.name	  = "__Roles:__";
@@ -92,30 +92,30 @@ namespace DiscordCoreAPI {
 					}
 				}
 				fields.emplace_back(field6);
-				EmbedFieldData field7{};
+				embed_field_data field7{};
 				field7.Inline = false;
 				field7.value  = msgString;
 				field7.name	  = "__Permissions:__";
 				fields.emplace_back(field7);
 
-				EmbedData msgEmbed;
-				msgEmbed.setColor(jsonifier::string{ discordGuild.data.borderColor });
+				embed_data msgEmbed;
+				msgEmbed.setColor("fefefe");
 				msgEmbed.setTimeStamp(getTimeAndDate());
-				msgEmbed.setTitle("__**UserCacheData Info:**__");
-				msgEmbed.setImage(guildMember.getGuildMemberImageUrl(GuildMemberImageTypes::Avatar) + "?size=4096");
-				msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
+				msgEmbed.setTitle("__**user_cache_data info:**__");
+				msgEmbed.setImage(guildMember.getGuildMemberImageUrl(guild_member_image_types::Avatar) + "?size=4096");
+				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 				msgEmbed.fields = fields;
-				RespondToInputEventData dataPackage02(argsNew.getInputEventData());
+				respond_to_input_event_data dataPackage02(argsNew.getInputEventData());
 				dataPackage02.addMessageEmbed(msgEmbed);
-				dataPackage02.setResponseType(InputEventResponseType::Interaction_Response);
-				auto eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get();
+				dataPackage02.setResponseType(input_event_response_type::Interaction_Response);
+				auto eventNew = input_events::respondToInputEventAsync(dataPackage02).get();
 
 				return;
 			} catch (const std::runtime_error& error) {
-				std::cout << "UserInfo::execute()" << error.what() << std::endl;
+				std::cout << "user_info::execute()" << error.what() << std::endl;
 			}
 		}
-		~UserInfo(){};
+		~user_info(){};
 	};
 
-}// namespace DiscordCoreAPI
+}// namespace discord_core_api

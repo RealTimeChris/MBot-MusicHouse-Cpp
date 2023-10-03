@@ -1,38 +1,38 @@
-// Np.hpp - Header for the "now playing" command.
-// Sep 4, 2021
-// Chris M.
-// https://gibhub.com/RealTimeChris
+// np.hpp - header for the "Now Playing" command.
+// sep 4, 2021
+// chris m.
+// https://gibhub.com/real_time_chris
 
 #pragma once
 
 #include "../HelperFunctions.hpp"
 
-namespace DiscordCoreAPI {
+namespace discord_core_api {
 
-	class Np : public BaseFunction {
+	class np : public base_function {
 	  public:
-		Np() {
+		np() {
 			this->commandName	  = "np";
-			this->helpDescription = "Displays the currently playing song.";
-			EmbedData msgEmbed{};
+			this->helpDescription = "displays the currently playing song.";
+			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /np!\n------");
-			msgEmbed.setTitle("__**Now Playing Usage:**__");
+			msgEmbed.setTitle("__**Now Playing usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("FeFeFe");
+			msgEmbed.setColor("fe_fe_fe");
 			this->helpEmbed = msgEmbed;
 		}
 
-		UniquePtr<BaseFunction> create() {
-			return makeUnique<Np>();
+		unique_ptr<base_function> create() {
+			return makeUnique<np>();
 		}
 
-		void execute(BaseFunctionArguments& argsNew) {
+		void execute(const base_function_arguments& argsNew) {
 			try {
-				ChannelCacheData channel{ argsNew.getChannelData() };
+				channel_cache_data channel{ argsNew.getChannelData() };
 
-				GuildData guild{ argsNew.getInteractionData().guildId };
+				guild_data guild{ argsNew.getInteractionData().guildId };
 
-				DiscordGuild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ managerAgent, guild };
 
 				bool checkIfAllowedInChannel = checkIfAllowedPlayingInChannel(argsNew.getInputEventData(), discordGuild);
 
@@ -40,7 +40,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				GuildMemberCacheData guildMember{ argsNew.getGuildMemberData() };
+				guild_member_cache_data guildMember{ argsNew.getGuildMemberData() };
 
 				bool doWeHaveControl = checkIfWeHaveControl(argsNew.getInputEventData(), discordGuild, guildMember);
 
@@ -48,16 +48,15 @@ namespace DiscordCoreAPI {
 					return;
 				}
 				discordGuild.getDataFromDB(managerAgent);
-				EmbedData newEmbed{};
-				newEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
+				embed_data newEmbed{};
+				newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 				newEmbed.setDescription("__**Title:**__ [" + discordGuild.data.playlist.currentSong.songTitle + "](" + discordGuild.data.playlist.currentSong.viewUrl + ")" +
-										"\n__**Description:**__ " + discordGuild.data.playlist.currentSong.description + "\n__**Duration:**__ " +
-										discordGuild.data.playlist.currentSong.duration + "\n__**Added By:**__ <@!" + discordGuild.data.playlist.currentSong.addedByUserId + "> (" +
-										discordGuild.data.playlist.currentSong.addedByUserName + ")");
+					"\n__**Description:**__ " + discordGuild.data.playlist.currentSong.description + "\n__**Duration:**__ " + discordGuild.data.playlist.currentSong.duration +
+					"\n__**Added By:**__ <@!" + discordGuild.data.playlist.currentSong.addedByUserId + ">");
 				newEmbed.setImage(discordGuild.data.playlist.currentSong.thumbnailUrl);
 				newEmbed.setTimeStamp(getTimeAndDate());
 				newEmbed.setTitle("__**Now Playing:**__");
-				newEmbed.setColor(jsonifier::string{ discordGuild.data.borderColor });
+				newEmbed.setColor("fefefe");
 				if (discordGuild.data.playlist.isLoopAllEnabled && discordGuild.data.playlist.isLoopSongEnabled) {
 					newEmbed.setFooter("✅ Loop-All, ✅ Loop-Song");
 				}
@@ -70,18 +69,18 @@ namespace DiscordCoreAPI {
 				if (!discordGuild.data.playlist.isLoopAllEnabled && !discordGuild.data.playlist.isLoopSongEnabled) {
 					newEmbed.setFooter("❌ Loop-All, ❌ Loop-Song");
 				}
-				RespondToInputEventData dataPackage(argsNew.getInputEventData());
-				dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
+				respond_to_input_event_data dataPackage(argsNew.getInputEventData());
+				dataPackage.setResponseType(input_event_response_type::Interaction_Response);
 				dataPackage.addMessageEmbed(newEmbed);
-				auto newEvent02 = InputEvents::respondToInputEventAsync(dataPackage).get();
+				auto newEvent02 = input_events::respondToInputEventAsync(dataPackage).get();
 
 
 				return;
 			} catch (const std::runtime_error& error) {
-				std::cout << "NP:execute()" << error.what() << std::endl;
+				std::cout << "np:execute()" << error.what() << std::endl;
 			}
 		}
-		~Np(){};
+		~np(){};
 	};
 
-}// namespace DiscordCoreAPI
+}// namespace discord_core_api

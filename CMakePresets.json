@@ -9,7 +9,7 @@
         "type": "equals"
       },
       "installDir": "${sourceDir}/Install/${presetName}",
-      "description": "Target Windows with the Visual Studio development environment.",
+      "Description": "Target Windows with the Visual Studio development environment.",
       "hidden": true,
       "name": "Windows-Base"
     },
@@ -19,7 +19,7 @@
         "strategy": "external"
       },
       "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" },
-      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Release)",
+      "Description": "Target Windows (64-bit) with the Visual Studio development environment. (Release)",
       "inherits": "Windows-Base",
       "name": "Windows-Release"
     },
@@ -29,7 +29,7 @@
         "strategy": "external"
       },
       "cacheVariables": { "CMAKE_BUILD_TYPE": "Release", "DEV": true },
-      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Release)",
+      "Description": "Target Windows (64-bit) with the Visual Studio development environment. (Release)",
       "inherits": "Windows-Base",
       "name": "Windows-Release-Dev"
     },
@@ -39,7 +39,7 @@
         "value": "x64"
       },
       "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" },
-      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
+      "Description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
       "inherits": "Windows-Base",
       "name": "Windows-Debug"
     },
@@ -49,7 +49,7 @@
         "strategy": "external"
       },
       "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "DEV": true },
-      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
+      "Description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
       "inherits": "Windows-Base",
       "name": "Windows-Debug-Dev"
     },
@@ -62,7 +62,7 @@
         "ASAN_ENABLED": "TRUE",
         "CMAKE_BUILD_TYPE": "Release"
       },
-      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Release)",
+      "Description": "Target Windows (64-bit) with the Visual Studio development environment. (Release)",
       "inherits": "Windows-Base",
       "name": "Windows-Release-Asan"
     },
@@ -75,7 +75,7 @@
         "ASAN_ENABLED": "TRUE",
         "CMAKE_BUILD_TYPE": "Debug"
       },
-      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
+      "Description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
       "inherits": "Windows-Base",
       "name": "Windows-Debug-Asan"
     },
@@ -86,7 +86,7 @@
         "rhs": "Linux",
         "type": "equals"
       },
-      "description": "Target Linux with the Visual Studio development environment.",
+      "Description": "Target Linux with the Visual Studio development environment.",
       "generator": "Unix Makefiles",
       "hidden": true,
       "name": "Linux-Base"
@@ -97,7 +97,7 @@
         "strategy": "external"
       },
       "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" },
-      "description": "Target Linux (64-bit) with the Visual Studio development environment. (Release)",
+      "Description": "Target Linux (64-bit) with the Visual Studio development environment. (Release)",
       "inherits": "Linux-Base",
       "name": "Linux-Release"
     },
@@ -107,7 +107,7 @@
         "value": "x64"
       },
       "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" },
-      "description": "Target Linux (64-bit) with the Visual Studio development environment. (Debug)",
+      "Description": "Target Linux (64-bit) with the Visual Studio development environment. (Debug)",
       "inherits": "Linux-Base",
       "name": "Linux-Debug"
     },
@@ -120,7 +120,7 @@
         "ASAN_ENABLED": "TRUE",
         "CMAKE_BUILD_TYPE": "Release"
       },
-      "description": "Target Linux (64-bit) with the Visual Studio development environment. (Release)",
+      "Description": "Target Linux (64-bit) with the Visual Studio development environment. (Release)",
       "inherits": "Linux-Base",
       "name": "Linux-Release-Asan"
     },
@@ -133,7 +133,7 @@
         "ASAN_ENABLED": "TRUE",
         "CMAKE_BUILD_TYPE": "Debug"
       },
-      "description": "Target Linux (64-bit) with the Visual Studio development environment. (Debug)",
+      "Description": "Target Linux (64-bit) with the Visual Studio development environment. (Debug)",
       "inherits": "Linux-Base",
       "name": "Linux-Debug-Asan"
     }

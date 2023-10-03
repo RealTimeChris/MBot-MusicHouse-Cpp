@@ -22,13 +22,21 @@
 # May 13, 2021
 # https://discordcoreapi.com
 # Set this value...
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-	set(DiscordCoreAPI_DIR "C:/Users/Chris/source/repos/DiscordCoreAPI/Install/Windows-Debug-Dev/share/discordcoreapi/")
+if (ASAN_ENABLED)
+	if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+		set(DiscordCoreAPI_DIR "C:/Users/Chris/source/repos/DiscordCoreAPI/Install/Windows-Debug-Asan/share/discordcoreapi/")
+	else()
+		set(DiscordCoreAPI_DIR "C:/Users/Chris/source/repos/DiscordCoreAPI/Install/Windows-Release-Asan/share/discordcoreapi/")
+	endif()
 else()
-	set(DiscordCoreAPI_DIR "C:/Users/Chris/source/repos/DiscordCoreAPI/Install/Windows-Release-Dev/share/discordcoreapi/")
+	if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+		set(DiscordCoreAPI_DIR "C:/Users/Chris/source/repos/DiscordCoreAPI/Install/Windows-Debug-Dev/share/discordcoreapi/")
+	else()
+		set(DiscordCoreAPI_DIR "C:/Users/Chris/source/repos/DiscordCoreAPI/Install/Windows-Release-Dev/share/discordcoreapi/")
+	endif()
 endif()
 
-include("${CMAKE_SOURCE_DIR}/CMake/GenerateProductVersion.cmake")
+include("GenerateProductVersion")
 generate_product_version(
 	PRODUCT_INFO
 	NAME "${PROJECT_NAME}"
@@ -42,7 +50,7 @@ generate_product_version(
 
 add_executable(
 	"${PROJECT_NAME}"
-	"../main.cpp"
+	"../MusicHouse.cpp"
 	"${PRODUCT_INFO}"
 )
 

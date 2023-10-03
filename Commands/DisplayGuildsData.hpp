@@ -1,69 +1,69 @@
-// DisplayGuildsData.hpp - Header for the "display guilds data" command.
-// Jun 22, 2021
-// Chris M.
-// https://github.com/RealTimeChris
+// display_guilds_data.hpp - header for the "display guilds data" command.
+// jun 22, 2021
+// chris m.
+// https://github.com/real_time_chris
 
 #pragma once
 
 #include "../HelperFunctions.hpp"
 
-namespace DiscordCoreAPI {
+namespace discord_core_api {
 
-	class DisplayGuildsData : public BaseFunction {
+	class display_guilds_data : public base_function {
 	  public:
-		DisplayGuildsData() {
+		display_guilds_data() {
 			this->commandName	  = "displayguildsdata";
-			this->helpDescription = "Displays some info about the servers that this bot is in.";
-			EmbedData msgEmbed{};
+			this->helpDescription = "displays some info about the servers that this bot is in.";
+			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nEnter /displayguildsdata.\n------");
-			msgEmbed.setTitle("__**Display Guild's Data Usage:**__");
+			msgEmbed.setTitle("__**display guild's data usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("FeFeFe");
+			msgEmbed.setColor("fe_fe_fe");
 			this->helpEmbed = msgEmbed;
 		}
 
-		UniquePtr<BaseFunction> create() {
-			return makeUnique<DisplayGuildsData>();
+		unique_ptr<base_function> create() {
+			return makeUnique<display_guilds_data>();
 		}
 
-		void execute(BaseFunctionArguments& argsNew) {
+		void execute(const base_function_arguments& argsNew) {
 			try {
-				ChannelCacheData channel{ argsNew.getChannelData() };
+				channel_cache_data channel{ argsNew.getChannelData() };
 
 				int32_t currentCount				  = 0;
-				jsonifier::vector<GuildData> theCache = Guilds::getAllGuildsAsync();
-				RespondToInputEventData dataPackage(argsNew.getInputEventData());
-				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
-				auto inputEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
+				jsonifier::vector<guild_data> theCache = guilds::getAllGuildsAsync();
+				respond_to_input_event_data dataPackage(argsNew.getInputEventData());
+				dataPackage.setResponseType(input_event_response_type::Ephemeral_Deferred_Response);
+				auto inputEvent = input_events::respondToInputEventAsync(dataPackage).get();
 				for (auto& valueNew : theCache) {
-					jsonifier::string msgString = "__Guild Name:__ " + valueNew.name + "\n";
-					msgString += "__Guild ID:__ " + valueNew.id + "\n";
-					msgString += "__Member Count:__ " + jsonifier::toString(valueNew.memberCount) + "\n";
+					jsonifier::string msgString = "__Guild name:__ " + valueNew.name + "\n";
+					msgString += "__Guild id:__ " + valueNew.id + "\n";
+					msgString += "__Member count:__ " + jsonifier::toString(valueNew.memberCount) + "\n";
 
-					UserCacheData owner = Users::getCachedUser({ valueNew.ownerId });
-					msgString += jsonifier::string{ "__Guild Owner:__ <@!" } + jsonifier::string{ valueNew.ownerId } + jsonifier::string{ "> " } + jsonifier::string{ owner.userName } +
+					user_cache_data owner = users::getCachedUser({ valueNew.ownerId });
+					msgString += jsonifier::string{ "__Guild owner:__ <@!" } + jsonifier::string{ valueNew.ownerId } + jsonifier::string{ "> " } + jsonifier::string{ owner.userName } +
 						jsonifier::string{ "#" } + jsonifier::string{ owner.discriminator } + jsonifier::string{ "\n" };
-					msgString += "__Created At:__ " + valueNew.id.getCreatedAtTimeStamp();
+					msgString += "__Created at:__ " + valueNew.id.getCreatedAtTimeStamp();
 
-					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
-					msgEmbed.setColor("FEFEFE");
-					msgEmbed.setImage(valueNew.getGuildImageUrl(GuildImageTypes::Icon));
-					msgEmbed.setTitle("__**Guild Data " + jsonifier::toString(currentCount + 1) + " of " + jsonifier::toString(theCache.size()) + "**__");
+					embed_data msgEmbed{};
+					msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed.setColor("fefefe");
+					msgEmbed.setImage(valueNew.getGuildImageUrl(guild_image_types::Icon));
+					msgEmbed.setTitle("__**guild data " + jsonifier::toString(currentCount + 1) + " of " + jsonifier::toString(theCache.size()) + "**__");
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setDescription(msgString);
 
-					RespondToInputEventData dataPackage02(inputEvent);
-					dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+					respond_to_input_event_data dataPackage02(inputEvent);
+					dataPackage02.setResponseType(input_event_response_type::Ephemeral_Follow_Up_Message);
 					dataPackage02.addMessageEmbed(msgEmbed);
-					inputEvent = InputEvents::respondToInputEventAsync(dataPackage02).get();
+					inputEvent = input_events::respondToInputEventAsync(dataPackage02).get();
 					currentCount += 1;
 				};
 				return;
 			} catch (const std::runtime_error& error) {
-				std::cout << "DisplayGuildsData::execute()" << error.what() << std::endl;
+				std::cout << "display_guilds_data::execute()" << error.what() << std::endl;
 			}
 		};
-		~DisplayGuildsData(){};
+		~display_guilds_data(){};
 	};
-}// namespace DiscordCoreAPI
+}// namespace discord_core_api
