@@ -27,6 +27,7 @@
 #include <mongocxx/database.hpp>
 #include <mongocxx/client.hpp>
 #include <mongocxx/pool.hpp>
+#include <bsoncxx/json.hpp>
 
 #include <discordcoreapi/Index.hpp>
 
@@ -186,8 +187,7 @@ namespace DiscordCoreAPI {
 					case (DatabaseWorkloadType::Discord_Guild_Write): {
 						auto doc = DatabaseManagerAgent::convertGuildDataToDBDoc(workload.guildData);
 						bsoncxx::builder::basic::document document{};
-						document.append(
-							bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<uint64_t>(workload.guildData.guildId))));
+						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<uint64_t>(workload.guildData.guildId))));
 						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
 							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
 						if (!resultNewer) {
@@ -337,20 +337,20 @@ namespace DiscordCoreAPI {
 								});
 							};
 						}));
-						subDocument02.append(kvp("addedByUserId", bsoncxx::types::b_int64(static_cast<uint64_t>(discordGuildData.playlist.currentSong.addedByUserId))),
-							kvp("contentLength", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.playlist.currentSong.contentLength))),
-							kvp("addedByUserName", bsoncxx::types::b_utf8(discordGuildData.playlist.currentSong.addedByUserName)),
-							kvp("description", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.description }),
-							kvp("secondDownloadUrl", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.secondDownloadUrl }),
-							kvp("duration", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.duration }),
-							kvp("songTitle", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.songTitle }),
-							kvp("firstDownloadUrl", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.firstDownloadUrl }),
-							kvp("thumbnailUrl", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.thumbnailUrl }),
-							kvp("type", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.playlist.currentSong.type))),
-							kvp("songId", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.songId }),
-							kvp("viewUrl", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.viewUrl }));
+						subDocument02.append(kvp("addedByUserId", bsoncxx::types::b_int64(static_cast<uint64_t>(discordGuildData.playlist.currentSong.addedByUserId))));
+						subDocument02.append(kvp("contentLength", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.playlist.currentSong.contentLength))));
+						subDocument02.append(kvp("addedByUserName", bsoncxx::types::b_utf8(discordGuildData.playlist.currentSong.addedByUserName)));
+						subDocument02.append(kvp("description", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.description }));
+						subDocument02.append(kvp("secondDownloadUrl", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.secondDownloadUrl }));
+						subDocument02.append(kvp("duration", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.duration }));
+						subDocument02.append(kvp("songTitle", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.songTitle }));
+						subDocument02.append(kvp("firstDownloadUrl", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.firstDownloadUrl }));
+						subDocument02.append(kvp("thumbnailUrl", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.thumbnailUrl }));
+						subDocument02.append(kvp("type", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.playlist.currentSong.type))));
+						subDocument02.append(kvp("songId", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.songId }));
+						subDocument02.append(kvp("viewUrl", bsoncxx::types::b_utf8{ discordGuildData.playlist.currentSong.viewUrl }));
 					}));
-
+					std::cout << "CURRENT SIZE (REAL): " << discordGuildData.playlist.songQueue.size() << std::endl;
 					subDocument01.append(kvp("songList", [&](bsoncxx::builder::basic::sub_array subArray01) {
 						for (auto& value: discordGuildData.playlist.songQueue) {
 							subArray01.append([&](bsoncxx::builder::basic::sub_document subDocument02) {
@@ -408,7 +408,10 @@ namespace DiscordCoreAPI {
 					getValueIfNotNull(downloadUrl.urlPath, value02, "urlPath");
 					guildData.playlist.currentSong.finalDownloadUrls.emplace_back(downloadUrl);
 				}
+				std::cout << "CURRENT DATA: " << bsoncxx::to_json(docValue.view()) << std::endl;
 				for (auto& value: docValue.view()["playlist"].get_document().view()["songList"].get_array().value) {
+					std::cout << "CURRENT SIZE: "
+							  << ( bool )docValue.view()["playlist"].get_document().view()["songList"].get_array().operator bsoncxx::v_noabi::array::view().empty() << std::endl;
 					Song newSong{};
 					for (auto& value02: value["downloadUrls"].get_array().value) {
 						DownloadUrl downloadUrl;
