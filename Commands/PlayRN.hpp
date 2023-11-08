@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 
@@ -16,9 +16,9 @@ namespace discord_core_api {
 			this->helpDescription = "add a song to the front of the queue and play it if nothing is playing.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /playrn songname or url.\n------");
-			msgEmbed.setTitle("__**play_rn usage:**__");
+			msgEmbed.setTitle("__**play_rn Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -31,7 +31,7 @@ namespace discord_core_api {
 				channel_cache_data channel{ argsNew.getChannelData() };
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
-				discord_guild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ guild };
 
 				bool areWeAllowed = checkIfAllowedPlayingInChannel(argsNew.getInputEventData(), discordGuild);
 
@@ -49,10 +49,10 @@ namespace discord_core_api {
 
 				input_event_data newEvent = argsNew.getInputEventData();
 
-				uint64_t currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-				uint64_t previousPlayedTime{ 0 };
+				int64_t currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+				int64_t previousPlayedTime{ 0 };
 				if (play::timeOfLastPlay.contains(newEvent.getInteractionData().guildId.operator const uint64_t&())) {
-					previousPlayedTime = play::timeOfLastPlay.at(newEvent.getInteractionData().guildId.operator const uint64_t&());
+					previousPlayedTime = static_cast<int64_t>(play::timeOfLastPlay.at(newEvent.getInteractionData().guildId.operator const uint64_t&()));
 				}
 
 				if (currentTime - previousPlayedTime < 5000) {
@@ -163,7 +163,7 @@ namespace discord_core_api {
 					}
 				}
 				jsonifier::vector<embed_data> embedsFromSearch{};
-				int32_t x{ 0 };
+				uint64_t x{ 0 };
 				for (song& value : searchResults) {
 					x += 1;
 					unique_ptr<embed_data> newEmbed{ makeUnique<embed_data>() };
@@ -178,7 +178,7 @@ namespace discord_core_api {
 				}
 
 				if (embedsFromSearch.size() > 0) {
-					discordGuild.getDataFromDB(managerAgent);
+					discordGuild.getDataFromDB();
 					song songNew			 = searchResults.at(0);
 					songNew.addedByUserId = guildMember.user.id;
 
@@ -214,7 +214,7 @@ namespace discord_core_api {
 
 					discordGuild.data.playlist.songQueue   = songVector;
 					discordGuild.data.playlist.currentSong = song();
-					discordGuild.writeDataToDB(managerAgent);
+					discordGuild.writeDataToDB();
 				}
 				auto channelId = argsNew.getInputEventData().getChannelData().id;
 				auto theTask   = [=](song_completion_event_data eventData) mutable -> co_routine<void, false> {
@@ -222,14 +222,14 @@ namespace discord_core_api {
 					  co_await newThreadAwaitable<void, false>();
 					  user_cache_data userNew = users::getCachedUser({ eventData.guildMemberId });
 					  std::this_thread::sleep_for(150ms);
-					  discordGuild.getDataFromDB(managerAgent);
+					  discordGuild.getDataFromDB();
 					  if (discordGuild.data.playlist.songQueue.size()) {
 						  unique_ptr<embed_data> newEmbed{ makeUnique<embed_data>() };
 						  if (!eventData.wasItAFail) {
-							  discordGuild.getDataFromDB(managerAgent);
+							  discordGuild.getDataFromDB();
 							  discordGuild.data.playlist.sendNextSong();
 							  discord_core_client::getSongAPI(guild.id).play(discordGuild.data.playlist.currentSong);
-							  discordGuild.writeDataToDB(managerAgent);
+							  discordGuild.writeDataToDB();
 							  newEmbed->setAuthor(userNew.userName, userNew.getUserImageUrl(user_image_types::Avatar));
 							  newEmbed->setDescription("__**Title:**__ [" + discordGuild.data.playlist.currentSong.songTitle + "](" + discordGuild.data.playlist.currentSong.viewUrl +
 													   ")" + "\n__**Description:**__ " + discordGuild.data.playlist.currentSong.description + "\n__**Duration:**__ " +
@@ -255,14 +255,14 @@ namespace discord_core_api {
 							  dataPackage02.addMessageEmbed(*newEmbed);
 							  messages::createMessageAsync(dataPackage02).get();
 						  } else {
-							  discordGuild.getDataFromDB(managerAgent);
+							  discordGuild.getDataFromDB();
 							  discordGuild.data.playlist.sendNextSong();
 							  discord_core_client::getSongAPI(guild.id).play(discordGuild.data.playlist.currentSong);
-							  discordGuild.writeDataToDB(managerAgent);
+							  discordGuild.writeDataToDB();
 							  newEmbed->setAuthor(userNew.userName, userNew.getUserImageUrl(user_image_types::Avatar));
 							  newEmbed->setDescription("__**it appears as though there was an error when trying to play the previous track!**__");
 							  newEmbed->setTimeStamp(getTimeAndDate());
-							  newEmbed->setTitle("__**Playing error:**__");
+							  newEmbed->setTitle("__**Playing Error:**__");
 							  newEmbed->setColor("fe0000");
 							  if (discordGuild.data.playlist.isLoopAllEnabled && discordGuild.data.playlist.isLoopSongEnabled) {
 								  newEmbed->setFooter("✅ Loop-All, ✅ Loop-Song");
@@ -305,7 +305,7 @@ namespace discord_core_api {
 							  dataPackage03.addMessageEmbed(*newEmbed);
 							  messages::createMessageAsync(dataPackage03).get();
 						  }
-						  discordGuild.writeDataToDB(managerAgent);
+						  discordGuild.writeDataToDB();
 					  } else {
 						  unique_ptr<embed_data> newEmbed{ makeUnique<embed_data>() };
 						  newEmbed->setAuthor(userNew.userName, userNew.getUserImageUrl(user_image_types::Avatar));
@@ -332,10 +332,10 @@ namespace discord_core_api {
 				discord_core_client::getSongAPI(guild.id).onSongCompletion(theTask);
 				if (discordGuild.data.playlist.songQueue.size()) {
 					discord_core_client::getSongAPI(guild.id).stop();
-					discordGuild.getDataFromDB(managerAgent);
+					discordGuild.getDataFromDB();
 					discordGuild.data.playlist.sendNextSong();
 					discord_core_client::getSongAPI(guild.id).play(discordGuild.data.playlist.currentSong);
-					discordGuild.writeDataToDB(managerAgent);
+					discordGuild.writeDataToDB();
 					unique_ptr<embed_data> newEmbed{ makeUnique<embed_data>() };
 					newEmbed->setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 					newEmbed->setDescription("__**Title:**__ [" + discordGuild.data.playlist.currentSong.songTitle + "](" + discordGuild.data.playlist.currentSong.viewUrl + ")" +

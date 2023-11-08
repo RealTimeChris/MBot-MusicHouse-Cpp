@@ -14,6 +14,7 @@
 #include "LoopSong.hpp"
 #include "Np.hpp"
 #include "Play.hpp"
+#include "PlaySearch.hpp"
 #include "PlayQ.hpp"
 #include "PlayRN.hpp"
 #include "Pause.hpp"

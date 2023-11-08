@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 
@@ -13,12 +13,12 @@ namespace discord_core_api {
 	  public:
 		help() {
 			this->commandName	  = "help";
-			this->helpDescription = "a help command for this bot!";
+			this->helpDescription = "A help command for this bot!";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /help, and follow the instructions!\n------");
-			msgEmbed.setTitle("__**help usage:**__");
+			msgEmbed.setTitle("__**Help Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -34,15 +34,15 @@ namespace discord_core_api {
 				while (1) {
 					respond_to_input_event_data responseData{ newEvent01 };
 					jsonifier::vector<jsonifier::vector<select_option_data>> selectOptions;
-					int32_t counter{ 0 };
-					int32_t currentHelpPage{ 0 };
+					uint64_t counter{ 0 };
+					uint64_t currentHelpPage{ 0 };
 					for (auto& [key, value] : discord_core_client::getInstance()->getCommandController().getFunctions()) {
 						if (counter % 24 == 0) {
 							selectOptions.emplace_back(jsonifier::vector<select_option_data>());
 							currentHelpPage += 1;
 						}
 						jsonifier::string newString;
-						newString.push_back(( char )toupper(value->commandName[0]));
+						newString.emplace_back(( char )toupper(value->commandName[0]));
 						newString += value->commandName.substr(1, value->commandName.size() - 1);
 						select_option_data newData;
 						newData.label		= newString;
@@ -62,11 +62,11 @@ namespace discord_core_api {
 						if (doWeContinue) {
 							continue;
 						}
-						selectOptions.at((int64_t)currentHelpPage - (int64_t)1).emplace_back(newData);
+						selectOptions.at(currentHelpPage - 1).emplace_back(newData);
 						counter += 1;
 					}
 					select_option_data newData;
-					newData.label		= "go back";
+					newData.label		= "Go Back";
 					newData.description = "go back to the previous menu.";
 					newData.value		= "go back";
 					newData.emoji.name	= "❌";
@@ -76,36 +76,36 @@ namespace discord_core_api {
 						selectOptionsNew.emplace_back(value);
 					}
 
-					int32_t counter02{ 0 };
+					uint64_t counter02{ 0 };
 					jsonifier::string messageNew = "------\nSelect which page of help items you would like to view, by clicking a button below!\n------";
 					embed_data newEmbed{};
 					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
-					newEmbed.setColor("fe_fe_fe");
+					newEmbed.setColor("fefefe");
 					newEmbed.setTimeStamp(getTimeAndDate());
 					newEmbed.setDescription(messageNew);
 					newEmbed.setTitle("__**" + static_cast<jsonifier::string>(discord_core_client::getInstance()->getBotUser().userName) + " help: front page**__");
 
 					jsonifier::string msgString = "------\nHello! how are you doing today?! i'm " + static_cast<jsonifier::string>(discord_core_client::getInstance()->getBotUser().userName) +
 											" and i'm here to help you out!\n" +
-											"please, select one of my commands from the drop-down menu below, to gain more information about them! (or select 'go back' "
+											"Please, select one of my commands from the drop-down menu below, to gain more information about them! (or select 'go back' "
 											"to go back "
 											"to the previous menu)\n------";
 					input_event_data newEvent{};
 					jsonifier::vector<jsonifier::string> numberEmojiNames{
-						"✅",
-						"🍬",
-						"🅱",
-						"❌",
+						jsonifier::string{ "✅" },
+						jsonifier::string{ "🍬" },
+						jsonifier::string{ "🅱" },
+						jsonifier::string{ "❌" },
 					};
 					jsonifier::vector<jsonifier::string> numberEmojiId;
 
 					responseData.addMessageEmbed(newEmbed);
-					for (uint32_t x = 0; x < selectOptionsNew.size(); x += 1) {
-						jsonifier::string customId{ "select_page_" + jsonifier::toString(x) };
+					for (uint64_t x = 0; x < selectOptionsNew.size(); x += 1) {
+						jsonifier::string customId{ "select_page" + jsonifier::toString(x) };
 						responseData.addButton(false, customId, jsonifier::toString(x), button_style::Success, numberEmojiNames.at(x));
 						numberEmojiId.emplace_back(customId);
 					}
-					responseData.addButton(false, "exit", "exit", button_style::Danger, "❌");
+					responseData.addButton(false, "exit", "Exit", button_style::Danger, "❌");
 					if (isItFirst) {
 						responseData.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
 						isItFirst  = false;
@@ -120,25 +120,25 @@ namespace discord_core_api {
 					embedData->setColor("fefefe");
 					embedData->setTitle("__**Permissions Issue:**__");
 					embedData->setTimeStamp(getTimeAndDate());
-					embedData->setDescription("sorry, but that button can only be pressed by <@" + argsNew.getUserData().id + ">!");
+					embedData->setDescription("Sorry, but that button can only be pressed by <@" + argsNew.getUserData().id + ">!");
 					createResponseData->addMessageEmbed(*embedData);
 					createResponseData->setResponseType(interaction_callback_type::Channel_Message_With_Source);
 					createResponseData->setFlags(64);
 					auto buttonData = button->collectButtonData(false, 120000, 1, *createResponseData, argsNew.getUserData().id).get();
-					int32_t counter03{ 0 };
+					uint64_t counter03{ 0 };
 					jsonifier::vector<respond_to_input_event_data> editInteractionResponseData00;
 					for (auto& value : selectOptionsNew) {
 						embed_data msgEmbed00;
 						msgEmbed00.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
-						msgEmbed00.setColor("fe_fe_fe");
+						msgEmbed00.setColor("fefefe");
 						msgEmbed00.setTimeStamp(getTimeAndDate());
 						msgEmbed00.setDescription(msgString);
-						msgEmbed00.setTitle("__**" + static_cast<jsonifier::string>(discord_core_client::getInstance()->getBotUser().userName) + " help: page " + jsonifier::toString(counter03 + 1) +
+						msgEmbed00.setTitle("__**" + static_cast<jsonifier::string>(discord_core_client::getInstance()->getBotUser().userName) + " Help: Page " + jsonifier::toString(counter03 + 1) +
 											" of " + jsonifier::toString(selectOptions.size()) + "**__");
 						respond_to_input_event_data responseData03(*buttonData.at(0).interactionData);
 						responseData03.setResponseType(input_event_response_type::Edit_Interaction_Response);
 						responseData03.addMessageEmbed(msgEmbed00);
-						responseData03.addSelectMenu(false, "help_menu", value, "commands", 1, 1, select_menu_type::String_Select);
+						responseData03.addSelectMenu(false, "help_menu", value, "Commands", 1, 1, select_menu_type::String_Select);
 						editInteractionResponseData00.emplace_back(responseData03);
 						counter03 += 1;
 					}
@@ -146,10 +146,10 @@ namespace discord_core_api {
 						if (buttonData.at(0).buttonId == "exit" || buttonData.at(0).buttonId == "empty") {
 							embed_data msgEmbed00;
 							msgEmbed00.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
-							msgEmbed00.setColor("fe_fe_fe");
+							msgEmbed00.setColor("fefefe");
 							msgEmbed00.setTimeStamp(getTimeAndDate());
 							msgEmbed00.setDescription(messageNew);
-							msgEmbed00.setTitle("__**" + static_cast<jsonifier::string>(discord_core_client::getInstance()->getBotUser().userName) + " help: page " +
+							msgEmbed00.setTitle("__**" + static_cast<jsonifier::string>(discord_core_client::getInstance()->getBotUser().userName) + " Help: Page " +
 												jsonifier::toString(counter03 + 1) + " of " + jsonifier::toString(selectOptions.size()) + "**__");
 							respond_to_input_event_data responseData03(*buttonData.at(0).interactionData);
 							responseData03.setResponseType(input_event_response_type::Edit_Interaction_Response);
@@ -158,7 +158,7 @@ namespace discord_core_api {
 							break;
 						}
 						counter02 = 0;
-						for (int32_t y = 0; y < numberEmojiId.size(); y += 1) {
+						for (uint64_t y = 0; y < numberEmojiId.size(); y += 1) {
 							if (buttonData.at(0).buttonId == numberEmojiId.at(y)) {
 								counter02 = y;
 								break;
@@ -180,12 +180,12 @@ namespace discord_core_api {
 						respond_to_input_event_data responseData02(*selectMenuReturnData.at(0).interactionData);
 						responseData02.setResponseType(input_event_response_type::Edit_Interaction_Response);
 						responseData02.addMessageEmbed(msgEmbed);
-						for (uint32_t x = 0; x < selectOptionsNew.size(); x += 1) {
-							jsonifier::string customId{ "select_page_" + jsonifier::toString(x) };
+						for (uint64_t x = 0; x < selectOptionsNew.size(); x += 1) {
+							jsonifier::string customId{ "select_page" + jsonifier::toString(x) };
 							responseData02.addButton(false, customId, jsonifier::toString(x), button_style::Success, numberEmojiNames.at(x));
 							numberEmojiId.emplace_back(customId);
 						}
-						responseData02.addButton(false, "exit", "exit", button_style::Danger, "❌");
+						responseData02.addButton(false, "exit", "Exit", button_style::Danger, "❌");
 						newEvent = input_events::respondToInputEventAsync(responseData02).get();
 						continue;
 					}
@@ -193,8 +193,8 @@ namespace discord_core_api {
 					respond_to_input_event_data responseData02(*selectMenuReturnData.at(0).interactionData);
 					responseData02.setResponseType(input_event_response_type::Edit_Interaction_Response);
 					responseData02.addMessageEmbed(msgEmbed);
-					responseData02.addButton(false, "back", "back", button_style::Success, "🔙");
-					responseData02.addButton(false, "exit", "exit", button_style::Success, "❌");
+					responseData02.addButton(false, "back", "Back", button_style::Success, "🔙");
+					responseData02.addButton(false, "exit", "Exit", button_style::Success, "❌");
 					newEvent				= input_events::respondToInputEventAsync(responseData02).get();
 					auto buttonReturnData02 = button_collector{ newEvent01 }.collectButtonData(false, 120000, 1, *createResponseData, argsNew.getUserData().id).get();
 					if (buttonReturnData02.at(0).buttonId == "back") {

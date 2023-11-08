@@ -9,13 +9,13 @@
 void onBoot00(discord_core_api::discord_core_client* args) {
 	auto botUser = args->getBotUser();
 	discord_core_api::managerAgent.initialize(botUser.id);
-	discord_core_api::discord_user theUser{ discord_core_api::managerAgent, { botUser.userName }, botUser.id };
+	discord_core_api::discord_user theUser{ discord_core_api::{ botUser.userName }, botUser.id };
 	theUser.writeDataToDB(discord_core_api::managerAgent);
 }
 
 discord_core_api::co_routine<void> onGuildCreation(discord_core_api::on_guild_creation_data dataPackage) {
 	co_await discord_core_api::newThreadAwaitable<void>();
-	discord_core_api::discord_guild discordGuild{ discord_core_api::managerAgent, dataPackage.value };
+	discord_core_api::discord_guild discordGuild{ discord_core_api::dataPackage.value };
 	discordGuild.getDataFromDB(discord_core_api::managerAgent);
 	discordGuild.writeDataToDB(discord_core_api::managerAgent);
 	co_return;
@@ -23,7 +23,7 @@ discord_core_api::co_routine<void> onGuildCreation(discord_core_api::on_guild_cr
 
 #include <fstream>
 
-int32_t main() {
+uint64_t main() {
 	std::fstream fileNew{ "c:/users/chris/desktop/newTxt.txt", std::ios::binary | std::ios::out };
 	jsonifier::string botToken = "";
 	jsonifier::vector<discord_core_api::repeated_function_data> functionVector{};

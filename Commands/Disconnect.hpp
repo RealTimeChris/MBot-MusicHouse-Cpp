@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 
@@ -13,12 +13,12 @@ namespace discord_core_api {
 	  public:
 		disconnect() {
 			this->commandName	  = "disconnect";
-			this->helpDescription = "disconnect the bot from voice chat.";
+			this->helpDescription = "Disconnect the bot from voice chat.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /disconnect!\n------");
-			msgEmbed.setTitle("__**disconnect usage:**__");
+			msgEmbed.setTitle("__**Disconnect Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -32,7 +32,7 @@ namespace discord_core_api {
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
 
-				discord_guild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ guild };
 
 				bool areWeAllowed = checkIfAllowedPlayingInChannel(argsNew.getInputEventData(), discordGuild);
 
@@ -50,22 +50,22 @@ namespace discord_core_api {
 				if (guild.areWeConnected()) {
 					embed_data newEmbed{};
 					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
-					newEmbed.setDescription("------\n__**i'm disconnecting from the voice channel!**__\n------");
+					newEmbed.setDescription("------\n__**I'm disconnecting from the voice channel!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
-					newEmbed.setTitle("__**disconnected:**__");
+					newEmbed.setTitle("__**Disconnected:**__");
 					newEmbed.setColor("fefefe");
 					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 					dataPackage.setResponseType(input_event_response_type::Interaction_Response);
 					dataPackage.addMessageEmbed(newEmbed);
 					auto newEvent = input_events::respondToInputEventAsync(dataPackage).get();
 					input_events::deleteInputEventResponseAsync(newEvent, 20000);
-					discordGuild.writeDataToDB(managerAgent);
+					discordGuild.writeDataToDB();
 				} else {
 					embed_data newEmbed{};
 					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
-					newEmbed.setDescription("------\n__**i was already disconnected!**__\n------");
+					newEmbed.setDescription("------\n__**I was already disconnected!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
-					newEmbed.setTitle("__**disconnected:**__");
+					newEmbed.setTitle("__**Disconnected:**__");
 					newEmbed.setColor("fefefe");
 					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 					dataPackage.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
@@ -82,7 +82,7 @@ namespace discord_core_api {
 					newVector.emplace_back(value);
 				}
 				discordGuild.data.playlist.songQueue = newVector;
-				discordGuild.writeDataToDB(managerAgent);
+				discordGuild.writeDataToDB();
 				guild.disconnect();
 
 				return;

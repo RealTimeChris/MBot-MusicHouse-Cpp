@@ -5,19 +5,19 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 	class loop_all : public base_function {
 	  public:
 		loop_all() {
 			this->commandName	  = "loopall";
-			this->helpDescription = "enables or disables looping of the current queue.";
+			this->helpDescription = "Enables or disables looping of the current queue.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /loopall!\n------");
-			msgEmbed.setTitle("__**Loop-All usage:**__");
+			msgEmbed.setTitle("__**Loop-All Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -31,7 +31,7 @@ namespace discord_core_api {
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
 
-				discord_guild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ guild };
 
 				bool areWeAllowed = checkIfAllowedPlayingInChannel(argsNew.getInputEventData(), discordGuild);
 
@@ -57,13 +57,13 @@ namespace discord_core_api {
 				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 				msgEmbed.setColor("fefefe");
 				if (discordGuild.data.playlist.isLoopAllEnabled) {
-					msgEmbed.setDescription("\n------\n__**looping-all has been enabled!**__\n------\n");
+					msgEmbed.setDescription("\n------\n__**Looping-All has been enabled!**__\n------\n");
 				} else {
-					msgEmbed.setDescription("\n------\n__**looping-all has been disabled!**__\n------\n");
+					msgEmbed.setDescription("\n------\n__**Looping-All has been disabled!**__\n------\n");
 				}
-				discordGuild.writeDataToDB(managerAgent);
+				discordGuild.writeDataToDB();
 				msgEmbed.setTimeStamp(getTimeAndDate());
-				msgEmbed.setTitle("__**looping-all change:**__");
+				msgEmbed.setTitle("__**Looping-All Change:**__");
 				respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 				dataPackage.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
 				dataPackage.addMessageEmbed(msgEmbed);

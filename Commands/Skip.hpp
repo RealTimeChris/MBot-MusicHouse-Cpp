@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 	class skip : public base_function {
@@ -14,12 +14,12 @@ namespace discord_core_api {
 
 		skip() {
 			this->commandName	  = "skip";
-			this->helpDescription = "skips to the next song in the queue.";
+			this->helpDescription = "Skips to the next song in the queue.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /skip.\n------");
-			msgEmbed.setTitle("__**skip usage:**__");
+			msgEmbed.setTitle("__**Skip Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -32,7 +32,7 @@ namespace discord_core_api {
 				channel_cache_data channel{ argsNew.getChannelData() };
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
-				discord_guild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ guild };
 
 				bool areWeAllowed = checkIfAllowedPlayingInChannel(argsNew.getInputEventData(), discordGuild);
 
@@ -107,7 +107,7 @@ namespace discord_core_api {
 					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 					newEmbed.setDescription("------\n__**Sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
-					newEmbed.setTitle("__**skipping issue:**__");
+					newEmbed.setTitle("__**Skipping Issue:**__");
 					newEmbed.setColor("fefefe");
 					respond_to_input_event_data dataPackage02{ argsNew.getInputEventData() };
 					dataPackage02.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
@@ -118,13 +118,13 @@ namespace discord_core_api {
 				}
 
 				if (!guild.areWeConnected() || !discord_core_client::getSongAPI(guild.id).areWeCurrentlyPlaying()) {
-					jsonifier::string msgString = "------\n**there's no music playing to be skipped!**\n------";
+					jsonifier::string msgString = "------\n**There's no music playing to be skipped!**\n------";
 					embed_data msgEmbed{};
 					msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 					msgEmbed.setColor("fefefe");
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
-					msgEmbed.setTitle("__**skipping issue:**__");
+					msgEmbed.setTitle("__**Skipping Issue:**__");
 					respond_to_input_event_data dataPackage02{ argsNew.getInputEventData() };
 					dataPackage02.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
 					dataPackage02.addMessageEmbed(msgEmbed);
@@ -134,13 +134,13 @@ namespace discord_core_api {
 				}
 
 				if (!discordGuild.data.playlist.songQueue.size()) {
-					jsonifier::string msgString = "------\n**there's no more songs for us to skip to!**\n------";
+					jsonifier::string msgString = "------\n**There's no more songs for us to skip to!**\n------";
 					embed_data msgEmbed02;
 					msgEmbed02.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 					msgEmbed02.setColor("fefefe");
 					msgEmbed02.setTimeStamp(getTimeAndDate());
 					msgEmbed02.setDescription(msgString);
-					msgEmbed02.setTitle("__**song queue issue:**__");
+					msgEmbed02.setTitle("__**Song Queue Issue:**__");
 					respond_to_input_event_data dataPackage02{ argsNew.getInputEventData() };
 					dataPackage02.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
 					dataPackage02.addMessageEmbed(msgEmbed02);
@@ -149,18 +149,18 @@ namespace discord_core_api {
 					return;
 				} else {
 					if (discord_core_client::getSongAPI(guild.id).areWeCurrentlyPlaying() && discordGuild.data.playlist.songQueue.size()) {
-						jsonifier::string msgString = "------\n**we're skipping to the next song!**\n------";
+						jsonifier::string msgString = "------\n**We're skipping to the next song!**\n------";
 						embed_data msgEmbed02{};
 						msgEmbed02.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar))
 							.setColor("fefefe")
 							.setTimeStamp(getTimeAndDate())
 							.setDescription(msgString)
-							.setTitle("__**song skip:**__");
+							.setTitle("__**Song Skip:**__");
 						respond_to_input_event_data dataPackage02{ argsNew.getInputEventData() };
 						dataPackage02.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
 						dataPackage02.addMessageEmbed(msgEmbed02);
 						discordGuild.data.playlist.currentSong = discordGuild.data.playlist.songQueue.at(0);
-						discordGuild.writeDataToDB(managerAgent);
+						discordGuild.writeDataToDB();
 						auto newEvent02 = input_events::respondToInputEventAsync(dataPackage02).get();
 						discord_core_client::getSongAPI(guild.id).skip();
 					} else if (!discordGuild.data.playlist.songQueue.size()) {
@@ -185,13 +185,13 @@ namespace discord_core_api {
 						input_events::respondToInputEventAsync(dataPackage02).get();
 						return;
 					} else {
-						jsonifier::string msgString = "------\n**there's no music playing to be skipped!**\n------";
+						jsonifier::string msgString = "------\n**There's no music playing to be skipped!**\n------";
 						embed_data msgEmbed02;
 						msgEmbed02.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 						msgEmbed02.setColor("fefefe");
 						msgEmbed02.setTimeStamp(getTimeAndDate());
 						msgEmbed02.setDescription(msgString);
-						msgEmbed02.setTitle("__**skipping issue:**__");
+						msgEmbed02.setTitle("__**Skipping Issue:**__");
 						respond_to_input_event_data dataPackage02{ argsNew.getInputEventData() };
 						dataPackage02.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
 						dataPackage02.addMessageEmbed(msgEmbed02);

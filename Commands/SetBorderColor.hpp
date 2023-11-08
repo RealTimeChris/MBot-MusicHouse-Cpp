@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 
@@ -13,12 +13,12 @@ namespace discord_core_api {
 	  public:
 		set_border_color() {
 			this->commandName	  = "setbordercolor";
-			this->helpDescription = "set the bot's default border color for message embeds.";
+			this->helpDescription = "Set the bot's default border color for message embeds.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /setbordercolor <hexcolorvalue>!\n------");
-			msgEmbed.setTitle("__**set border color usage:**__");
+			msgEmbed.setTitle("__**Set Border Color Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -30,10 +30,10 @@ namespace discord_core_api {
 			try {
 				channel_cache_data channel{ argsNew.getChannelData() };
 				guild_data guild{ argsNew.getInteractionData().guildId };
-				discord_guild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ guild };
 				guild_member_cache_data guildMember{ argsNew.getGuildMemberData() };
 				auto inputEventData			 = argsNew.getInputEventData();
-				bool doWeHaveAdminPermission = doWeHaveAdminPermissions(argsNew, inputEventData, discordGuild, channel, guildMember);
+				bool doWeHaveAdminPermission = doWeHaveAdminPermissions(inputEventData, channel, guildMember);
 				if (!doWeHaveAdminPermission) {
 					return;
 				}
@@ -41,13 +41,13 @@ namespace discord_core_api {
 
 				if (jsonifier::strToInt64 < 16>(argsNew.getCommandArguments().values["hexcolorvalue"].value.operator jsonifier::string()) < 0 ||
 					jsonifier::strToInt64<16>(argsNew.getCommandArguments().values["hexcolorvalue"].value.operator jsonifier::string()) > jsonifier::strToInt64<16>("fefefe")) {
-					jsonifier::string msgString = "------\n**please, enter a hex-color value between 0 and fe_fe_fe! (!setbordercolor = botname, hexcolorvalue)**\n------";
+					jsonifier::string msgString = "------\n**Please, enter a hex-color value between 0 and fefefe! (!setbordercolor = botname, hexcolorvalue)**\n------";
 					embed_data msgEmbed{};
 					msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 					msgEmbed.setColor("fefefe");
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
-					msgEmbed.setTitle("__**missing or invalid arguments:**__");
+					msgEmbed.setTitle("__**Missing or Invalid Arguments:**__");
 					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 					dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
@@ -57,15 +57,15 @@ namespace discord_core_api {
 					borderColor = argsNew.getCommandArguments().values["hexcolorvalue"].value.operator jsonifier::string();
 
 					discordGuild.data.borderColor = borderColor;
-					discordGuild.writeDataToDB(managerAgent);
+					discordGuild.writeDataToDB();
 
 					embed_data msgEmbed{};
 					msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 					msgEmbed.setColor("fefefe");
 					msgEmbed.setDescription(jsonifier::string{
-						"nicely done, you've updated the default border color for this bot!\n------\n__**border color values:**__ " + discordGuild.data.borderColor + "\n------" });
+						"Nicely done, you've updated the default border color for this bot!\n------\n__**Border Color Values:**__ " + discordGuild.data.borderColor + "\n------" });
 					msgEmbed.setTimeStamp(getTimeAndDate());
-					msgEmbed.setTitle("__**updated border color:**__");
+					msgEmbed.setTitle("__**Updated Border Color:**__");
 					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 					dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);

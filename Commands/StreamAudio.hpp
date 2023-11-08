@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 
@@ -13,12 +13,12 @@ namespace discord_core_api {
 	  public:
 		stream_audio() {
 			this->commandName	  = "streamaudio";
-			this->helpDescription = "stream audio from one bot to another.";
+			this->helpDescription = "Stream audio from one bot to another.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /streamaudio!\n------");
-			msgEmbed.setTitle("__**stream_audio usage:**__");
+			msgEmbed.setTitle("__**Stream_audio Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -32,7 +32,7 @@ namespace discord_core_api {
 
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
-				discord_guild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ guild };
 
 				guild_member_cache_data guildMember{ argsNew.getGuildMemberData() };
 
@@ -56,7 +56,7 @@ namespace discord_core_api {
 				theInfo.address = argsNew.getCommandArguments().values["connectionip"].value.operator jsonifier::string();
 				theInfo.port	= 51072;
 				theInfo.type	= stream_type::server;
-				if (argsNew.getCommandArguments().values["botaudio"].value == "true") {
+				if (argsNew.getCommandArguments().values["botaudio"].value.operator jsonifier::string() == "true") {
 					theInfo.streamBotAudio = true;
 				} else {
 					theInfo.streamBotAudio = false;
@@ -95,9 +95,9 @@ namespace discord_core_api {
 
 				unique_ptr<embed_data> newEmbed{ makeUnique<embed_data>() };
 				newEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getGuildMemberImageUrl(guild_member_image_types::Avatar));
-				newEmbed->setDescription("------\n__**congratulations - you've been connected to an audio channel to stream audio!**__\n------");
+				newEmbed->setDescription("------\n__**Congratulations - you've been connected to an audio channel to stream audio!**__\n------");
 				newEmbed->setTimeStamp(getTimeAndDate());
-				newEmbed->setTitle("__**streaming audio:**__");
+				newEmbed->setTitle("__**Streaming Audio:**__");
 				newEmbed->setColor("fefefe");
 				respond_to_input_event_data dataPackage02{ argsNew.getInputEventData() };
 				dataPackage02.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);

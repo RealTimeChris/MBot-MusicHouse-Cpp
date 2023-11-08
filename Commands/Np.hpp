@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 
@@ -13,12 +13,12 @@ namespace discord_core_api {
 	  public:
 		np() {
 			this->commandName	  = "np";
-			this->helpDescription = "displays the currently playing song.";
+			this->helpDescription = "Displays the currently playing song.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /np!\n------");
-			msgEmbed.setTitle("__**Now Playing usage:**__");
+			msgEmbed.setTitle("__**Now Playing Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -32,7 +32,7 @@ namespace discord_core_api {
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
 
-				discord_guild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ guild };
 
 				bool checkIfAllowedInChannel = checkIfAllowedPlayingInChannel(argsNew.getInputEventData(), discordGuild);
 
@@ -47,7 +47,7 @@ namespace discord_core_api {
 				if (!doWeHaveControl) {
 					return;
 				}
-				discordGuild.getDataFromDB(managerAgent);
+				discordGuild.getDataFromDB();
 				embed_data newEmbed{};
 				newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 				newEmbed.setDescription("__**Title:**__ [" + discordGuild.data.playlist.currentSong.songTitle + "](" + discordGuild.data.playlist.currentSong.viewUrl + ")" +
