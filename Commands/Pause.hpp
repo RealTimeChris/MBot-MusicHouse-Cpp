@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 
@@ -13,12 +13,12 @@ namespace discord_core_api {
 	  public:
 		pause() {
 			this->commandName	  = "pause";
-			this->helpDescription = "pauses the currently playing music.";
+			this->helpDescription = "Pauses the currently playing music.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /pause!\n------");
-			msgEmbed.setTitle("__**pause usage:**__");
+			msgEmbed.setTitle("__*Pause Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -31,7 +31,7 @@ namespace discord_core_api {
 				channel_cache_data channel{ argsNew.getChannelData() };
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
-				discord_guild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ guild };
 				bool checkIfAllowedInChannel = checkIfAllowedPlayingInChannel(argsNew.getInputEventData(), discordGuild);
 				if (!checkIfAllowedInChannel) {
 					return;
@@ -64,7 +64,7 @@ namespace discord_core_api {
 					return;
 				}
 				voice_connection& voiceConnection = guild.connectToVoice(guildMember.user.id);
-				discordGuild.getDataFromDB(managerAgent);
+				discordGuild.getDataFromDB();
 				if (!voiceConnection.areWeConnected() || !guild.areWeConnected()) {
 					embed_data newEmbed{};
 					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
@@ -84,7 +84,7 @@ namespace discord_core_api {
 					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 					newEmbed.setDescription("------\n__**Sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
-					newEmbed.setTitle("__**pausing issue:**__");
+					newEmbed.setTitle("__**Pausing Issue:**__");
 					newEmbed.setColor("fefefe");
 					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 					dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
@@ -98,7 +98,7 @@ namespace discord_core_api {
 					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 					newEmbed.setDescription("------\n__**Sorry, but i need to be either playing or paused for this command to be possible!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
-					newEmbed.setTitle("__**pausing issue:**__");
+					newEmbed.setTitle("__**Pausing Issue:**__");
 					newEmbed.setColor("fefefe");
 					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 					dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
@@ -112,9 +112,9 @@ namespace discord_core_api {
 				embed_data msgEmbed{};
 				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 				msgEmbed.setColor("fefefe");
-				msgEmbed.setDescription("\n------\n__**songs remaining in queue:**__ " + jsonifier::toString(discordGuild.data.playlist.songQueue.size()) + "\n------");
+				msgEmbed.setDescription("\n------\n__**Songs remaining in queue:**__ " + jsonifier::toString(discordGuild.data.playlist.songQueue.size()) + "\n------");
 				msgEmbed.setTimeStamp(getTimeAndDate());
-				msgEmbed.setTitle("__**paused playback:**__");
+				msgEmbed.setTitle("__**Paused Playback:**__");
 				respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 				dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
 				dataPackage.addMessageEmbed(msgEmbed);

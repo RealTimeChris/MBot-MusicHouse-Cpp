@@ -32,57 +32,6 @@
 
 namespace discord_core_api {
 
-	template<typename value_type>
-	concept signed_integer_t = std::signed_integral<value_type>;
-
-	template<typename value_type>
-	concept unsigned_integer_t = std::unsigned_integral<value_type>;
-
-	template<typename value_type>
-	concept float_t = std::floating_point<value_type>;
-
-	template<typename value_type, typename value_type02>
-	concept array_t = std::same_as<value_type, jsonifier::vector<value_type02>>;
-
-	using bsoncxx::builder::basic::kvp;
-
-	class mongo_entity;
-
-	class mongo_entity {
-	  public:
-		mongo_entity() noexcept = default;
-		//mongo_entity& operator[](const jsonifier::string& keyNew) {
-		//if (!mapOfValues.contains(keyNew)) {
-		//mapOfValues.emplace(std::make_pair(keyNew, mongo_entity{ keyNew }));
-		//}
-		//return mapOfValues[keyNew];
-		//}
-
-		inline mongo_entity(const jsonifier::string& keyNew) {
-			key = keyNew;
-		}
-
-		template<signed_integer_t value_type> mongo_entity& operator=(value_type&& value) {
-			document.append(kvp(key, bsoncxx::types::b_int64(value)));
-			return *this;
-		}
-
-		template<typename value_type01, array_t<value_type01> value_type> mongo_entity(value_type&& value) {
-			document.append(kvp(key, bsoncxx::types::b_array(value)));
-			return *this;
-		}
-
-		bsoncxx::v_noabi::builder::basic::document convertToDocument(mongo_entity& newEntity) {
-			for (auto& [keyNew, value]: mapOfValues) {
-				//bsoncxx::builder::concatenate(document.view(), value.document.view());
-			}
-		}
-
-		std::map<jsonifier::string, mongo_entity> mapOfValues{};
-		bsoncxx::builder::basic::document document{};
-		jsonifier::string key{};
-	};
-
 	struct discord_user_data {
 		jsonifier::vector<uint64_t> botCommanders{};
 		jsonifier::string userName{ "" };
@@ -132,18 +81,18 @@ namespace discord_core_api {
 
 	class database_manager_agent {
 	  public:
-		inline void initialize(snowflake botUserIdNew) {
+		inline static void initialize(snowflake botUserIdNew) {
 			database_manager_agent::botUserId	   = botUserIdNew;
 			auto newClient					   = database_manager_agent::getClient();
 			mongocxx::database newDataBase	   = (*newClient)[database_manager_agent::botUserId.operator jsonifier::string().data()];
 			mongocxx::collection newCollection = newDataBase[database_manager_agent::botUserId.operator jsonifier::string().data()];
 		}
 
-		inline mongocxx::pool::entry getClient() {
+		inline static mongocxx::pool::entry getClient() {
 			return database_manager_agent::thePool.acquire();
 		}
 
-		inline database_return_value submitWorkloadAndGetResults(database_workload workload) {
+		inline static database_return_value submitWorkloadAndGetResults(const database_workload& workload) {
 			std::lock_guard<std::mutex> workloadLock{ database_manager_agent::workloadMutex01 };
 			while (database_manager_agent::botUserId == 0) {
 				std::this_thread::sleep_for(1ms);
@@ -157,7 +106,7 @@ namespace discord_core_api {
 					case (database_workload_type::Discord_User_Write): {
 						auto doc = database_manager_agent::convertUserDataToDBDoc(workload.userData);
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<uint64_t>(workload.userData.userId))));
+						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<int64_t>(workload.userData.userId.operator const uint64_t&()))));
 						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
 							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
 						if (!resultNewer) {
@@ -169,7 +118,7 @@ namespace discord_core_api {
 					}
 					case (database_workload_type::Discord_User_Read): {
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<uint64_t>(workload.userData.userId))));
+						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<int64_t>(workload.userData.userId.operator const uint64_t&()))));
 						auto resultNew = newCollection.find_one(document.view());
 						if (resultNew) {
 							discord_user_data userData = database_manager_agent::parseUserData(*resultNew);
@@ -183,7 +132,7 @@ namespace discord_core_api {
 					case (database_workload_type::Discord_Guild_Write): {
 						auto doc = database_manager_agent::convertGuildDataToDBDoc(workload.guildData);
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<uint64_t>(workload.guildData.guildId))));
+						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<int64_t>(workload.guildData.guildId.operator const uint64_t&()))));
 						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
 							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
 						if (!resultNewer) {
@@ -195,7 +144,7 @@ namespace discord_core_api {
 					}
 					case (database_workload_type::Discord_Guild_Read): {
 						bsoncxx::builder::basic::document document{};
-						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<uint64_t>(workload.guildData.guildId))));
+						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<int64_t>(workload.guildData.guildId.operator const uint64_t&()))));
 						auto resultNew = newCollection.find_one(document.view());
 						if (resultNew) {
 							discord_guild_data guildData = database_manager_agent::parseGuildData(*resultNew);
@@ -241,55 +190,62 @@ namespace discord_core_api {
 		}
 
 	  protected:
-		mongocxx::instance instance{};
-		std::mutex workloadMutex01{};
-		mongocxx::pool thePool{};
-		snowflake botUserId{};
+		inline static mongocxx::instance instance{};
+		inline static std::mutex workloadMutex01{};
+		inline static mongocxx::pool thePool{};
+		inline static snowflake botUserId{};
 
-		template<typename value_type, typename value_type_to_search>
-		static void getValueIfNotNull(value_type& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind);
-
-		template<typename value_type_to_search>
-		static void getValueIfNotNull(jsonifier::string& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+		template<jsonifier::concepts::string_t return_type, typename value_type_to_search>
+		static return_type getValueIfNotNull(value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
 			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
-				value = jsonifier::string{ valueToSearch[valueToFind].get_string().value };
+				return return_type{ valueToSearch[valueToFind].get_string().value };
+			} else {
+				return {};
 			}
 		}
 
-		template<typename value_type_to_search> static void getValueIfNotNull(snowflake& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+		template<jsonifier_internal::snowflake_t return_type, typename value_type_to_search>
+		static return_type getValueIfNotNull(value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
 			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
-				value = valueToSearch[valueToFind].get_int64().value;
+				return return_type{ static_cast<uint64_t>(valueToSearch[valueToFind].get_int64().value) };
+			} else {
+				return {};
 			}
 		}
 
-		template<jsonifier::concepts::enum_t enum_type, typename value_type_to_search>
-		static void getValueIfNotNull(enum_type& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+		template<jsonifier::concepts::enum_t return_type, typename value_type_to_search>
+		static return_type getValueIfNotNull(value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
 			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
-				value = static_cast<enum_type>(valueToSearch[valueToFind].get_int64().value);
+				return static_cast<return_type>(valueToSearch[valueToFind].get_int64().value);
+			} else {
+				return {};
 			}
 		}
 
-		template<typename value_type_to_search> static void getValueIfNotNull(uint32_t& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+		template<jsonifier::concepts::unsigned_t return_type, typename value_type_to_search>
+		static return_type getValueIfNotNull(value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
 			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
-				value = valueToSearch[valueToFind].get_int64().value;
+				return return_type{ valueToSearch[valueToFind].get_int64().value };
+			} else {
+				return {};
 			}
 		}
 
-		template<typename value_type_to_search> static void getValueIfNotNull(int64_t& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+		template<jsonifier::concepts::signed_t return_type, typename value_type_to_search>
+		static return_type getValueIfNotNull(value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
 			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
-				value = valueToSearch[valueToFind].get_int64().value;
+				return return_type{ valueToSearch[valueToFind].get_int64().value };
+			} else {
+				return {};
 			}
 		}
 
-		template<typename value_type_to_search> static void getValueIfNotNull(uint64_t& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+		template<jsonifier::concepts::bool_t return_type, typename value_type_to_search>
+		static return_type getValueIfNotNull(value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
 			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
-				value = valueToSearch[valueToFind].get_int64().value;
-			}
-		}
-
-		template<typename value_type_to_search> static void getValueIfNotNull(bool& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
-			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
-				value = valueToSearch[valueToFind].get_bool().value;
+				return return_type{ valueToSearch[valueToFind].get_bool().value };
+			} else {
+				return {};
 			}
 		}
 
@@ -297,12 +253,12 @@ namespace discord_core_api {
 			bsoncxx::builder::basic::document buildDoc;
 			try {
 				using bsoncxx::builder::basic::kvp;
-				buildDoc.append(kvp("_id", bsoncxx::types::b_int64(static_cast<uint64_t>(discordUserData.userId))));
-				buildDoc.append(kvp("userId", bsoncxx::types::b_int64(static_cast<uint64_t>(discordUserData.userId))));
+				buildDoc.append(kvp("_id", bsoncxx::types::b_int64(static_cast<int64_t>(discordUserData.userId.operator const uint64_t&()))));
+				buildDoc.append(kvp("userId", bsoncxx::types::b_int64(static_cast<int64_t>(discordUserData.userId.operator const uint64_t&()))));
 				buildDoc.append(kvp("userName", discordUserData.userName));
 				buildDoc.append(kvp("botCommanders", [discordUserData](bsoncxx::builder::basic::sub_array subArray) {
 					for (auto& value: discordUserData.botCommanders) {
-						subArray.append(bsoncxx::types::b_int64(static_cast<uint64_t>(value)));
+						subArray.append(bsoncxx::types::b_int64(static_cast<int64_t>(value)));
 					}
 				}));
 				return buildDoc;
@@ -315,9 +271,9 @@ namespace discord_core_api {
 		inline static discord_user_data parseUserData(bsoncxx::document::value docValue) {
 			discord_user_data userData{};
 			try {
-				getValueIfNotNull(userData.userId, docValue.view(), "_id");
-				getValueIfNotNull(userData.userName, docValue.view(), "userName");
-				getValueIfNotNull(userData.userId, docValue.view(), "userId");
+				userData.userId			= getValueIfNotNull<snowflake>(docValue.view(), "_id");
+				userData.userName		= getValueIfNotNull<jsonifier::string>(docValue.view(), "userName");
+				userData.userId			= getValueIfNotNull<snowflake>(docValue.view(), "userId");
 				auto botCommandersArray = docValue.view()["botCommanders"].get_array();
 				jsonifier::vector<uint64_t> newVector;
 				for (const auto& value: botCommandersArray.value) {
@@ -335,15 +291,15 @@ namespace discord_core_api {
 			bsoncxx::builder::basic::document buildDoc{};
 			try {
 				using bsoncxx::builder::basic::kvp;
-				buildDoc.append(kvp("_id", bsoncxx::types::b_int64(static_cast<uint64_t>(discordGuildData.guildId))));
-				buildDoc.append(kvp("guildId", bsoncxx::types::b_int64(static_cast<uint64_t>(discordGuildData.guildId))));
+				buildDoc.append(kvp("_id", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.guildId.operator const uint64_t&()))));
+				buildDoc.append(kvp("guildId", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.guildId.operator const uint64_t&()))));
 				buildDoc.append(kvp("guildName", discordGuildData.guildName));
 				buildDoc.append(kvp("memberCount", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.memberCount))));
 				buildDoc.append(kvp("borderColor", discordGuildData.borderColor));
-				buildDoc.append(kvp("djRoleId", bsoncxx::types::b_int64(static_cast<uint64_t>(discordGuildData.djRoleId))));
+				buildDoc.append(kvp("djRoleId", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.djRoleId.operator const uint64_t&()))));
 				buildDoc.append(kvp("musicChannelIds", [&](bsoncxx::builder::basic::sub_array subArray) {
 					for (auto& value: discordGuildData.musicChannelIds) {
-						subArray.append(bsoncxx::types::b_int64(static_cast<uint64_t>(value)));
+						subArray.append(bsoncxx::types::b_int64(static_cast<int64_t>(value.operator const uint64_t&())));
 					}
 				}));
 				buildDoc.append(kvp("playlist", [&](bsoncxx::builder::basic::sub_document subDocument01) {
@@ -359,7 +315,7 @@ namespace discord_core_api {
 							};
 						}));
 
-						subDocument02.append(kvp("addedByUserId", bsoncxx::types::b_int64(static_cast<uint64_t>(discordGuildData.playlist.currentSong.addedByUserId))),
+						subDocument02.append(kvp("addedByUserId", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.playlist.currentSong.addedByUserId.operator const uint64_t&()))),
 							kvp("contentLength", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.playlist.currentSong.contentLength))),
 							kvp("Description", jsonifier::string{ discordGuildData.playlist.currentSong.description}),
 							kvp("secondDownloadUrl", jsonifier::string{ discordGuildData.playlist.currentSong.secondDownloadUrl }),
@@ -383,7 +339,7 @@ namespace discord_core_api {
 										});
 									};
 								}));
-								subDocument02.append(kvp("addedByUserId", bsoncxx::types::b_int64(static_cast<uint64_t>(value.addedByUserId.operator const uint64_t&()))),
+								subDocument02.append(kvp("addedByUserId", bsoncxx::types::b_int64(static_cast<int64_t>(value.addedByUserId.operator const uint64_t&()))),
 									kvp("contentLength", bsoncxx::types::b_int64(static_cast<int64_t>(value.contentLength))),
 									kvp("Description", jsonifier::string{ value.description}), kvp("Duration", jsonifier::string{ value.duration }),
 									kvp("thumbnailUrl", value.thumbnailUrl), kvp("songId", jsonifier::string{ value.songId }),
@@ -405,56 +361,56 @@ namespace discord_core_api {
 			discord_guild_data guildData{};
 			try {
 				auto currentSongValue = docValue.view()["playlist"].get_document().value["currentSong"].get_document();
-				getValueIfNotNull(guildData.playlist.currentSong.addedByUserId, currentSongValue.value, "addedByUserId");
-				getValueIfNotNull(guildData.playlist.currentSong.firstDownloadUrl, currentSongValue.value, "firstDownloadUrl");
-				getValueIfNotNull(guildData.playlist.currentSong.secondDownloadUrl, currentSongValue.value, "secondDownloadUrl");
-				getValueIfNotNull(guildData.playlist.currentSong.contentLength, currentSongValue.value, "contentLength");
-				getValueIfNotNull(guildData.playlist.currentSong.description, currentSongValue.value, "Description");
-				getValueIfNotNull(guildData.playlist.currentSong.thumbnailUrl, currentSongValue.value, "thumbnailUrl");
-				getValueIfNotNull(guildData.playlist.currentSong.duration, currentSongValue.value, "Duration");
-				getValueIfNotNull(guildData.playlist.currentSong.songId, currentSongValue.value, "songId");
-				getValueIfNotNull(guildData.playlist.currentSong.songTitle, currentSongValue.value, "songTitle");
-				getValueIfNotNull(guildData.playlist.currentSong.type, currentSongValue.value, "type");
-				getValueIfNotNull(guildData.playlist.currentSong.viewUrl, currentSongValue.value, "viewUrl");
-				getValueIfNotNull(guildData.playlist.isLoopSongEnabled, docValue.view()["playlist"].get_document().value, "isLoopSongEnabled");
-				getValueIfNotNull(guildData.playlist.isLoopAllEnabled, docValue.view()["playlist"].get_document().value, "isLoopAllEnabled");
+				guildData.playlist.currentSong.addedByUserId	 = getValueIfNotNull<snowflake>(currentSongValue.value, "addedByUserId");
+				guildData.playlist.currentSong.firstDownloadUrl	 = getValueIfNotNull<jsonifier::string>(currentSongValue.value, "firstDownloadUrl");
+				guildData.playlist.currentSong.secondDownloadUrl = getValueIfNotNull<jsonifier::string>(currentSongValue.value, "secondDownloadUrl");
+				guildData.playlist.currentSong.contentLength	 = getValueIfNotNull<int64_t>(currentSongValue.value, "contentLength");
+				guildData.playlist.currentSong.description		 = getValueIfNotNull<jsonifier::string>(currentSongValue.value, "Description");
+				guildData.playlist.currentSong.thumbnailUrl		 = getValueIfNotNull<jsonifier::string>(currentSongValue.value, "thumbnailUrl");
+				guildData.playlist.currentSong.duration			 = getValueIfNotNull<jsonifier::string>(currentSongValue.value, "Duration");
+				guildData.playlist.currentSong.songId			 = getValueIfNotNull<jsonifier::string>(currentSongValue.value, "songId");
+				guildData.playlist.currentSong.songTitle		 = getValueIfNotNull<jsonifier::string>(currentSongValue.value, "songTitle");
+				guildData.playlist.currentSong.type				 = getValueIfNotNull<song_type>(currentSongValue.value, "type");
+				guildData.playlist.currentSong.viewUrl			 = getValueIfNotNull<jsonifier::string>(currentSongValue.value, "viewUrl");
+				guildData.playlist.isLoopSongEnabled			 = getValueIfNotNull<bool>(docValue.view()["playlist"].get_document().value, "isLoopSongEnabled");
+				guildData.playlist.isLoopAllEnabled				 = getValueIfNotNull<bool>(docValue.view()["playlist"].get_document().value, "isLoopAllEnabled");
 				for (auto& value02: currentSongValue.value["downloadUrls"].get_array().value) {
 					download_url downloadUrl;
-					getValueIfNotNull(downloadUrl.contentSize, value02, "contentSize");
-					getValueIfNotNull(downloadUrl.urlPath, value02, "urlPath");
+					downloadUrl.contentSize = getValueIfNotNull<int64_t>(value02, "contentSize");
+					downloadUrl.urlPath		= getValueIfNotNull<jsonifier::string>(value02, "urlPath");
 					guildData.playlist.currentSong.finalDownloadUrls.emplace_back(downloadUrl);
 				}
 				for (auto& value: docValue.view()["playlist"].get_document().view()["songList"].get_array().value) {
 					song newSong{};
 					for (auto& value02: value["downloadUrls"].get_array().value) {
 						download_url downloadUrl;
-						getValueIfNotNull(downloadUrl.contentSize, value02, "contentSize");
-						getValueIfNotNull(downloadUrl.urlPath, value02, "urlPath");
+						downloadUrl.contentSize = getValueIfNotNull<int64_t>(value02, "contentSize");
+						downloadUrl.urlPath		= getValueIfNotNull<jsonifier::string>(value02, "urlPath");
 						newSong.finalDownloadUrls.emplace_back(downloadUrl);
 					}
-					getValueIfNotNull(newSong.description, value, "Description");
-					getValueIfNotNull(newSong.addedByUserId, value, "addedByUserId");
-					getValueIfNotNull(newSong.duration, value, "Duration");
-					getValueIfNotNull(newSong.thumbnailUrl, value, "thumbnailUrl");
-					getValueIfNotNull(newSong.contentLength, value, "contentLength");
+					newSong.description	  = getValueIfNotNull<jsonifier::string>(value, "Description");
+					newSong.addedByUserId = getValueIfNotNull<snowflake>(value, "addedByUserId");
+					newSong.duration	  = getValueIfNotNull<jsonifier::string>(value, "Duration");
+					newSong.thumbnailUrl  = getValueIfNotNull<jsonifier::string>(value, "thumbnailUrl");
+					newSong.contentLength = getValueIfNotNull<int64_t>(value, "contentLength");
 					int64_t songType{};
-					getValueIfNotNull(songType, value, "type");
-					newSong.type = static_cast<song_type>(songType);
-					getValueIfNotNull(newSong.songId, value, "songId");
-					getValueIfNotNull(newSong.firstDownloadUrl, value, "firstDownloadUrl");
-					getValueIfNotNull(newSong.secondDownloadUrl, value, "secondDownloadUrl");
-					getValueIfNotNull(newSong.songTitle, value, "songTitle");
-					getValueIfNotNull(newSong.viewUrl, value, "viewUrl");
+					songType				  = getValueIfNotNull<int64_t>(value, "type");
+					newSong.type			  = static_cast<song_type>(songType);
+					newSong.songId			  = getValueIfNotNull<jsonifier::string>(value, "songId");
+					newSong.firstDownloadUrl  = getValueIfNotNull<jsonifier::string>(value, "firstDownloadUrl");
+					newSong.secondDownloadUrl = getValueIfNotNull<jsonifier::string>(value, "secondDownloadUrl");
+					newSong.songTitle		  = getValueIfNotNull<jsonifier::string>(value, "songTitle");
+					newSong.viewUrl			  = getValueIfNotNull<jsonifier::string>(value, "viewUrl");
 					guildData.playlist.songQueue.emplace_back(newSong);
 				}
-				getValueIfNotNull(guildData.djRoleId, docValue.view(), "djRoleId");
-				getValueIfNotNull(guildData.borderColor, docValue.view(), "borderColor");
-				getValueIfNotNull(guildData.guildName, docValue.view(), "guildName");
-				getValueIfNotNull(guildData.guildId, docValue.view(), "guildId");
+				guildData.djRoleId	  = getValueIfNotNull<snowflake>(docValue.view(), "djRoleId");
+				guildData.borderColor = getValueIfNotNull<jsonifier::string>(docValue.view(), "borderColor");
+				guildData.guildName	  = getValueIfNotNull<jsonifier::string>(docValue.view(), "guildName");
+				guildData.guildId	  = getValueIfNotNull<snowflake>(docValue.view(), "guildId");
 				for (auto& value: docValue.view()["musicChannelIds"].get_array().value) {
 					guildData.musicChannelIds.emplace_back(value.get_int64().value);
 				}
-				getValueIfNotNull(guildData.memberCount, docValue.view(), "memberCount");
+				guildData.memberCount = getValueIfNotNull<int64_t>(docValue.view(), "memberCount");
 				return guildData;
 			} catch (const std::runtime_error& error) {
 				std::cout << "database_manager_agent::parseGuildData()" << error.what() << std::endl;
@@ -469,8 +425,8 @@ namespace discord_core_api {
 				using bsoncxx::builder::basic::kvp;
 				buildDoc.append(kvp("guildMemberMention", jsonifier::string{ discordGuildMemberData.guildMemberMention }));
 				buildDoc.append(kvp("_id", jsonifier::string{ discordGuildMemberData.globalId }));
-				buildDoc.append(kvp("guildId", bsoncxx::types::b_int64(discordGuildMemberData.guildId.operator const uint64_t&())));
-				buildDoc.append(kvp("guildMemberId", bsoncxx::types::b_int64(discordGuildMemberData.guildMemberId.operator const uint64_t&())));
+				buildDoc.append(kvp("guildId", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildMemberData.guildId.operator const uint64_t&()))));
+				buildDoc.append(kvp("guildMemberId", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildMemberData.guildMemberId.operator const uint64_t&()))));
 				buildDoc.append(kvp("globalId", jsonifier::string{ discordGuildMemberData.globalId }));
 				buildDoc.append(kvp("userName", jsonifier::string{ discordGuildMemberData.userName }));
 				buildDoc.append(kvp("displayName", jsonifier::string{ discordGuildMemberData.displayName }));
@@ -484,12 +440,12 @@ namespace discord_core_api {
 		inline static discord_guild_member_data parseGuildMemberData(bsoncxx::document::value docValue) {
 			discord_guild_member_data guildMemberData{};
 			try {
-				getValueIfNotNull(guildMemberData.guildMemberMention, docValue.view(), "guildMemberMention");
-				getValueIfNotNull(guildMemberData.guildId, docValue.view(), "guildId");
-				getValueIfNotNull(guildMemberData.displayName, docValue.view(), "displayName");
-				getValueIfNotNull(guildMemberData.globalId, docValue.view(), "globalId");
-				getValueIfNotNull(guildMemberData.guildMemberId, docValue.view(), "guildMemberId");
-				getValueIfNotNull(guildMemberData.userName, docValue.view(), "userName");
+				guildMemberData.guildMemberMention = getValueIfNotNull<jsonifier::string>(docValue.view(), "guildMemberMention");
+				guildMemberData.guildId			   = getValueIfNotNull<snowflake>(docValue.view(), "guildId");
+				guildMemberData.displayName		   = getValueIfNotNull<jsonifier::string>(docValue.view(), "displayName");
+				guildMemberData.globalId		   = getValueIfNotNull<jsonifier::string>(docValue.view(), "globalId");
+				guildMemberData.guildMemberId	   = getValueIfNotNull<jsonifier::string>(docValue.view(), "guildMemberId");
+				guildMemberData.userName		   = getValueIfNotNull<jsonifier::string>(docValue.view(), "userName");
 				return guildMemberData;
 			} catch (const std::runtime_error& error) {
 				std::cout << "database_manager_agent::parseGuildData()" << error.what() << std::endl;
@@ -504,26 +460,26 @@ namespace discord_core_api {
 
 		discord_user_data data{};
 
-		inline discord_user(database_manager_agent& other, jsonifier::string userNameNew, snowflake userIdNew) {
+		inline discord_user(jsonifier::string userNameNew, snowflake userIdNew) {
 			this->data.userId	= userIdNew;
 			this->data.userName = userNameNew;
-			this->getDataFromDB(other);
+			this->getDataFromDB();
 			this->data.userId	= userIdNew;
 			this->data.userName = userNameNew;
 		}
 
-		inline void writeDataToDB(database_manager_agent& other) {
+		inline void writeDataToDB() {
 			database_workload workload{};
 			workload.workloadType = database_workload_type::Discord_User_Write;
 			workload.userData	  = this->data;
-			other.submitWorkloadAndGetResults(workload);
+			database_manager_agent::submitWorkloadAndGetResults(workload);
 		}
 
-		inline void getDataFromDB(database_manager_agent& other) {
+		inline void getDataFromDB() {
 			database_workload workload{};
 			workload.workloadType = database_workload_type::Discord_User_Read;
 			workload.userData	  = this->data;
-			auto result			  = other.submitWorkloadAndGetResults(workload);
+			auto result			  = database_manager_agent::submitWorkloadAndGetResults(workload);
 			if (result.discordUser.userId != 0) {
 				this->data = result.discordUser;
 			}
@@ -535,28 +491,28 @@ namespace discord_core_api {
 		inline discord_guild() noexcept = default;
 		discord_guild_data data{};
 
-		inline discord_guild(database_manager_agent& other, guild_cache_data guildData) {
+		inline discord_guild(guild_cache_data guildData) {
 			this->data.guildId	   = guildData.id;
 			this->data.guildName   = guildData.name;
 			this->data.memberCount = guildData.memberCount;
-			this->getDataFromDB(other);
+			this->getDataFromDB();
 			this->data.guildId	   = guildData.id;
 			this->data.guildName   = guildData.name;
 			this->data.memberCount = guildData.memberCount;
 		}
 
-		inline void writeDataToDB(database_manager_agent& other) {
+		inline void writeDataToDB() {
 			database_workload workload{};
 			workload.workloadType = database_workload_type::Discord_Guild_Write;
 			workload.guildData	  = this->data;
-			other.submitWorkloadAndGetResults(workload);
+			database_manager_agent::submitWorkloadAndGetResults(workload);
 		}
 
-		inline void getDataFromDB(database_manager_agent& other) {
+		inline void getDataFromDB() {
 			database_workload workload{};
 			workload.workloadType = database_workload_type::Discord_Guild_Read;
 			workload.guildData	  = this->data;
-			auto result			  = other.submitWorkloadAndGetResults(workload);
+			auto result			  = database_manager_agent::submitWorkloadAndGetResults(workload);
 			if (result.discordGuild.guildId != 0) {
 				this->data = result.discordGuild;
 			}
@@ -567,11 +523,13 @@ namespace discord_core_api {
 	  public:
 		discord_guild_member_data data{};
 
-		inline discord_guild_member(database_manager_agent& other, guild_member_cache_data guildMemberData) {
+		inline discord_guild_member() noexcept = default;
+
+		inline discord_guild_member(guild_member_cache_data guildMemberData) {
 			this->data.guildMemberId = guildMemberData.user.id;
 			this->data.guildId		 = guildMemberData.guildId.operator const uint64_t&();
 			this->data.globalId		 = this->data.guildId + " + " + this->data.guildMemberId;
-			this->getDataFromDB(other);
+			this->getDataFromDB();
 			if (guildMemberData.nick == "") {
 				this->data.displayName		  = guildMemberData.getUserData().userName;
 				this->data.guildMemberMention = "<@" + this->data.guildMemberId + ">";
@@ -582,18 +540,18 @@ namespace discord_core_api {
 			this->data.userName = guildMemberData.getUserData().userName;
 		}
 
-		inline void writeDataToDB(database_manager_agent& other) {
+		inline void writeDataToDB() {
 			database_workload workload{};
 			workload.workloadType	 = database_workload_type::Discord_Guild_Member_Write;
 			workload.guildMemberData = this->data;
-			other.submitWorkloadAndGetResults(workload);
+			database_manager_agent::submitWorkloadAndGetResults(workload);
 		}
 
-		inline void getDataFromDB(database_manager_agent& other) {
+		inline void getDataFromDB() {
 			database_workload workload{};
 			workload.workloadType	 = database_workload_type::Discord_Guild_Member_Read;
 			workload.guildMemberData = this->data;
-			auto result				 = other.submitWorkloadAndGetResults(workload);
+			auto result				 = database_manager_agent::submitWorkloadAndGetResults(workload);
 			if (result.discordGuildMember.globalId != "") {
 				this->data = result.discordGuildMember;
 			}

@@ -5,19 +5,20 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
+
 	class loop_song : public base_function {
 	  public:
 		loop_song() {
 			this->commandName	  = "loop_song";
-			this->helpDescription = "enables or disables looping of the current song.";
+			this->helpDescription = "Enables or disables looping of the current song.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /loopsong!\n------");
-			msgEmbed.setTitle("__**Loop-Song usage:**__");
+			msgEmbed.setTitle("__**Loop-Song Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -31,7 +32,7 @@ namespace discord_core_api {
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
 
-				discord_guild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ guild };
 
 				bool areWeAllowed = checkIfAllowedPlayingInChannel(argsNew.getInputEventData(), discordGuild);
 
@@ -57,13 +58,13 @@ namespace discord_core_api {
 				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 				msgEmbed.setColor("fefefe");
 				if (discordGuild.data.playlist.isLoopSongEnabled) {
-					msgEmbed.setDescription("\n------\n__**looping-song has been enabled!**__\n------\n");
+					msgEmbed.setDescription("\n------\n__**Looping-Song has been enabled!**__\n------\n");
 				} else {
-					msgEmbed.setDescription("\n------\n__**looping-song has been disabled!**__\n------\n");
+					msgEmbed.setDescription("\n------\n__**Looping-Song has been disabled!**__\n------\n");
 				}
-				discordGuild.writeDataToDB(managerAgent);
+				discordGuild.writeDataToDB();
 				msgEmbed.setTimeStamp(getTimeAndDate());
-				msgEmbed.setTitle("__**looping-song change:**__");
+				msgEmbed.setTitle("__**Looping-Song Change:**__");
 				respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 				dataPackage.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
 				dataPackage.addMessageEmbed(msgEmbed);

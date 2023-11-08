@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 
@@ -71,6 +71,18 @@ namespace discord_core_api {
 			playCommandDataOptionOne.description = "The name of the song that you would like to search.";
 			playCommandDataOptionOne.required	 = false;
 			createPlayCommandData.options.emplace_back(playCommandDataOptionOne);
+
+			createPlaySearchCommandData.defaultMemberPermissions = permission::Use_Application_Commands;
+			createPlaySearchCommandData.dmPermission			   = false;
+			createPlaySearchCommandData.type					   = application_command_type::Chat_Input;
+			createPlaySearchCommandData.description			   = "Search for and play a song.";
+			createPlaySearchCommandData.name					   = "playsearch";
+			application_command_option_data playSearchCommandDataOptionOne;
+			playSearchCommandDataOptionOne.name		 = "songname";
+			playSearchCommandDataOptionOne.type		 = application_command_option_type::String;
+			playSearchCommandDataOptionOne.description = "The name of the song that you would like to search.";
+			playSearchCommandDataOptionOne.required	 = false;
+			createPlaySearchCommandData.options.emplace_back(playSearchCommandDataOptionOne);
 
 			RegisterApplicationCommandsCommandData.defaultMemberPermissions = permission::Use_Application_Commands;
 			RegisterApplicationCommandsCommandData.dmPermission				= false;
@@ -260,6 +272,7 @@ namespace discord_core_api {
 		create_global_application_command_data createDisplayGuildsDataCommandData{};
 		create_global_application_command_data createSeekCommandData{};
 		create_global_application_command_data createPlayCommandData{};
+		create_global_application_command_data createPlaySearchCommandData{};
 		create_global_application_command_data RegisterApplicationCommandsCommandData{};
 		create_global_application_command_data setMusicChannelCommandData{};
 		create_global_application_command_data createSetBorderColorCommandData{};

@@ -50,7 +50,7 @@ namespace discord_core_api {
 			return true;
 		}
 		bool doWeHaveControl = false;
-		discord_guild_member guildMemberData(managerAgent, guildMember);
+		discord_guild_member guildMemberData{ guildMember };
 
 		auto myRoles =
 			roles::getGuildMemberRolesAsync({ .guildMember = guildMember, .guildId = snowflake{ static_cast<uint64_t>(guildData.data.guildId) } })
@@ -90,8 +90,7 @@ namespace discord_core_api {
 		return false;
 	}
 
-	bool doWeHaveAdminPermissions(const base_function_arguments& argsNew, input_event_data& eventData, discord_guild& discordGuild, channel_cache_data& channel,
-		guild_member_cache_data& guildMember, bool displayResponse = true) {
+	bool doWeHaveAdminPermissions(input_event_data& eventData, channel_cache_data& channel, guild_member_cache_data& guildMember, bool displayResponse = true) {
 		respond_to_input_event_data dataPackage{ eventData };
 		dataPackage.setResponseType(input_event_response_type::Ephemeral_Deferred_Response);
 		input_events::respondToInputEventAsync(dataPackage).get();
@@ -99,7 +98,7 @@ namespace discord_core_api {
 		if (doWeHaveAdmin) {
 			return true;
 		}
-		discord_user discordUser(managerAgent, discord_core_client::getInstance()->getBotUser().userName,  discord_core_client::getInstance()->getBotUser().id);
+		discord_user discordUser(discord_core_client::getInstance()->getBotUser().userName,  discord_core_client::getInstance()->getBotUser().id);
 		bool areWeACommander = checkForBotCommanderStatus(guildMember, discordUser);
 
 		if (areWeACommander) {

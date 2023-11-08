@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 
@@ -13,12 +13,12 @@ namespace discord_core_api {
 	  public:
 		stop() {
 			this->commandName	  = "stop";
-			this->helpDescription = "stops the current song from playing.";
+			this->helpDescription = "Stops the current song from playing.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /stop!\n------");
-			msgEmbed.setTitle("__**stop usage:**__");
+			msgEmbed.setTitle("__**Stop Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -30,7 +30,7 @@ namespace discord_core_api {
 				channel_cache_data channel{ argsNew.getChannelData() };
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
-				discord_guild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ guild };
 
 				bool checkIfAllowedInChannel = checkIfAllowedPlayingInChannel(argsNew.getInputEventData(), discordGuild);
 
@@ -84,7 +84,7 @@ namespace discord_core_api {
 					return;
 				}
 				voice_connection& voiceConnection = guild.connectToVoice(guildMember.user.id);
-				discordGuild.getDataFromDB(managerAgent);
+				discordGuild.getDataFromDB();
 				if (!voiceConnection.areWeConnected()) {
 					embed_data newEmbed{};
 					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
@@ -104,7 +104,7 @@ namespace discord_core_api {
 					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 					newEmbed.setDescription("------\n__**Sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
-					newEmbed.setTitle("__**stopping issue:**__");
+					newEmbed.setTitle("__**Stopping Issue:**__");
 					newEmbed.setColor("fefefe");
 					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 					dataPackage.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
@@ -120,7 +120,7 @@ namespace discord_core_api {
 					msgEmbed.setColor("fefefe");
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
-					msgEmbed.setTitle("__**stopping issue:**__");
+					msgEmbed.setTitle("__**Stopping Issue:**__");
 					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 					dataPackage.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
@@ -136,14 +136,14 @@ namespace discord_core_api {
 					newVector.emplace_back(value);
 				}
 				discordGuild.data.playlist.songQueue = newVector;
-				discordGuild.writeDataToDB(managerAgent);
+				discordGuild.writeDataToDB();
 				discord_core_client::getSongAPI(guild.id).stop();
 				embed_data msgEmbed{};
 				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 				msgEmbed.setColor("fefefe");
-				msgEmbed.setDescription("\n------\n__**songs remaining in queue:**__ " + jsonifier::toString(discordGuild.data.playlist.songQueue.size()) + "\n------");
+				msgEmbed.setDescription("\n------\n__**Songs remaining in queue:**__ " + jsonifier::toString(discordGuild.data.playlist.songQueue.size()) + "\n------");
 				msgEmbed.setTimeStamp(getTimeAndDate());
-				msgEmbed.setTitle("__**stopping playback:**__");
+				msgEmbed.setTitle("__**Stopping Playback:**__");
 				respond_to_input_event_data dataPackage02{ argsNew.getInputEventData() };
 				dataPackage02.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
 				dataPackage02.addMessageEmbed(msgEmbed);

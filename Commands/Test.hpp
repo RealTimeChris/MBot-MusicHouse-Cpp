@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 
@@ -11,12 +11,12 @@ namespace discord_core_api {
 	  public:
 		test() {
 			this->commandName	  = "test";
-			this->helpDescription = "testing purposes!";
+			this->helpDescription = "Testing purposes!";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /test!\n------");
-			msgEmbed.setTitle("__**test usage:**__");
+			msgEmbed.setTitle("__**Test Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -29,30 +29,10 @@ namespace discord_core_api {
 				jsonifier::vector<song> searchResults{};
 				guild_data guild{ argsNew.getInteractionData().guildId };
 				guild_member_cache_data guildMember{ argsNew.getGuildMemberData() };
-				respond_to_input_event_data dataPackage0(argsNew.getInputEventData());
-				dataPackage0.setResponseType(input_event_response_type::Ephemeral_Deferred_Response);
-				jsonifier::vector<embed_data> embedsFromSearch;
-				create_message_data createMessageData{};
-				auto newEvent = input_events::respondToInputEventAsync(dataPackage0).get();
-				auto newArg					= argsNew.getCommandArguments().values["test"].value.operator jsonifier::string();
-				createMessageData.channelId = argsNew.getChannelData().id;
-				for (size_t x = 0; x < 20; ++x) {
-					embed_data newData{};
-					createMessageData.addContent(":star:");
-					messages::createMessageAsync(createMessageData);
-					newData.description = "testing: " + jsonifier::toString(x) + "\r\n";
-					newData.setColor("fefefe");
-					newData.timeStamp = getTimeAndDate();
-					embedsFromSearch.emplace_back(newData);
-				}
-				std::cout << "WERE LEAVING LEAVING!" << std::endl;
-				for (size_t x = 0; x < 20; ++x) {
-					respond_to_input_event_data responseData{ newEvent };
-					responseData.setResponseType(input_event_response_type::Ephemeral_Follow_Up_Message);
-					responseData.addMessageEmbed(embedsFromSearch.at(x));
-					input_events::respondToInputEventAsync(responseData);
-				}
-				std::cout << "WERE LEAVING LEAVING!" << std::endl;
+				for (uint64_t x = 0; x < 100; ++x) {
+					voice_connection& voiceConnection = guild.connectToVoice(guildMember.user.id, guildMember.getVoiceStateData().channelId);
+					guild.disconnect();
+				}				
 
 			} catch (const std::runtime_error& error) {
 				std::cout << "test::execute()" << error.what() << std::endl;

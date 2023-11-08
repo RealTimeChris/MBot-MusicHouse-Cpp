@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 
@@ -13,12 +13,12 @@ namespace discord_core_api {
 	  public:
 		display_guilds_data() {
 			this->commandName	  = "displayguildsdata";
-			this->helpDescription = "displays some info about the servers that this bot is in.";
+			this->helpDescription = "Displays some info about the servers that this bot is in.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nEnter /displayguildsdata.\n------");
-			msgEmbed.setTitle("__**display guild's data usage:**__");
+			msgEmbed.setTitle("__**Display Guild's Data Usage:**__");
+			msgEmbed.setColor("fefefe");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -30,26 +30,26 @@ namespace discord_core_api {
 			try {
 				channel_cache_data channel{ argsNew.getChannelData() };
 
-				int32_t currentCount				  = 0;
+				uint64_t currentCount				  = 0;
 				jsonifier::vector<guild_data> theCache = guilds::getAllGuildsAsync();
 				respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 				dataPackage.setResponseType(input_event_response_type::Ephemeral_Deferred_Response);
 				auto inputEvent = input_events::respondToInputEventAsync(dataPackage).get();
 				for (auto& valueNew : theCache) {
-					jsonifier::string msgString = "__Guild name:__ " + valueNew.name + "\n";
-					msgString += "__Guild id:__ " + valueNew.id + "\n";
-					msgString += "__Member count:__ " + jsonifier::toString(valueNew.memberCount) + "\n";
+					jsonifier::string msgString = "__Guild Name:__ " + valueNew.name + "\n";
+					msgString += "__Guild Id:__ " + valueNew.id + "\n";
+					msgString += "__Member Count:__ " + jsonifier::toString(valueNew.memberCount) + "\n";
 
 					user_cache_data owner = users::getCachedUser({ valueNew.ownerId });
-					msgString += jsonifier::string{ "__Guild owner:__ <@!" } + jsonifier::string{ valueNew.ownerId } + jsonifier::string{ "> " } + jsonifier::string{ owner.userName } +
+					msgString += jsonifier::string{ "__Guild Owner:__ <@!" } + jsonifier::string{ valueNew.ownerId } + jsonifier::string{ "> " } + jsonifier::string{ owner.userName } +
 						jsonifier::string{ "#" } + jsonifier::string{ owner.discriminator } + jsonifier::string{ "\n" };
-					msgString += "__Created at:__ " + valueNew.id.getCreatedAtTimeStamp();
+					msgString += "__Created At:__ " + valueNew.id.getCreatedAtTimeStamp();
 
 					embed_data msgEmbed{};
 					msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 					msgEmbed.setColor("fefefe");
 					msgEmbed.setImage(valueNew.getGuildImageUrl(guild_image_types::Icon));
-					msgEmbed.setTitle("__**guild data " + jsonifier::toString(currentCount + 1) + " of " + jsonifier::toString(theCache.size()) + "**__");
+					msgEmbed.setTitle("__**Guild Data " + jsonifier::toString(currentCount + 1) + " of " + jsonifier::toString(theCache.size()) + "**__");
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setDescription(msgString);
 

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 
@@ -16,9 +16,9 @@ namespace discord_core_api {
 			this->helpDescription = "displays some info about a chosen user.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nEnter /userinfo, or /userinfo @usermention, to display the info of another user.\n------");
-			msgEmbed.setTitle("__**user_cache_data info usage:**__");
+			msgEmbed.setTitle("__**user_cache_data info Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -32,7 +32,7 @@ namespace discord_core_api {
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
 
-				discord_guild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ guild };
 				snowflake userId{ argsNew.getCommandArguments().values["user"].value.operator size_t() };
 				guild_member_cache_data guildMember = guild_members::getCachedGuildMember({ .guildMemberId = userId, .guildId = guild.id });
 				user_cache_data theUser			 = users::getCachedUser({ .userId = argsNew.getUserData().id });
@@ -74,7 +74,7 @@ namespace discord_core_api {
 				permissions permsString							= permissions{ permissions::getCurrentChannelPermissions(guildMember, channel) };
 				jsonifier::vector<jsonifier::string> permissionsArray = permsString.displayPermissions();
 				jsonifier::string msgString;
-				for (int32_t x = 0; x < permissionsArray.size(); x += 1) {
+				for (uint64_t x = 0; x < permissionsArray.size(); x += 1) {
 					msgString += permissionsArray.at(x);
 					if (x < permissionsArray.size() - 1) {
 						msgString += ", ";
@@ -85,7 +85,7 @@ namespace discord_core_api {
 				field6.value  = "";
 				field6.name	  = "__Roles:__";
 
-				for (int32_t x = 0; x < guildMember.roles.size(); x += 1) {
+				for (uint64_t x = 0; x < guildMember.roles.size(); x += 1) {
 					field6.value += "<@&" + guildMember.roles.at(x) + ">";
 					if (x < guildMember.roles.size() - 1) {
 						field6.value += ", ";

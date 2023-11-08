@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
 namespace discord_core_api {
 
@@ -13,12 +13,12 @@ namespace discord_core_api {
 	  public:
 		clear() {
 			this->commandName	  = "clear";
-			this->helpDescription = "clears the current song queue.";
+			this->helpDescription = "Clears the current song queue.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nSimply enter /clear! and that's it!\n------");
-			msgEmbed.setTitle("__**clear usage:**__");
+			msgEmbed.setTitle("__**Clear Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("fe_fe_fe");
+			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
 		}
 
@@ -32,7 +32,7 @@ namespace discord_core_api {
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
 
-				discord_guild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ guild };
 
 				bool checkIfAllowedInChannel = checkIfAllowedPlayingInChannel(argsNew.getInputEventData(), discordGuild);
 
@@ -49,14 +49,14 @@ namespace discord_core_api {
 				}
 
 				discordGuild.data.playlist = playlist{};
-				discordGuild.writeDataToDB(managerAgent);
+				discordGuild.writeDataToDB();
 
 				embed_data msgEmbed{};
 				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 				msgEmbed.setColor("fefefe");
-				msgEmbed.setDescription("\n------\n__**you have cleared the song queue!**__\n------");
+				msgEmbed.setDescription("\n------\n__**You have cleared the song queue!**__\n------");
 				msgEmbed.setTimeStamp(getTimeAndDate());
-				msgEmbed.setTitle("__**queue cleared:**__");
+				msgEmbed.setTitle("__**Queue Cleared:**__");
 				respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 				dataPackage.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
 				dataPackage.addMessageEmbed(msgEmbed);
