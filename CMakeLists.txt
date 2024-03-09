@@ -23,8 +23,8 @@
 # https://discordcoreapi.com
 set(LOCAL TRUE)
 
-set(VCPKG_ROOT_DIR "C:/vcpkg")
-#set(Jsonifier_DIR "C:/Users/Chris/source/repos/Jsonifier/Install/Windows-Release/share/jsonifier")
+set(VCPKG_ROOT_DIR "C:/Vcpkg")
+
 
 if (WIN32)
 	set(OS "windows")
@@ -49,11 +49,13 @@ if (EXISTS "${VCPKG_INSTALLATION_ROOT_NEW}")
 	#set(Jsonifier_DIR "${VCPKG_INSTALLATION_ROOT_NEW}/installed/x64-${OS}/share/jsonifier")
 	set(Opus_DIR "${VCPKG_INSTALLATION_ROOT_NEW}/installed/x64-${OS}/share/opus")
 	set(unofficial-sodium_DIR "${VCPKG_INSTALLATION_ROOT_NEW}/installed/x64-${OS}/share/unofficial-sodium")
-	set(DiscordCoreAPI_DIR "${VCPKG_INSTALLATION_ROOT_NEW}/installed/x64-${OS}/share/discordcoreapi")
+	
 	include("${VCPKG_INSTALLATION_ROOT_NEW}/scripts/buildsystems/vcpkg.cmake")
 else()
 	message(WARNING "No Vcpkg root folder found, Please make sure that you properly set the library folders.")
 endif()
+
+
 
 cmake_minimum_required(VERSION 3.20)
 set(PROJECT_NAME "MBot-MusicHouse")
@@ -67,6 +69,8 @@ project(
 	HOMEPAGE_URL "https://discordcoreapi.com"
 	DESCRIPTION "${DESCRIPTION}"
 )
+
+set(DiscordCoreAPI_DIR "C:/Users/Chris/source/repos/DiscordCoreAPI/Install/Windows-Release-Dev/share/discordcoreapi")
 
 set(CMAKE_CXX_STANDARD 20)
 
