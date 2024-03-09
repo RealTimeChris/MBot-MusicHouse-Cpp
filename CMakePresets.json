@@ -28,7 +28,10 @@
         "value": "x64",
         "strategy": "external"
       },
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release", "DEV": true },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "DEV": true
+      },
       "Description": "Target Windows (64-bit) with the Visual Studio development environment. (Release)",
       "inherits": "Windows-Base",
       "name": "Windows-Release-Dev"
@@ -48,7 +51,10 @@
         "value": "x64",
         "strategy": "external"
       },
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "DEV": true },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "DEV": true
+      },
       "Description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
       "inherits": "Windows-Base",
       "name": "Windows-Debug-Dev"
