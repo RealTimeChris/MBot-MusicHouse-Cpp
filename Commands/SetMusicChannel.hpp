@@ -30,11 +30,11 @@ namespace discord_core_api {
 
 		void execute(const base_function_arguments& argsNew) {
 			try {
-				channel_cache_data channel{ argsNew.getChannelData() };
+				channel_data channel{ argsNew.getChannelData() };
 
-				guild_cache_data guild{ argsNew.getInteractionData().guildId };
+				guild_data guild{ argsNew.getInteractionData().guildId };
 				discord_guild discordGuild{ guild };
-				guild_member_cache_data guildMember{ argsNew.getGuildMemberData() };
+				guild_member_data guildMember{ argsNew.getGuildMemberData() };
 				auto inputEventData			 = argsNew.getInputEventData();
 				bool doWeHaveAdminPermission = doWeHaveAdminPermissions(inputEventData, channel, guildMember);
 

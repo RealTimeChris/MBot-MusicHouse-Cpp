@@ -30,14 +30,14 @@ namespace discord_core_api {
 
 		void execute(const base_function_arguments& argsNew) {
 			try {
-				channel_cache_data channel{ argsNew.getChannelData() };
+				channel_data channel{ argsNew.getChannelData() };
 				guild_data guild{ guilds::getCachedGuild({ argsNew.getInteractionData().guildId }) };
 				discord_guild discordGuild{ guild };
 				bool areWeAllowed{ checkIfAllowedPlayingInChannel(argsNew.getInputEventData(), discordGuild) };
 				if (!areWeAllowed) {
 					return;
 				}
-				guild_member_cache_data guildMember{ argsNew.getGuildMemberData() };
+				guild_member_data guildMember{ argsNew.getGuildMemberData() };
 				bool doWeHaveControl = checkIfWeHaveControl(argsNew.getInputEventData(), discordGuild, guildMember);
 				if (!doWeHaveControl) {
 					return;
@@ -130,7 +130,7 @@ namespace discord_core_api {
 				}
 				jsonifier::vector<song> searchResults{};
 				if (argsNew.getCommandArguments().values.size() > 0) {
-					searchResults = discord_core_client::getSongAPI(guild.id).searchForSong(argsNew.getCommandArguments().values["songname"].value.operator jsonifier::string(), 1);
+					searchResults = discord_core_client::getSongAPI(guild.id).searchForSong(argsNew.getCommandArguments().values["songname"].operator jsonifier::string(), 1);
 				}
 
 				if ((searchResults.size() <= 0 && argsNew.getCommandArguments().values.size() > 0) || searchResults.at(0).songTitle == "") {
@@ -150,7 +150,7 @@ namespace discord_core_api {
 				move_through_message_pages_data returnData{};
 				if (searchResults.size() > 0) {
 					discordGuild.getDataFromDB();
-					user_cache_data user = users::getCachedUser({ .userId = guildMember.user.id });
+					user_data user = users::getCachedUser({ .userId = guildMember.user.id });
 					unique_ptr<embed_data> newEmbed{ makeUnique<embed_data>() };
 					jsonifier::string descriptionString{};
 					discordGuild.writeDataToDB();
@@ -178,7 +178,7 @@ namespace discord_core_api {
 				auto theTask   = [=](song_completion_event_data eventData) mutable -> co_routine<void, false> {
 					  auto argsNewer = std::move(argsNew);
 					  co_await newThreadAwaitable<void, false>();
-					  user_cache_data userNew = users::getCachedUser({ eventData.guildMemberId });
+					  user_data userNew = users::getCachedUser({ eventData.guildMemberId });
 					  std::this_thread::sleep_for(150ms);
 					  discordGuild.getDataFromDB();
 					  if (discordGuild.data.playlist.areThereAnySongs()) {

@@ -28,10 +28,10 @@ namespace discord_core_api {
 
 		void execute(const base_function_arguments& argsNew) {
 			try {
-				channel_cache_data channel{ argsNew.getChannelData() };
+				channel_data channel{ argsNew.getChannelData() };
 				guild_data guild{ argsNew.getInteractionData().guildId };
 				discord_guild discordGuild{ guild };
-				guild_member_cache_data guildMember{ argsNew.getGuildMemberData() };
+				guild_member_data guildMember{ argsNew.getGuildMemberData() };
 				auto inputEventData			 = argsNew.getInputEventData();
 				bool doWeHaveAdminPermission = doWeHaveAdminPermissions(inputEventData, channel, guildMember);
 				if (!doWeHaveAdminPermission) {
@@ -39,8 +39,8 @@ namespace discord_core_api {
 				}
 				jsonifier::string borderColor;
 
-				if (jsonifier::strToInt64 < 16>(argsNew.getCommandArguments().values["hexcolorvalue"].value.operator jsonifier::string()) < 0 ||
-					jsonifier::strToInt64<16>(argsNew.getCommandArguments().values["hexcolorvalue"].value.operator jsonifier::string()) > jsonifier::strToInt64<16>("fefefe")) {
+				if (jsonifier::strToInt64 < 16>(argsNew.getCommandArguments().values["hexcolorvalue"].operator jsonifier::string()) < 0 ||
+					jsonifier::strToInt64<16>(argsNew.getCommandArguments().values["hexcolorvalue"].operator jsonifier::string()) > jsonifier::strToInt64<16>("fefefe")) {
 					jsonifier::string msgString = "------\n**Please, enter a hex-color value between 0 and fefefe! (!setbordercolor = botname, hexcolorvalue)**\n------";
 					embed_data msgEmbed{};
 					msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
@@ -54,7 +54,7 @@ namespace discord_core_api {
 					auto newEvent = input_events::respondToInputEventAsync(dataPackage).get();
 					return;
 				} else {
-					borderColor = argsNew.getCommandArguments().values["hexcolorvalue"].value.operator jsonifier::string();
+					borderColor = argsNew.getCommandArguments().values["hexcolorvalue"].operator jsonifier::string();
 
 					discordGuild.data.borderColor = borderColor;
 					discordGuild.writeDataToDB();

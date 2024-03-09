@@ -10,13 +10,13 @@
 namespace discord_core_api {
 
 	move_through_message_pages_data recurseThroughOptions(move_through_message_pages_data returnData, uint64_t currentPageIndex, input_event_data newEvent,
-		jsonifier::vector<embed_data> embedsFromSearch, const base_function_arguments& argsNew, jsonifier::vector<int32_t> arrayOfIndices, guild_member_cache_data guildMember,
+		jsonifier::vector<embed_data> embedsFromSearch, const base_function_arguments& argsNew, jsonifier::vector<int32_t> arrayOfIndices, guild_member_data guildMember,
 		jsonifier::vector<song> searchResults) {
 		if (returnData.buttonId == "exit") {
 			discord_guild discordGuild{ guilds::getCachedGuild({ .guildId = argsNew.getGuildMemberData().guildId }) };
 			discordGuild.getDataFromDB();
 			size_t songSize	   = discordGuild.data.playlist.songQueue.size();
-			user_cache_data user = users::getCachedUser({ .userId = guildMember.user.id });
+			user_data user = users::getCachedUser({ .userId = guildMember.user.id });
 			arrayOfIndices.erase(arrayOfIndices.end() - 1);
 			for (auto& value: arrayOfIndices) {
 				if (value != -1) {
@@ -80,7 +80,7 @@ namespace discord_core_api {
 			try {
 				channel_data channel{ argsNew.getChannelData() };
 
-				guild_cache_data guild{ guilds::getCachedGuild({ .guildId = argsNew.getGuildMemberData().guildId })  };
+				guild_data guild{ guilds::getCachedGuild({ .guildId = argsNew.getGuildMemberData().guildId })  };
 
 				discord_guild discordGuild{ guild };
 
@@ -90,7 +90,7 @@ namespace discord_core_api {
 					return;
 				}
 
-				guild_member_cache_data guildMember{ argsNew.getGuildMemberData() };
+				guild_member_data guildMember{ argsNew.getGuildMemberData() };
 
 				bool doWeHaveControl = checkIfWeHaveControl(argsNew.getInputEventData(), discordGuild, guildMember);
 
@@ -192,7 +192,7 @@ namespace discord_core_api {
 				jsonifier::vector<song> searchResults{};
 				if (argsNew.getCommandArguments().values.size() > 0) {
 					searchResults =
-						discord_core_client::getSongAPI(guild.id).searchForSong(argsNew.getCommandArguments().values["songname"].value.operator jsonifier::string());
+						discord_core_client::getSongAPI(guild.id).searchForSong(argsNew.getCommandArguments().values["songname"].operator jsonifier::string());
 				}
 
 				if (searchResults.size() <= 0 && argsNew.getCommandArguments().values.size() > 0) {
@@ -240,7 +240,7 @@ namespace discord_core_api {
 				auto theTask   = [=](song_completion_event_data eventData) mutable -> co_routine<void, false> {
 					  auto argsNewer = std::move(argsNew);
 					  co_await newThreadAwaitable<void, false>();
-					  user_cache_data userNew = users::getCachedUser({ eventData.guildMemberId });
+					  user_data userNew = users::getCachedUser({ eventData.guildMemberId });
 					  std::this_thread::sleep_for(150ms);
 					  discordGuild.getDataFromDB();
 					  if (discordGuild.data.playlist.areThereAnySongs()) {

@@ -32,7 +32,7 @@ namespace discord_core_api {
 				respond_to_input_event_data replyMessageData{ eventData };
 				replyMessageData.addMessageEmbed(msgEmbed);
 
-				if (eventData.responseType != input_event_response_type::unset) {
+				if (eventData.responseType != input_event_response_type::Unset) {
 					input_events::deleteInputEventResponseAsync(eventData).get();
 					replyMessageData.setResponseType(input_event_response_type::Ephemeral_Follow_Up_Message);
 				} else {
@@ -45,7 +45,7 @@ namespace discord_core_api {
 		return isItFound;
 	}
 
-	bool checkIfWeHaveControl(input_event_data eventData, discord_guild guildData, guild_member_cache_data guildMember) {
+	bool checkIfWeHaveControl(input_event_data eventData, discord_guild guildData, guild_member_data guildMember) {
 		if (guildData.data.djRoleId == 0) {
 			return true;
 		}
@@ -78,7 +78,7 @@ namespace discord_core_api {
 		return doWeHaveControl;
 	}
 
-	bool checkForBotCommanderStatus(guild_member_cache_data guildMember, discord_user& discordUser) {
+	bool checkForBotCommanderStatus(guild_member_data guildMember, discord_user& discordUser) {
 		bool areWeACommander;
 		for (auto& value: discordUser.data.botCommanders) {
 			if (guildMember.user.id == value) {
@@ -90,11 +90,11 @@ namespace discord_core_api {
 		return false;
 	}
 
-	bool doWeHaveAdminPermissions(input_event_data& eventData, channel_cache_data& channel, guild_member_cache_data& guildMember, bool displayResponse = true) {
+	bool doWeHaveAdminPermissions(input_event_data& eventData, channel_data& channel, guild_member_data& guildMember, bool displayResponse = true) {
 		respond_to_input_event_data dataPackage{ eventData };
 		dataPackage.setResponseType(input_event_response_type::Ephemeral_Deferred_Response);
 		input_events::respondToInputEventAsync(dataPackage).get();
-		bool doWeHaveAdmin = permissions{ guildMember.permissionsVal }.checkForPermission(guildMember, channel, permission::administrator);
+		bool doWeHaveAdmin = permissions{ guildMember.permissions }.checkForPermission(guildMember, channel, permission::administrator);
 		if (doWeHaveAdmin) {
 			return true;
 		}

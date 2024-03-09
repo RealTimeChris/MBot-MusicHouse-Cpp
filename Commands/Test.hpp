@@ -28,7 +28,7 @@ namespace discord_core_api {
 			try {
 				jsonifier::vector<song> searchResults{};
 				guild_data guild{ argsNew.getInteractionData().guildId };
-				guild_member_cache_data guildMember{ argsNew.getGuildMemberData() };
+				guild_member_data guildMember{ argsNew.getGuildMemberData() };
 				for (uint64_t x = 0; x < 100; ++x) {
 					voice_connection& voiceConnection = guild.connectToVoice(guildMember.user.id, guildMember.getVoiceStateData().channelId);
 					guild.disconnect();

@@ -28,7 +28,7 @@ namespace discord_core_api {
 
 		void execute(const base_function_arguments& argsNew) {
 			try {
-				channel_cache_data channel{ argsNew.getChannelData() };
+				channel_data channel{ argsNew.getChannelData() };
 
 				uint64_t currentCount				  = 0;
 				jsonifier::vector<guild_data> theCache = guilds::getAllGuildsAsync();
@@ -40,7 +40,7 @@ namespace discord_core_api {
 					msgString += "__Guild Id:__ " + valueNew.id + "\n";
 					msgString += "__Member Count:__ " + jsonifier::toString(valueNew.memberCount) + "\n";
 
-					user_cache_data owner = users::getCachedUser({ valueNew.ownerId });
+					user_data owner = users::getCachedUser({ valueNew.ownerId });
 					msgString += jsonifier::string{ "__Guild Owner:__ <@!" } + jsonifier::string{ valueNew.ownerId } + jsonifier::string{ "> " } + jsonifier::string{ owner.userName } +
 						jsonifier::string{ "#" } + jsonifier::string{ owner.discriminator } + jsonifier::string{ "\n" };
 					msgString += "__Created At:__ " + valueNew.id.getCreatedAtTimeStamp();

@@ -16,7 +16,7 @@ namespace discord_core_api {
 			this->helpDescription = "displays some info about a chosen user.";
 			embed_data msgEmbed{};
 			msgEmbed.setDescription("------\nEnter /userinfo, or /userinfo @usermention, to display the info of another user.\n------");
-			msgEmbed.setTitle("__**user_cache_data info Usage:**__");
+			msgEmbed.setTitle("__**user_data info Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
 			msgEmbed.setColor("fefefe");
 			this->helpEmbed = msgEmbed;
@@ -28,14 +28,14 @@ namespace discord_core_api {
 
 		void execute(const base_function_arguments& argsNew) {
 			try {
-				channel_cache_data channel{ argsNew.getChannelData() };
+				channel_data channel{ argsNew.getChannelData() };
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
 
 				discord_guild discordGuild{ guild };
-				snowflake userId{ argsNew.getCommandArguments().values["user"].value.operator size_t() };
-				guild_member_cache_data guildMember = guild_members::getCachedGuildMember({ .guildMemberId = userId, .guildId = guild.id });
-				user_cache_data theUser			 = users::getCachedUser({ .userId = argsNew.getUserData().id });
+				snowflake userId{ argsNew.getCommandArguments().values["user"].operator size_t() };
+				guild_member_data guildMember = guild_members::getCachedGuildMember({ .guildMemberId = userId, .guildId = guild.id });
+				user_data theUser			 = users::getCachedUser({ .userId = argsNew.getUserData().id });
 				jsonifier::vector<embed_field_data> fields;
 				embed_field_data field{};
 				field.Inline = true;
@@ -101,7 +101,7 @@ namespace discord_core_api {
 				embed_data msgEmbed;
 				msgEmbed.setColor("fefefe");
 				msgEmbed.setTimeStamp(getTimeAndDate());
-				msgEmbed.setTitle("__**user_cache_data info:**__");
+				msgEmbed.setTitle("__**user_data info:**__");
 				msgEmbed.setImage(guildMember.getGuildMemberImageUrl(guild_member_image_types::Avatar) + "?size=4096");
 				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
 				msgEmbed.fields = fields;

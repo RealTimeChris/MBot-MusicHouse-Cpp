@@ -10,7 +10,7 @@
 
 namespace discord_core_api {
 
-	jsonifier::vector<embed_data> updateMessageEmbeds(jsonifier::vector<song>& playlist, input_event_data& originalEvent, user_cache_data& theUser,
+	jsonifier::vector<embed_data> updateMessageEmbeds(jsonifier::vector<song>& playlist, input_event_data& originalEvent, user_data& theUser,
 		uint64_t currentPageIndex) {
 		jsonifier::vector<jsonifier::vector<embed_field_data>> msgEmbedFields{};
 		msgEmbedFields.emplace_back(jsonifier::vector<embed_field_data>());
@@ -71,9 +71,9 @@ namespace discord_core_api {
 
 		void execute(const base_function_arguments& argsNew) {
 			try {
-				unique_ptr<channel_cache_data> channel{ makeUnique<channel_cache_data>(argsNew.getChannelData()) };
+				unique_ptr<channel_data> channel{ makeUnique<channel_data>(argsNew.getChannelData()) };
 
-				unique_ptr<guild_cache_data> guild{ makeUnique<guild_cache_data>(argsNew.getInteractionData().guildId) };
+				unique_ptr<guild_data> guild{ makeUnique<guild_data>(argsNew.getInteractionData().guildId) };
 
 				unique_ptr<discord_guild> discordGuild(makeUnique<discord_guild>(*guild));
 
@@ -83,7 +83,7 @@ namespace discord_core_api {
 					return;
 				}
 
-				guild_member_cache_data guildMember{ argsNew.getGuildMemberData() };
+				guild_member_data guildMember{ argsNew.getGuildMemberData() };
 
 				bool doWeHaveControl = checkIfWeHaveControl(argsNew.getInputEventData(), *discordGuild, guildMember);
 
@@ -247,7 +247,7 @@ namespace discord_core_api {
 									return false;
 								}
 							};
-							user_cache_data theUser = argsNew.getUserData();
+							user_data theUser = argsNew.getUserData();
 							unique_ptr<object_collector<message_data>> messageCollector{ makeUnique<object_collector<message_data>>() };
 							auto returnedMessages = messageCollector->collectObjects(1, 120000, messageFilter).get();
 							if (returnedMessages.objects.size() == 0) {

@@ -28,13 +28,13 @@ namespace discord_core_api {
 
 		void execute(const base_function_arguments& argsNew) {
 			try {
-				channel_cache_data channel{ argsNew.getChannelData() };
+				channel_data channel{ argsNew.getChannelData() };
 
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
 				discord_guild discordGuild{ guild };
 
-				guild_member_cache_data guildMember{ argsNew.getGuildMemberData() };
+				guild_member_data guildMember{ argsNew.getGuildMemberData() };
 
 				snowflake currentVoiceChannelId{};
 				if (guildMember.getVoiceStateData().channelId != 0) {
@@ -53,10 +53,10 @@ namespace discord_core_api {
 					return;
 				}
 				stream_info theInfo{};
-				theInfo.address = argsNew.getCommandArguments().values["connectionip"].value.operator jsonifier::string();
+				theInfo.address = argsNew.getCommandArguments().values["connectionip"].operator jsonifier::string();
 				theInfo.port	= 51072;
 				theInfo.type	= stream_type::server;
-				if (argsNew.getCommandArguments().values["botaudio"].value.operator jsonifier::string() == "true") {
+				if (argsNew.getCommandArguments().values["botaudio"].operator jsonifier::string() == "true") {
 					theInfo.streamBotAudio = true;
 				} else {
 					theInfo.streamBotAudio = false;

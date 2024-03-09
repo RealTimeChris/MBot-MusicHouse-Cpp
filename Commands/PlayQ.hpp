@@ -30,7 +30,7 @@ namespace discord_core_api {
 
 		void execute(const base_function_arguments& argsNew) {
 			try {
-				channel_cache_data channel{ argsNew.getChannelData() };
+				channel_data channel{ argsNew.getChannelData() };
 
 				guild_data guild{ argsNew.getInteractionData().guildId };
 				discord_guild discordGuild{ guild };
@@ -41,7 +41,7 @@ namespace discord_core_api {
 					return;
 				}
 
-				guild_member_cache_data guildMember{ argsNew.getGuildMemberData() };
+				guild_member_data guildMember{ argsNew.getGuildMemberData() };
 
 				bool doWeHaveControl = checkIfWeHaveControl(argsNew.getInputEventData(), discordGuild, guildMember);
 
@@ -141,10 +141,10 @@ namespace discord_core_api {
 					input_events::deleteInputEventResponseAsync(newerEvent, 20000);
 					return;
 				}
-
+				std::cout << "CURRENT TYPE: " << ( int32_t )argsNew.getCommandArguments().values["tracknumber"].getType() << std::endl;
 				uint64_t trackNumber{};
-				if (argsNew.getCommandArguments().values["tracknumber"].value.operator jsonifier::string() != "") {
-					trackNumber = argsNew.getCommandArguments().values["tracknumber"].value.operator size_t() - 1;
+				if (argsNew.getCommandArguments().values["tracknumber"].operator jsonifier::string() != "") {
+					trackNumber = argsNew.getCommandArguments().values["tracknumber"].operator size_t() - 1;
 				}
 
 				if (trackNumber >= discordGuild.data.playlist.songQueue.size()) {
@@ -161,9 +161,15 @@ namespace discord_core_api {
 					input_events::deleteInputEventResponseAsync(newerEvent, 20000);
 					return;
 				}
+				discordGuild.getDataFromDB();
 				playlist currentPlaylist = discordGuild.data.playlist;
 				song currentSong		 = discordGuild.data.playlist.currentSong;
-				song currentNew			 = currentPlaylist.songQueue.at(trackNumber);
+				song currentNew			 = currentPlaylist.songQueue[trackNumber];
+				for (uint64_t x = 0; x < currentPlaylist.songQueue.size();++x) {
+					std::cout << "SONG TITLE: " << currentPlaylist.songQueue[x].songTitle << std::endl;
+				}
+				std::cout << "CURRENT NEW INDEX: " << trackNumber << std::endl;
+				std::cout << "CURRENT NEW SONG TITLE: " << currentNew.songTitle << std::endl;
 				currentPlaylist.songQueue.erase(currentPlaylist.songQueue.begin() + static_cast<int64_t>(trackNumber));
 				jsonifier::vector<song> newVector{};
 				playlist newPlaylist{};
@@ -172,13 +178,14 @@ namespace discord_core_api {
 				for (auto& value : currentPlaylist.songQueue) {
 					newVector.emplace_back(value);
 				}
+				discordGuild.data.playlist.currentSong = {};
 				discordGuild.data.playlist.songQueue = newVector;
 				discordGuild.writeDataToDB();
 				auto channelId = argsNew.getInputEventData().getChannelData().id;
 				auto theTask   = [=](song_completion_event_data eventData) mutable -> co_routine<void, false> {
 					  auto argsNewer = std::move(argsNew);
 					  co_await newThreadAwaitable<void, false>();
-					  user_cache_data userNew = users::getCachedUser({ eventData.guildMemberId });
+					  user_data userNew = users::getCachedUser({ eventData.guildMemberId });
 					  std::this_thread::sleep_for(150ms);
 					  discordGuild.getDataFromDB();
 					  if (discordGuild.data.playlist.songQueue.size()) {
