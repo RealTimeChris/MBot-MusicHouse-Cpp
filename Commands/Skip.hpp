@@ -57,7 +57,7 @@ namespace discord_core_api {
 
 				if (currentTime - previousSkippedTime < 5000) {
 					embed_data newEmbed{};
-					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					newEmbed.setDescription("------\n__**Sorry, but please wait a total of 5 seconds in between skips!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
 					newEmbed.setTitle("__**Timing Issue:**__");
@@ -76,7 +76,7 @@ namespace discord_core_api {
 					currentVoiceChannelId = guildMember.getVoiceStateData().channelId;
 				} else {
 					embed_data newEmbed{};
-					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					newEmbed.setDescription("------\n__**Sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
 					newEmbed.setTitle("__**Connection Issue:**__");
@@ -90,7 +90,7 @@ namespace discord_core_api {
 				voice_connection& voiceConnection = guild.connectToVoice(guildMember.user.id);
 				if (!voiceConnection.areWeConnected()) {
 					embed_data newEmbed{};
-					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					newEmbed.setDescription("------\n__**Sorry, but there is no voice connection that is currently held by me!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
 					newEmbed.setTitle("__**Connection Issue:**__");
@@ -104,7 +104,7 @@ namespace discord_core_api {
 
 				if (guildMember.getVoiceStateData().channelId == 0 || guildMember.getVoiceStateData().channelId != voiceConnection.getChannelId()) {
 					embed_data newEmbed{};
-					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					newEmbed.setDescription("------\n__**Sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
 					newEmbed.setTitle("__**Skipping Issue:**__");
@@ -120,7 +120,7 @@ namespace discord_core_api {
 				if (!guild.areWeConnected() || !discord_core_client::getSongAPI(guild.id).areWeCurrentlyPlaying()) {
 					jsonifier::string msgString = "------\n**There's no music playing to be skipped!**\n------";
 					embed_data msgEmbed{};
-					msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed.setColor("fefefe");
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
@@ -136,7 +136,7 @@ namespace discord_core_api {
 				if (!discordGuild.data.playlist.songQueue.size()) {
 					jsonifier::string msgString = "------\n**There's no more songs for us to skip to!**\n------";
 					embed_data msgEmbed02;
-					msgEmbed02.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed02.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed02.setColor("fefefe");
 					msgEmbed02.setTimeStamp(getTimeAndDate());
 					msgEmbed02.setDescription(msgString);
@@ -151,7 +151,7 @@ namespace discord_core_api {
 					if (discord_core_client::getSongAPI(guild.id).areWeCurrentlyPlaying() && discordGuild.data.playlist.songQueue.size()) {
 						jsonifier::string msgString = "------\n**We're skipping to the next song!**\n------";
 						embed_data msgEmbed02{};
-						msgEmbed02.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar))
+						msgEmbed02.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>())
 							.setColor("fefefe")
 							.setTimeStamp(getTimeAndDate())
 							.setDescription(msgString)
@@ -165,7 +165,7 @@ namespace discord_core_api {
 						discord_core_client::getSongAPI(guild.id).skip();
 					} else if (!discordGuild.data.playlist.songQueue.size()) {
 						embed_data newEmbed{};
-						newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+						newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 						newEmbed.setDescription("------\n__**Sorry, but there's nothing left to play here!**__\n------");
 						newEmbed.setTimeStamp(getTimeAndDate());
 						newEmbed.setTitle("__**Now Playing:**__");
@@ -187,7 +187,7 @@ namespace discord_core_api {
 					} else {
 						jsonifier::string msgString = "------\n**There's no music playing to be skipped!**\n------";
 						embed_data msgEmbed02;
-						msgEmbed02.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+						msgEmbed02.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 						msgEmbed02.setColor("fefefe");
 						msgEmbed02.setTimeStamp(getTimeAndDate());
 						msgEmbed02.setDescription(msgString);

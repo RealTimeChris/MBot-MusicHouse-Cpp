@@ -33,7 +33,7 @@ namespace discord_core_api {
 				guild_data guild{ argsNew.getInteractionData().guildId };
 
 				discord_guild discordGuild{ guild };
-				snowflake userId{ argsNew.getCommandArguments().values["user"].operator size_t() };
+				snowflake userId{ argsNew.getCommandArguments().values["user"].get<size_t>() };
 				guild_member_data guildMember = guild_members::getCachedGuildMember({ .guildMemberId = userId, .guildId = guild.id });
 				user_data theUser			 = users::getCachedUser({ .userId = argsNew.getUserData().id });
 				jsonifier::vector<embed_field_data> fields;
@@ -102,8 +102,8 @@ namespace discord_core_api {
 				msgEmbed.setColor("fefefe");
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setTitle("__**user_data info:**__");
-				msgEmbed.setImage(guildMember.getGuildMemberImageUrl(guild_member_image_types::Avatar) + "?size=4096");
-				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+				msgEmbed.setImage(guildMember.getGuildMemberImageUrl<guild_member_image_types::Avatar>() + "?size=4096");
+				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 				msgEmbed.fields = fields;
 				respond_to_input_event_data dataPackage02(argsNew.getInputEventData());
 				dataPackage02.addMessageEmbed(msgEmbed);

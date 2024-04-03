@@ -48,7 +48,7 @@ namespace discord_core_api {
 						if (channelID == discordGuild.data.musicChannelIds.at(x)) {
 							jsonifier::string msgString = "------\n**That channel is already on the list of enabled channels!**\n------";
 							embed_data messageEmbed;
-							messageEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+							messageEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 							messageEmbed.setColor("fefefe");
 							messageEmbed.setTimeStamp(getTimeAndDate());
 							messageEmbed.setDescription(msgString);
@@ -65,7 +65,7 @@ namespace discord_core_api {
 					discordGuild.data.musicChannelIds.emplace_back(channelID);
 					discordGuild.writeDataToDB();
 					embed_data messageEmbed;
-					messageEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					messageEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					messageEmbed.setColor("fefefe");
 					messageEmbed.setTimeStamp(getTimeAndDate());
 					messageEmbed.setDescription("------\n**You've succesfully added <#" + channelID + "> to your list of accepted music channels!**\n------");
@@ -94,7 +94,7 @@ namespace discord_core_api {
 					if (isItPresent == false) {
 						jsonifier::string msgString2 = "------\n**That channel is not present on the list of enabled music channels!**\n------";
 						embed_data messageEmbed;
-						messageEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+						messageEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 						messageEmbed.setColor("fefefe");
 						messageEmbed.setTimeStamp(getTimeAndDate());
 						messageEmbed.setDescription(msgString2);
@@ -108,7 +108,7 @@ namespace discord_core_api {
 					}
 
 					embed_data messageEmbed;
-					messageEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					messageEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					messageEmbed.setColor("fefefe");
 					messageEmbed.setTimeStamp(getTimeAndDate());
 					messageEmbed.setDescription(msgString);
@@ -140,7 +140,7 @@ namespace discord_core_api {
 					}
 
 					embed_data messageEmbed;
-					messageEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					messageEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					messageEmbed.setColor("fefefe");
 					messageEmbed.setTimeStamp(getTimeAndDate());
 					messageEmbed.setDescription(msgString);
@@ -163,7 +163,7 @@ namespace discord_core_api {
 					msgString += "------\n";
 
 					embed_data messageEmbed;
-					messageEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					messageEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					messageEmbed.setColor("fefefe");
 					messageEmbed.setTimeStamp(getTimeAndDate());
 					messageEmbed.setDescription(msgString);

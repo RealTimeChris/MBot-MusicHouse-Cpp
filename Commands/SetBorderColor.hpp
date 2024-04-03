@@ -39,11 +39,11 @@ namespace discord_core_api {
 				}
 				jsonifier::string borderColor;
 
-				if (jsonifier::strToInt64 < 16>(argsNew.getCommandArguments().values["hexcolorvalue"].operator jsonifier::string()) < 0 ||
-					jsonifier::strToInt64<16>(argsNew.getCommandArguments().values["hexcolorvalue"].operator jsonifier::string()) > jsonifier::strToInt64<16>("fefefe")) {
+				if (jsonifier::strToInt64 < 16>(argsNew.getCommandArguments().values["hexcolorvalue"].get<jsonifier::string>()) < 0 ||
+					jsonifier::strToInt64<16>(argsNew.getCommandArguments().values["hexcolorvalue"].get<jsonifier::string>()) > jsonifier::strToInt64<16>("fefefe")) {
 					jsonifier::string msgString = "------\n**Please, enter a hex-color value between 0 and fefefe! (!setbordercolor = botname, hexcolorvalue)**\n------";
 					embed_data msgEmbed{};
-					msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed.setColor("fefefe");
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
@@ -54,13 +54,13 @@ namespace discord_core_api {
 					auto newEvent = input_events::respondToInputEventAsync(dataPackage).get();
 					return;
 				} else {
-					borderColor = argsNew.getCommandArguments().values["hexcolorvalue"].operator jsonifier::string();
+					borderColor = argsNew.getCommandArguments().values["hexcolorvalue"].get<jsonifier::string>();
 
 					discordGuild.data.borderColor = borderColor;
 					discordGuild.writeDataToDB();
 
 					embed_data msgEmbed{};
-					msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed.setColor("fefefe");
 					msgEmbed.setDescription(jsonifier::string{
 						"Nicely done, you've updated the default border color for this bot!\n------\n__**Border Color Values:**__ " + discordGuild.data.borderColor + "\n------" });

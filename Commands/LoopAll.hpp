@@ -54,7 +54,7 @@ namespace discord_core_api {
 					discordGuild.data.playlist.isLoopAllEnabled	 = true;
 				}
 				embed_data msgEmbed{};
-				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 				msgEmbed.setColor("fefefe");
 				if (discordGuild.data.playlist.isLoopAllEnabled) {
 					msgEmbed.setDescription("\n------\n__**Looping-All has been enabled!**__\n------\n");

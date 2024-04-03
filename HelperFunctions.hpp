@@ -25,7 +25,7 @@ namespace discord_core_api {
 			}
 			msgString += "------";
 			if (isItFound == false) {
-				msgEmbed.setAuthor(eventData.getUserData().userName, eventData.getUserData().getUserImageUrl(user_image_types::Avatar));
+				msgEmbed.setAuthor(eventData.getUserData().userName, eventData.getUserData().getUserImageUrl<user_image_types::Avatar>());
 				msgEmbed.setColor("fefefe");
 				msgEmbed.setDescription(msgString);
 				msgEmbed.setTitle("__**Permissions Issue:**__");
@@ -65,7 +65,7 @@ namespace discord_core_api {
 		if (!doWeHaveControl) {
 			jsonifier::string msgString = "------\n**Sorry, but you lack the permissions to do that!**\n------";
 			embed_data msgEmbed{};
-			msgEmbed.setAuthor(guildMember.getUserData().userName, guildMember.getGuildMemberImageUrl(guild_member_image_types::Avatar));
+			msgEmbed.setAuthor(guildMember.getUserData().userName, guildMember.getGuildMemberImageUrl<guild_member_image_types::Avatar>());
 			msgEmbed.setDescription(msgString);
 			msgEmbed.setColor(guildData.data.borderColor);
 			msgEmbed.setTimeStamp(getTimeAndDate());
@@ -108,7 +108,7 @@ namespace discord_core_api {
 		if (displayResponse) {
 			jsonifier::string msgString = "------\n**Sorry, but you don't have the permissions required for that!**\n------";
 			embed_data msgEmbed{};
-			msgEmbed.setAuthor(eventData.getUserData().userName,  eventData.getUserData().getUserImageUrl(user_image_types::Avatar));
+			msgEmbed.setAuthor(eventData.getUserData().userName,  eventData.getUserData().getUserImageUrl<user_image_types::Avatar>());
 			msgEmbed.setColor("fefefe");
 			msgEmbed.setDescription(msgString);
 			msgEmbed.setTimeStamp(getTimeAndDate());

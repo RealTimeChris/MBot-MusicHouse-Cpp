@@ -15,10 +15,6 @@
 	#undef BSONCXX_POLY_USE_BOOST
 #endif
 
-#ifndef BSONCXX_POLY_USE_STD_EXPERIMENTAL
-	#define BSONCXX_POLY_USE_STD_EXPERIMENTAL
-#endif
-
 #ifndef _GLIBCXX17_INLINE
 	#define _GLIBCXX17_INLINE inline
 #endif
@@ -28,7 +24,7 @@
 #include <Mongocxx/Client.hpp>
 #include <Mongocxx/Pool.hpp>
 
-#include <Discordcoreapi/Index.hpp>
+#include <discordcoreapi/Index.hpp>
 
 namespace discord_core_api {
 
@@ -85,7 +81,7 @@ namespace discord_core_api {
 			database_manager_agent::botUserId	   = botUserIdNew;
 			auto newClient					   = database_manager_agent::getClient();
 			mongocxx::database newDataBase	   = (*newClient)[database_manager_agent::botUserId.operator jsonifier::string().data()];
-			mongocxx::collection newCollection = newDataBase[database_manager_agent::botUserId.operator jsonifier::string().data()];
+			mongocxx::collection newCollection	   = newDataBase[database_manager_agent::botUserId.operator jsonifier::string().data()];
 		}
 
 		inline static mongocxx::pool::entry getClient() {

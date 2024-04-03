@@ -46,9 +46,9 @@ namespace discord_core_api {
 					msgString += "__Created At:__ " + valueNew.id.getCreatedAtTimeStamp();
 
 					embed_data msgEmbed{};
-					msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed.setColor("fefefe");
-					msgEmbed.setImage(valueNew.getGuildImageUrl(guild_image_types::Icon));
+					msgEmbed.setImage(valueNew.getGuildImageUrl<guild_image_types::Icon>());
 					msgEmbed.setTitle("__**Guild Data " + jsonifier::toString(currentCount + 1) + " of " + jsonifier::toString(theCache.size()) + "**__");
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setDescription(msgString);
