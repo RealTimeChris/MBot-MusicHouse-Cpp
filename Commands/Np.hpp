@@ -49,7 +49,7 @@ namespace discord_core_api {
 				}
 				discordGuild.getDataFromDB();
 				embed_data newEmbed{};
-				newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+				newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 				newEmbed.setDescription("__**Title:**__ [" + discordGuild.data.playlist.currentSong.songTitle + "](" + discordGuild.data.playlist.currentSong.viewUrl + ")" +
 					"\n__**Description:**__ " + discordGuild.data.playlist.currentSong.description + "\n__**Duration:**__ " + discordGuild.data.playlist.currentSong.duration +
 					"\n__**Added By:**__ <@!" + discordGuild.data.playlist.currentSong.addedByUserId + ">");

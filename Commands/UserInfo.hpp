@@ -102,8 +102,8 @@ namespace discord_core_api {
 				msgEmbed.setColor("fefefe");
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setTitle("__**user_data info:**__");
-				msgEmbed.setImage(guildMember.getGuildMemberImageUrl(guild_member_image_types::Avatar) + "?size=4096");
-				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+				msgEmbed.setImage(guildMember.getGuildMemberImageUrl<guild_member_image_types::Avatar>() + "?size=4096");
+				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 				msgEmbed.fields = fields;
 				respond_to_input_event_data dataPackage02(argsNew.getInputEventData());
 				dataPackage02.addMessageEmbed(msgEmbed);

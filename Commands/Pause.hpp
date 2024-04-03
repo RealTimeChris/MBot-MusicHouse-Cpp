@@ -52,7 +52,7 @@ namespace discord_core_api {
 					currentVoiceChannelId = guildMember.getVoiceStateData().channelId;
 				} else {
 					embed_data newEmbed{};
-					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					newEmbed.setDescription("------\n__**Sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
 					newEmbed.setTitle("__**Connection Issue:**__");
@@ -67,7 +67,7 @@ namespace discord_core_api {
 				discordGuild.getDataFromDB();
 				if (!voiceConnection.areWeConnected() || !guild.areWeConnected()) {
 					embed_data newEmbed{};
-					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					newEmbed.setDescription("------\n__**Sorry, but there is no voice connection that is currently held by me!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
 					newEmbed.setTitle("__**Connection Issue:**__");
@@ -81,7 +81,7 @@ namespace discord_core_api {
 
 				if (guildMember.getVoiceStateData().channelId == 0 || guildMember.getVoiceStateData().channelId != voiceConnection.getChannelId()) {
 					embed_data newEmbed{};
-					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					newEmbed.setDescription("------\n__**Sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
 					newEmbed.setTitle("__**Pausing Issue:**__");
@@ -95,7 +95,7 @@ namespace discord_core_api {
 
 				if (!discord_core_client::getSongAPI(guild.id).areWeCurrentlyPlaying()) {
 					embed_data newEmbed{};
-					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					newEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					newEmbed.setDescription("------\n__**Sorry, but i need to be either playing or paused for this command to be possible!**__\n------");
 					newEmbed.setTimeStamp(getTimeAndDate());
 					newEmbed.setTitle("__**Pausing Issue:**__");
@@ -110,7 +110,7 @@ namespace discord_core_api {
 				discord_core_client::getSongAPI(guild.id).pauseToggle();
 
 				embed_data msgEmbed{};
-				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 				msgEmbed.setColor("fefefe");
 				msgEmbed.setDescription("\n------\n__**Songs remaining in queue:**__ " + jsonifier::toString(discordGuild.data.playlist.songQueue.size()) + "\n------");
 				msgEmbed.setTimeStamp(getTimeAndDate());

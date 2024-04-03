@@ -55,7 +55,7 @@ namespace discord_core_api {
 					discordGuild.data.playlist.isLoopSongEnabled = true;
 				}
 				embed_data msgEmbed{};
-				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 				msgEmbed.setColor("fefefe");
 				if (discordGuild.data.playlist.isLoopSongEnabled) {
 					msgEmbed.setDescription("\n------\n__**Looping-Song has been enabled!**__\n------\n");

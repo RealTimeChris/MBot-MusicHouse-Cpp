@@ -15,10 +15,6 @@
 	#undef BSONCXX_POLY_USE_BOOST
 #endif
 
-#ifndef BSONCXX_POLY_USE_STD_EXPERIMENTAL
-	#define BSONCXX_POLY_USE_STD_EXPERIMENTAL
-#endif
-
 #ifndef _GLIBCXX17_INLINE
 	#define _GLIBCXX17_INLINE inline
 #endif
@@ -28,7 +24,7 @@
 #include <Mongocxx/Client.hpp>
 #include <Mongocxx/Pool.hpp>
 
-#include <Discordcoreapi/Index.hpp>
+#include <discordcoreapi/Index.hpp>
 
 namespace discord_core_api {
 
@@ -222,7 +218,7 @@ namespace discord_core_api {
 			}
 		}
 
-		template<jsonifier::concepts::unsigned_t return_type, typename value_type_to_search>
+		template<jsonifier::concepts::unsigned_type return_type, typename value_type_to_search>
 		static return_type getValueIfNotNull(value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
 			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
 				return return_type{ valueToSearch[valueToFind].get_int64().value };
@@ -231,7 +227,7 @@ namespace discord_core_api {
 			}
 		}
 
-		template<jsonifier::concepts::signed_t return_type, typename value_type_to_search>
+		template<jsonifier::concepts::signed_type return_type, typename value_type_to_search>
 		static return_type getValueIfNotNull(value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
 			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
 				return return_type{ valueToSearch[valueToFind].get_int64().value };

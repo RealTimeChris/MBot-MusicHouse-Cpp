@@ -32,7 +32,7 @@ namespace discord_core_api {
 		jsonifier::vector<embed_data> newMsgEmbeds{};
 		for (uint64_t y = 0; y < msgEmbedFields.size(); y += 1) {
 			unique_ptr<embed_data> newEmbed{ makeUnique<embed_data>() };
-			newEmbed->setAuthor(theUser.userName, theUser.getUserImageUrl(user_image_types::Avatar));
+			newEmbed->setAuthor(theUser.userName, theUser.getUserImageUrl<user_image_types::Avatar>());
 			newEmbed->setColor("fefefe");
 			newEmbed->setTimeStamp(getTimeAndDate());
 			newEmbed->setTitle("__**Playlist, page " + jsonifier::toString(y + 1) + " of " + jsonifier::toString(msgEmbedFields.size()) + "**__");
@@ -95,7 +95,7 @@ namespace discord_core_api {
 				discordGuild->getDataFromDB();
 				if (discordGuild->data.playlist.songQueue.size() == 0) {
 					unique_ptr<embed_data> newEmbed{ makeUnique<embed_data>() };
-					newEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					newEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					newEmbed->setColor(discordGuild->data.borderColor);
 					newEmbed->setTimeStamp(getTimeAndDate());
 					newEmbed->setTitle("__**Empty Playlist:**__");
@@ -131,7 +131,7 @@ namespace discord_core_api {
 				for (uint64_t y = 0; y < msgEmbedFields.size(); y += 1) {
 					unique_ptr<embed_data> newEmbed{ makeUnique<embed_data>() };
 					newEmbed->setColor(discordGuild->data.borderColor)
-						.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar))
+						.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>())
 						.setTimeStamp(getTimeAndDate())
 						.setTitle("__**Playlist, page " + jsonifier::toString(y + 1) + " of " + jsonifier::toString(msgEmbedFields.size()) + "**__")
 						.setFooter("React with ✅ to edit the contents of the current page. React with ❌ to exit!")

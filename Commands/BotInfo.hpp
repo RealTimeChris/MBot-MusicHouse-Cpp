@@ -34,8 +34,8 @@ namespace discord_core_api {
 					userCount += value.memberCount;
 				}
 				embed_data messageEmbed;
-				messageEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
-				messageEmbed.setImage(discord_core_client::getInstance()->getBotUser().getUserImageUrl(user_image_types::Avatar));
+				messageEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
+				messageEmbed.setImage(discord_core_client::getInstance()->getBotUser().getUserImageUrl<user_image_types::Avatar>());
 				messageEmbed.setColor("fefefe");
 				messageEmbed.setTitle("__**Bot Info:**__");
 				messageEmbed.setTimeStamp(getTimeAndDate());

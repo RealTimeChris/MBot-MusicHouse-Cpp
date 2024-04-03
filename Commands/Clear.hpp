@@ -52,7 +52,7 @@ namespace discord_core_api {
 				discordGuild.writeDataToDB();
 
 				embed_data msgEmbed{};
-				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+				msgEmbed.setAuthor(argsNew.getUserData().userName,  argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 				msgEmbed.setColor("fefefe");
 				msgEmbed.setDescription("\n------\n__**You have cleared the song queue!**__\n------");
 				msgEmbed.setTimeStamp(getTimeAndDate());

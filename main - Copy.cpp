@@ -9,22 +9,21 @@
 void onBoot00(discord_core_api::discord_core_client* args) {
 	auto botUser = args->getBotUser();
 	discord_core_api::managerAgent.initialize(botUser.id);
-	discord_core_api::discord_user theUser{ discord_core_api::{ botUser.userName }, botUser.id };
-	theUser.writeDataToDB(discord_core_api::managerAgent);
+	discord_core_api::discord_user theUser{ { botUser.userName }, botUser.id };
+	theUser.writeDataToDB();
 }
 
-discord_core_api::co_routine<void> onGuildCreation(discord_core_api::on_guild_creation_data dataPackage) {
+discord_core_api::co_routine<void> onGuildCreation(const discord_core_api::on_guild_creation_data& dataPackage) {
 	co_await discord_core_api::newThreadAwaitable<void>();
-	discord_core_api::discord_guild discordGuild{ discord_core_api::dataPackage.value };
-	discordGuild.getDataFromDB(discord_core_api::managerAgent);
-	discordGuild.writeDataToDB(discord_core_api::managerAgent);
+	discord_core_api::discord_guild discordGuild{ dataPackage.value };
+	discordGuild.getDataFromDB();
+	discordGuild.writeDataToDB();
 	co_return;
 }
 
 #include <fstream>
 
-uint64_t main() {
-	std::fstream fileNew{ "c:/users/chris/desktop/newTxt.txt", std::ios::binary | std::ios::out };
+int32_t main() {
 	jsonifier::string botToken = "";
 	jsonifier::vector<discord_core_api::repeated_function_data> functionVector{};
 	functionVector.reserve(5);
@@ -38,15 +37,28 @@ uint64_t main() {
 	shardOptions.totalNumberOfShards		  = 1;
 	shardOptions.startingShard				  = 0;
 	discord_core_api::logging_options logOptions{};
-	logOptions.logWebSocketErrorMessages = true;
-	logOptions.logGeneralErrorMessages	 = true;
-	logOptions.logHttpsErrorMessages	 = true;
+	logOptions.logWebSocketErrorMessages   = true;
+	logOptions.logGeneralErrorMessages	   = true;
+	logOptions.logHttpsErrorMessages	   = true;
+	logOptions.logHttpsSuccessMessages	   = true;
+	logOptions.logWebSocketSuccessMessages = true;
+	logOptions.logGeneralSuccessMessages   = true;
+	//logOptions.errorStream				   = &fileNew;
+	//logOptions.outputStream				   = &fileNew;
 	discord_core_api::discord_core_client_config clientConfig{};
+	//clientConfig.connectionAddress				= "127.0.0.1";
+	discord_core_api::discord_core_internal::https_client clientNew{ botToken };
+	discord_core_api::discord_core_internal::https_workload_data data{ discord_core_api::discord_core_internal::https_workload_type::Get_Gateway_Bot };
+	data.workloadClass = discord_core_api::discord_core_internal::https_workload_class::Get;
+	data.baseUrl	   = "https://discord.com/api/v10";
+	data.relativePath  = "gateway/bot";
+	//clientNew.submitWorkloadAndGetResult(data);
 	clientConfig.shardOptions					= shardOptions;
 	clientConfig.logOptions						= logOptions;
 	clientConfig.botToken						= botToken;
 	clientConfig.cacheOptions.cacheRoles		= false;
 	clientConfig.cacheOptions.cacheGuildMembers = false;
+	clientConfig.cacheOptions.cacheVoiceStates	= true;
 	clientConfig.cacheOptions.cacheUsers		= true;
 	clientConfig.cacheOptions.cacheGuilds		= true;
 	clientConfig.cacheOptions.cacheChannels		= true;
@@ -64,10 +76,17 @@ uint64_t main() {
 	clientConfig.presenceData.status	 = discord_core_api::presence_update_state::online;
 	auto thePtr							 = discord_core_api::makeUnique<discord_core_api::discord_core_client>(clientConfig);
 	discord_core_api::register_application_commands theData{};
+	std::cout << "WERE HERE THIS IS IT! 0101" << std::endl;
 	thePtr->getEventManager().onGuildCreationEvent.add(onGuildCreation);
+	std::cout << "WERE HERE THIS IS IT! 0202" << std::endl;
 	//thePtr->getEventManager().onMessageCreationEvent.add(discord_core_api::message_handler);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "botinfo" }, discord_core_api::makeUnique<discord_core_api::bot_info>(), theData.createBotInfoCommandData);
-	thePtr->registerFunction( jsonifier::vector<jsonifier::string>{ "clear" }, discord_core_api::makeUnique<discord_core_api::clear>(), theData.createClearData);
+	auto newValue = jsonifier::vector<jsonifier::string>{ "botinfo" };
+	std::cout << "WERE HERE THIS IS IT! 0303" << std::endl;
+	auto newValue02 = discord_core_api::makeUnique<discord_core_api::bot_info>();
+	std::cout << "WERE HERE THIS IS IT! 0404" << std::endl;
+	thePtr->registerFunction(newValue, std::move(newValue02), theData.createBotInfoCommandData);
+	std::cout << "WERE HERE THIS IS IT! 0404" << std::endl;
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "clear" }, discord_core_api::makeUnique<discord_core_api::clear>(), theData.createClearData);
 	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "disconnect" }, discord_core_api::makeUnique<discord_core_api::disconnect>(), theData.createDisconnectData);
 	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "displayguildsdata" }, discord_core_api::makeUnique<discord_core_api::display_guilds_data>(),
 		theData.createDisplayGuildsDataCommandData);
@@ -77,6 +96,8 @@ uint64_t main() {
 	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "np" }, discord_core_api::makeUnique<discord_core_api::np>(), theData.createNpData);
 	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "play" }, discord_core_api::makeUnique<discord_core_api::play>(), theData.createPlayCommandData);
 	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "playq" }, discord_core_api::makeUnique<discord_core_api::play_q>(), theData.createPlayQCommandData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "playsearch" }, discord_core_api::makeUnique<discord_core_api::play_search>(),
+		theData.createPlaySearchCommandData);
 	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "playrn" }, discord_core_api::makeUnique<discord_core_api::play_rn>(), theData.createPlayRNCommandData);
 	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "pause" }, discord_core_api::makeUnique<discord_core_api::pause>(), theData.createPauseData);
 	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "queue" }, discord_core_api::makeUnique<discord_core_api::the_queue>(), theData.createQueueData);
@@ -91,7 +112,5 @@ uint64_t main() {
 	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "test" }, discord_core_api::makeUnique<discord_core_api::test>(), theData.createTestData);
 	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "user info" }, discord_core_api::makeUnique<discord_core_api::user_info>(), theData.createUserInfoData);
 	thePtr->runBot();
-	fileNew.write("testing", std::size("testing"));
 	return 0;
 };
-
